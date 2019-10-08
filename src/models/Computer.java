@@ -3,14 +3,24 @@ package models;
 import java.util.Date;
 
 public class Computer {
+
+	private long id;
 	private String name;
 	private Date dateIntroduce;
-	private Date dateDisconected;
-	private String Manifacturer;
+	private Date dateDisconnected;
+	private Company company;
 	
 	public Computer(String name) {
 		super();
 		this.name = name;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -29,27 +39,27 @@ public class Computer {
 		this.dateIntroduce = dateIntroduce;
 	}
 
-	public Date getDateDisconected() {
-		return dateDisconected;
+	public Date getDateDisconnected() {
+		return dateDisconnected;
 	}
 
-	public void setDateDisconected(Date dateDisconected) {
-		if(dateDisconected.after(this.dateIntroduce)) {
-			this.dateDisconected = dateDisconected;
+	public void setDateDisconnected(Date dateDisconnected) {
+		if(dateDisconnected.after(this.dateIntroduce)) {
+			this.dateDisconnected = dateDisconnected;
 		}
 	}
 
-	public String getManifacturer() {
-		return Manifacturer;
+	public Company getCompany() {
+		return company;
 	}
 
-	public void setManifacturer(String manifacturer) {
-		Manifacturer = manifacturer;
+	public void setCompany(Company company) {
+		this.company = company;
 	}
 
 	@Override
 	public String toString() {
-		return "Computer [name=" + name + ", dateIntroduce=" + dateIntroduce + ", dateDisconected=" + dateDisconected
-				+ ", Manifacturer=" + Manifacturer + "]";
+		return "Computer [name=" + name + ", dateIntroduce=" + dateIntroduce + ", dateDisconnected=" + dateDisconnected
+				+ ", Manifacturer=" + company + "]";
 	}
 }
