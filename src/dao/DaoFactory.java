@@ -1,18 +1,21 @@
 package dao;
 
+import java.sql.SQLException;
+
 public class DaoFactory {
 
-    ConnectionDao connexion;
+    ConnectionToDb connexion;
 
-    public DaoFactory(ConnectionDao connexion) {
-        this.connexion = connexion;
+    public DaoFactory(ConnectionToDb connexion) {
+        super();
+    	this.connexion = connexion;
     }
 
     public Dao getDao(TypeDao type){
         if(type == null){
             return null;
         }
-        if(type.equals(TypeDao.Computer)){
+        if(type.equals(TypeDao.COMPUTER)){
             return ComputerDao.getInstance(connexion);
         }
         else if(type.equals(TypeDao.COMPANY)) {

@@ -1,18 +1,27 @@
 package models;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Computer {
 
 	private long id;
 	private String name;
-	private Date dateIntroduce;
-	private Date dateDisconnected;
+	private LocalDate dateIntroduced;
+	private LocalDate dateDiscontinued;
 	private Company company;
 	
 	public Computer(String name) {
 		super();
 		this.name = name;
+	}
+	
+	public Computer(long id, String name, LocalDate dateIntroduced, LocalDate dateDiscontinued, Company company) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.dateIntroduced = dateIntroduced;
+		this.dateDiscontinued = dateDiscontinued;
+		this.company = company;
 	}
 
 	public long getId() {
@@ -30,23 +39,21 @@ public class Computer {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public Date getDateIntroduce() {
-		return dateIntroduce;
+	
+	public LocalDate getDateIntroduced() {
+		return dateIntroduced;
 	}
 
-	public void setDateIntroduce(Date dateIntroduce) {
-		this.dateIntroduce = dateIntroduce;
+	public void setDateIntroduced(LocalDate dateIntroduced) {
+		this.dateIntroduced = dateIntroduced;
 	}
 
-	public Date getDateDisconnected() {
-		return dateDisconnected;
+	public LocalDate getDateDiscontinued() {
+		return dateDiscontinued;
 	}
 
-	public void setDateDisconnected(Date dateDisconnected) {
-		if(dateDisconnected.after(this.dateIntroduce)) {
-			this.dateDisconnected = dateDisconnected;
-		}
+	public void setDateDiscontinued(LocalDate dateDiscontinued) {
+		this.dateDiscontinued = dateDiscontinued;
 	}
 
 	public Company getCompany() {
@@ -59,7 +66,9 @@ public class Computer {
 
 	@Override
 	public String toString() {
-		return "Computer [name=" + name + ", dateIntroduce=" + dateIntroduce + ", dateDisconnected=" + dateDisconnected
-				+ ", Manifacturer=" + company + "]";
+		return "Computer [id=" + id + ", name=" + name + ", dateIntroduce=" + dateIntroduced + ", dateDisconnected="
+				+ dateDiscontinued + ", company=" + company + "]";
 	}
+
+	
 }
