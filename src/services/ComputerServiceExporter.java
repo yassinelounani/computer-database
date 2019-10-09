@@ -61,12 +61,18 @@ public class ComputerServiceExporter implements ComputerService {
 		}
 		String id = String.valueOf(computer.getId());
 		try {
-			Company company = companyDao.getCompanyByID(computer.getCompany().getId());
-			if(company == null) {
-				throw new NotFoundCompanyException("Company with id :"+ id+" not Exist");
-			} else {
+			if(computer.getCompany().getId() > 0) {
+				Company company = companyDao.getCompanyByID(computer.getCompany().getId());
+				if(company == null) {
+					throw new NotFoundCompanyException("Company with id :"+ id+" not Exist");
+				} else {
+					return computerDao.addComputer(computer);
+				}
+			}
+			else {
 				return computerDao.addComputer(computer);
 			}
+			
 		} catch( SQLException e) {
 			e.getMessage();
 		}

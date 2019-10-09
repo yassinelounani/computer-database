@@ -39,7 +39,7 @@ public class Computer {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		if(name != null) this.name = name;
 	}
 	
 	public LocalDate getDateIntroduced() {
@@ -47,7 +47,7 @@ public class Computer {
 	}
 
 	public void setDateIntroduced(LocalDate dateIntroduced) {
-		this.dateIntroduced = dateIntroduced;
+		if(dateIntroduced != null) this.dateIntroduced = dateIntroduced;
 	}
 
 	public LocalDate getDateDiscontinued() {
@@ -55,10 +55,12 @@ public class Computer {
 	}
 
 	public void setDateDiscontinued(LocalDate dateDiscontinued) throws DateBeforeDiscontinuedException {
-		if( dateIntroduced.isBefore(dateDiscontinued)) {
-			this.dateDiscontinued = dateDiscontinued;
-		} else {
-			throw new DateBeforeDiscontinuedException("your date " + dateDiscontinued + " is before date introduced : " + dateIntroduced);
+		if(dateDiscontinued != null && dateIntroduced != null) {
+			if(dateIntroduced.isBefore(dateDiscontinued)) {
+				this.dateDiscontinued = dateDiscontinued;
+			}else {
+				throw new DateBeforeDiscontinuedException("your date " + dateDiscontinued + " is before date introduced : " + dateIntroduced);
+			}
 		}
 	}
 
@@ -67,7 +69,7 @@ public class Computer {
 	}
 
 	public void setCompany(Company company) {
-		this.company = company;
+		if(company != null) this.company = company;
 	}
 
 	@Override

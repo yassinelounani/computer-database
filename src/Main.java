@@ -44,14 +44,14 @@ public class Main {
 			switch(choice) {
 				case 1 : printListComputers(computerService); break;
 				case 2 : printListCompanies(companyService); break;
-				case 3 : printComputer(computerService); break;
+				case 3 : printDetailsComputer(computerService); break;
 				case 4 : createComputer(computerService); break;
-				case 5 : deleteComputer(computerService); break;
+				case 5 : updateComputer(computerService); break;
+				case 6 : deleteComputer(computerService); break;
 				case 0 : break LABEL;
-				default : System.out.print("tooto"); break;
 			}
-			System.out.println("\n");
 		}
+		System.out.println("\n Tank You For Chosing EXCILYS");
 		
 		
 		
@@ -91,10 +91,9 @@ public class Main {
 		}
 	}
 	
-	public static void printComputer(ComputerService computerService) {
-		int id = 0;
-		System.out.print("Entrer l' ID du computer : ");
-		id = insertChoice();
+	public static void printDetailsComputer(ComputerService computerService) {
+		System.out.print("Entrer l'ID du computer : ");
+		long id = sc.nextLong();
 		try {
 			Computer computer = computerService.getComputerById(id);
 			System.out.println(computer);
@@ -112,6 +111,7 @@ public class Main {
 				continue;
 			}
 			choice = sc.nextInt();
+			sc.nextLine();
 		}while(choice < 1 || choice > 6);
 		return choice;
 	}
@@ -121,9 +121,9 @@ public class Main {
 		sc.nextLine();
 		System.out.print("Please Entrer name Computer :");
 		String name = sc.nextLine();
-		System.out.print("Please Entrer date introduced of Computer (format yyyy-mm-dd) :");
+		System.out.print("Please Entrer date introduced of Computer (format yyyy-mm-dd or dd/mm/yyyy) :");
 		String stringDateIntroduced = sc.nextLine();
-		System.out.print("Please Entrer date discontinued of Computer (format yyyy-mm-dd) :");
+		System.out.print("Please Entrer date discontinued of Computer (format yyyy-mm-dd or dd/mm/yyyy) :");
 		String StringDateDiscontinued = sc.nextLine();
 		System.out.print("Please Entrer id of company of Computer if not please entre 0:");
 		long company_id = sc.nextLong();
@@ -148,6 +148,7 @@ public class Main {
 		long id = sc.nextLong();
 		int delete = computerService.deleteComputerById(id);
 		switch(delete) {
+			case 0 : System.out.println("Computer is not deleted"); break;
 			case 1 : System.out.println("Computer is deleted"); break;
 			case 2 : System.out.println("your id is negative or null"); break;
 		}	
@@ -156,18 +157,19 @@ public class Main {
 	public static void updateComputer(ComputerService computerService) {
 		System.out.print("Please Entrer id of of Computer to update :");
 		long id = sc.nextLong();
+		sc.nextLine();
 		System.out.print("Please Entrer new name for Computer:");
 		String name = sc.nextLine();
-		System.out.print("Please Entrer new date introduced of Computer (format yyyy-mm-dd) :");
+		System.out.print("Please Entrer new date introduced of Computer (format yyyy-mm-dd or dd/mm/yyyy) :");
 		String stringDateIntroduced = sc.nextLine();
-		System.out.print("Please Entrer new date discontinued of Computer (format yyyy-mm-dd) :");
+		System.out.print("Please Entrer new date discontinued of Computer (format yyyy-mm-dd or dd/mm/yyyy) :");
 		String StringDateDiscontinued = sc.nextLine();
 		System.out.print("Please Entrer id of company of Computer if not please entre 0:");
 		long company_id = sc.nextLong();
 		
 		LocalDate dateIntroduced = HelperDate.StringDateToLocalDate(stringDateIntroduced);
 		LocalDate dateDiscontinued = HelperDate.StringDateToLocalDate(StringDateDiscontinued);
-		System.out.println(dateIntroduced);
+		
 		Company company = new Company(company_id, null);
 		Computer computer = new Computer(name);
 		computer.setId(id);
@@ -182,6 +184,7 @@ public class Main {
 		try {
 			int update = computerService.updateComputer(computer);
 			switch(update) {
+				case 0 : System.out.println("computer not updated"); break;
 				case 1 : System.out.println("Computer is updated"); break;
 				case 2 : System.out.println("computer to update is null"); break;
 			}

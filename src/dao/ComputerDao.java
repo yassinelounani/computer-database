@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +103,11 @@ public class ComputerDao implements Dao {
 	    	preparedStatement.setString(2, computer.getName());
 	    	preparedStatement.setDate(3, HelperDate.dateToSql(computer.getDateIntroduced()));
 	    	preparedStatement.setDate(4, HelperDate.dateToSql(computer.getDateDiscontinued()));
-	    	preparedStatement.setLong(5, computer.getCompany().getId());
+	    	if(computer.getCompany().getId() > 0 ) {
+	    		preparedStatement.setLong(5, computer.getCompany().getId());
+	    	} else {
+	    		preparedStatement.setNull(5, Types.DATE);
+	    	}
 	    	
 	    	return preparedStatement.executeUpdate();
 	    	
