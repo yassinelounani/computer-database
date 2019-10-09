@@ -2,6 +2,8 @@ package models;
 
 import java.time.LocalDate;
 
+import exception.DateBeforeDiscontinuedException;
+
 public class Computer {
 
 	private long id;
@@ -15,7 +17,7 @@ public class Computer {
 		this.name = name;
 	}
 	
-	public Computer(long id, String name, LocalDate dateIntroduced, LocalDate dateDiscontinued, Company company) {
+	public Computer(long id, String name, LocalDate dateIntroduced, LocalDate dateDiscontinued, Company company){
 		super();
 		this.id = id;
 		this.name = name;
@@ -52,8 +54,12 @@ public class Computer {
 		return dateDiscontinued;
 	}
 
-	public void setDateDiscontinued(LocalDate dateDiscontinued) {
-		this.dateDiscontinued = dateDiscontinued;
+	public void setDateDiscontinued(LocalDate dateDiscontinued) throws DateBeforeDiscontinuedException {
+		if( dateIntroduced.isBefore(dateDiscontinued)) {
+			this.dateDiscontinued = dateDiscontinued;
+		} else {
+			throw new DateBeforeDiscontinuedException("your date " + dateDiscontinued + " is before date introduced : " + dateIntroduced);
+		}
 	}
 
 	public Company getCompany() {

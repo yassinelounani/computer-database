@@ -13,6 +13,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import exception.DateBeforeDiscontinuedException;
+
 public class ComputerDao implements Dao {
 
 	ConnectionToDb connexionToDb;
@@ -32,31 +34,30 @@ public class ComputerDao implements Dao {
     }
 
     public List<Computer> getComputers() throws SQLException {
-    	
+    	List<Computer> computers = new ArrayList<>();
     	Connection connexion = null;
     	try {
     		connexion = connexionToDb.getConnectionDb();
-			List<Computer> computers = new ArrayList<>();
 	    	String query = "SELECT * FROM computer INNER JOIN company ON computer.company_id = company.id;";
 	    	Statement statement = connexion.createStatement();
 	    	ResultSet results = statement.executeQuery(query);
 	    	while (results.next()) { 
 	    		long id = results.getLong ("id");
 	    		String name = results.getString ("name");
-	    		LocalDate introduced = results.getDate ("introduced").toLocalDate();
-	    		LocalDate discontinued = results.getDate("discontinued").toLocalDate();
+	    		LocalDate introduced = results.getObject("introduced", LocalDate.class);
+	    		LocalDate discontinued = results.getObject("discontinued", LocalDate.class);
 	    		long idCompany = results.getLong("company_id");
 	    		String nameCompany = results.getString("name");
 	    		Company company = new Company(idCompany, nameCompany);
 	    		computers.add(new Computer(id, name, introduced, discontinued, company));
 	    	}
-			return computers;	
+				
 		} catch (ClassNotFoundException e) {
 			e.getMessage();
 		} finally {
 			connexion.close();
 		}
-    	return null;
+    	return computers;
     }
 
     public Computer getComputerById(long id) throws SQLException {
@@ -71,8 +72,8 @@ public class ComputerDao implements Dao {
 	    	while (results.next()) { 
 		    	long idComputer = results.getLong("id");
 		    	String name = results.getString("name");
-		    	LocalDate dateIntroduced = results.getDate("introduced").toLocalDate();
-		    	LocalDate dateDiscontinued = results.getDate("discontinued").toLocalDate();
+		    	LocalDate dateIntroduced = results.getObject("introduced", LocalDate.class);
+		    	LocalDate dateDiscontinued = results.getObject("discontinued", LocalDate.class);
 		    	long idCompany = results.getLong("company_id");
 	    		String nameCompany = results.getString("name");
 	    		Company company = new Company(idCompany, nameCompany);
