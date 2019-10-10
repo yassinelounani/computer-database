@@ -1,7 +1,5 @@
 package dao;
 
-import java.sql.SQLException;
-
 public class DaoFactory {
 
     ConnectionToDb connexion;

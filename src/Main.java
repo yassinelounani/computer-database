@@ -3,13 +3,18 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.log4j.BasicConfigurator;
+
 import api.CompanyService;
 import api.ComputerService;
+import api.Page;
 import dao.CompanyDao;
 import dao.ComputerDao;
 import dao.ConnectionToDb;
 import dao.DaoFactory;
 import dao.TypeDao;
+import exception.BadNumberPageException;
+import exception.BadSizePageException;
 import exception.DateBeforeDiscontinuedException;
 import exception.NotFoundCompanyException;
 import exception.NotFoundComputerException;
@@ -24,7 +29,7 @@ public class Main {
 	private static Scanner sc = new Scanner(System.in);
 	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		
+		BasicConfigurator.configure();
 		int choice = 0;
 		
 		ConnectionToDb connectionDb = new ConnectionToDb();
@@ -37,7 +42,9 @@ public class Main {
 		ComputerService computerService = new ComputerServiceExporter(computerDao, companyDao);
 		CompanyService companyService = new CompanyServiceExporter(companyDao);
 		
-	LABEL :	while(true) {
+		boolean isContinue = true;
+	
+		LABEL :	while(isContinue) {
 			printMenu();
 			choice = insertChoice();
 			
@@ -48,10 +55,13 @@ public class Main {
 				case 4 : createComputer(computerService); break;
 				case 5 : updateComputer(computerService); break;
 				case 6 : deleteComputer(computerService); break;
-				case 0 : break LABEL;
+				case 0 : System.out.println("\n Tank You For chosing EXCILYS\n"); break LABEL;
 			}
+			
 		}
-		System.out.println("\n Tank You For Chosing EXCILYS");
+		System.out.println("End Propram.....");
+		
+		
 		
 		
 		
@@ -61,33 +71,101 @@ public class Main {
 		System.out.println("                    MENU                             ");
 		System.out.println("====================================================");
 		System.out.println("Choose one option please, Entrer number of operation.");
-		System.out.println("1 - show list of computers");
-		System.out.println("2 - show list companies");
-		System.out.println("3 - show details of selected Computer");
-		System.out.println("4 - create computer");
-		System.out.println("5 - update computer");
-		System.out.println("6 - delete computer");
-		System.out.println("0 - quit");
+		System.out.println("1 - Show list of computers");
+		System.out.println("2 - Show list companies");
+		System.out.println("3 - Show details of selected Computer");
+		System.out.println("4 - Create computer");
+		System.out.println("5 - Update computer");
+		System.out.println("6 - Delete computer");
+		System.out.println("0 - Quit");
 		System.out.println("====================================================\n");
-		System.out.print(" your choice pleace ? : ");
+		System.out.print(" Your choice pleace ? : ");
 		
 	}
 	
-	public static void printListComputers(ComputerService computerService) {
+	public static void printComputers(ComputerService computerService) {
 		try {
 			List<Computer> computers = computerService.getComputers();
 			computers.forEach(System.out::println);
 		} catch (NotFoundComputerException e) {
-			e.getMessage();
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	
+	public static void printComputerswithPage(ComputerService computerService) {
+		Page page = askPage();
+		if(page != null) {
+			try {
+				List<Computer> computers = computerService.getComputersWithPage(page);
+				computers.forEach(System.out::println);
+			} catch (NotFoundComputerException e) {
+				System.out.println(e.getMessage());
+			} catch (BadNumberPageException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+	}
+	
+	public static Page askPage() {
+		System.out.print("Please Entrer your number page (!! first page begin at 1 !!): ");
+		int numberPage = sc.nextInt();
+		System.out.print("Please Entrer your size page : ");
+		int sizePage = sc.nextInt();
+		
+		try {
+			return new Page(numberPage, sizePage);
+		} catch (BadNumberPageException e) {
+			System.out.println(e.getMessage());
+			return null;
+		}catch (BadSizePageException e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
+	}
+	
+	public static boolean isListWithPage() {
+		System.out.println("Would you prefer get List with Page (0 => yes or 1 => no)");
+		int choice = sc.nextInt();
+		return choice == 0 ? true : false; 
+	}
+	
+	public static void printListComputers(ComputerService computerService) {
+		if(isListWithPage()) {
+			printComputerswithPage(computerService);
+		} else {
+			printComputers(computerService);
 		}
 	}
 	
 	public static void printListCompanies(CompanyService companyService) {
+		if(isListWithPage()) {
+			printCompaniesWithPage(companyService);
+		} else {
+			printCompanies(companyService);
+		}
+	}
+	
+	public static void printCompanies(CompanyService companyService) {
 		try {
 			List<Company> companies = companyService.getCompanies();
 			companies.forEach(System.out::println);
 		} catch (NotFoundCompanyException e) {
-			e.getMessage();
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public static void printCompaniesWithPage(CompanyService companyService) {
+		Page page = askPage();
+		if(page != null) {
+			try {
+				List<Company> companies = companyService.getCompaniesWithPage(page);
+				companies.forEach(System.out::println);
+			} catch (NotFoundCompanyException e) {
+				System.out.println(e.getMessage());
+			}catch(BadNumberPageException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 	}
 	
@@ -98,7 +176,7 @@ public class Main {
 			Computer computer = computerService.getComputerById(id);
 			System.out.println(computer);
 		} catch (NotFoundComputerException e) {
-			e.getMessage();
+			System.out.println(e.getMessage());
 		}
 	}
 	public static int insertChoice() {
@@ -112,7 +190,7 @@ public class Main {
 			}
 			choice = sc.nextInt();
 			sc.nextLine();
-		}while(choice < 1 || choice > 6);
+		}while(choice < 0 || choice > 6);
 		return choice;
 	}
 	public static void createComputer(ComputerService computerService) {
@@ -129,6 +207,11 @@ public class Main {
 		long company_id = sc.nextLong();
 		LocalDate dateIntroduced = HelperDate.StringDateToLocalDate(stringDateIntroduced);
 		LocalDate dateDiscontinued = HelperDate.StringDateToLocalDate(StringDateDiscontinued);
+		if(! dateIntroduced.isBefore(dateDiscontinued)) {
+			System.out.println("Date Disontinued (" + dateDiscontinued + ") is not after (" + dateIntroduced + ")");
+			System.out.println("Computer is not added");
+			return;
+		}
 		Company company = new Company(company_id, null);
 		Computer computer = new Computer(id, name, dateIntroduced, dateDiscontinued, company);
 		try {
@@ -136,10 +219,10 @@ public class Main {
 			switch(addCmputer) {
 			case 0 : System.out.println("Computer is not added"); break;
 			case 1 : System.out.println("Computer is added"); break;
-			case 2 : System.out.println("your id is negative or null"); break;
+			case 2 : System.out.println("Your id is negative or null"); break;
 			}
 		} catch (NotFoundCompanyException e) {
-			e.getMessage();
+			System.out.println(e.getMessage());
 		}	
 	}
 	
@@ -150,7 +233,7 @@ public class Main {
 		switch(delete) {
 			case 0 : System.out.println("Computer is not deleted"); break;
 			case 1 : System.out.println("Computer is deleted"); break;
-			case 2 : System.out.println("your id is negative or null"); break;
+			case 2 : System.out.println("Your id is negative or null"); break;
 		}	
 	}
 	
@@ -177,19 +260,22 @@ public class Main {
 		try{
 			computer.setDateDiscontinued(dateDiscontinued);
 		}catch (DateBeforeDiscontinuedException e) {
-			e.getMessage();
+			System.out.println(e.getMessage());
+			System.out.println("Computer not updated");
+			return;
 		}
 		computer.setCompany(company);
 		
 		try {
 			int update = computerService.updateComputer(computer);
 			switch(update) {
-				case 0 : System.out.println("computer not updated"); break;
+				case -1 : System.out.println("Error update in date discontinued "); break;
+				case 0 : System.out.println("Computer not updated"); break;
 				case 1 : System.out.println("Computer is updated"); break;
-				case 2 : System.out.println("computer to update is null"); break;
+				case 2 : System.out.println("Computer to update is null"); break;
 			}
 		} catch (NotFoundComputerException e) {
-			e.getMessage();
+			System.out.println(e.getMessage());
 		} 
 		
 	}

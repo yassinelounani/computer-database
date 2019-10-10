@@ -2,6 +2,7 @@ package api;
 
 import java.util.List;
 
+import exception.BadNumberPageException;
 import exception.NotFoundCompanyException;
 import exception.NotFoundComputerException;
 import models.Computer;
@@ -14,6 +15,14 @@ public interface ComputerService {
 	 * @throws NotFoundComputerException throw exception if any computer founded
 	 */
 	public List<Computer> getComputers() throws NotFoundComputerException;
+	
+	/**
+	 * get all computers with page
+	 * @param page represent number of page and size of page
+	 * @return computers list of computers
+	 * @throws NotFoundComputerException throw exception if any computer founded
+	 */
+	public List<Computer> getComputersWithPage(Page page) throws NotFoundComputerException, BadNumberPageException;
 	/**
 	 * get computer with id 
 	 * @param id of computer to find
@@ -38,8 +47,10 @@ public interface ComputerService {
 	/**
 	 * update computer 
 	 * @param computer
-	 * @return -2 if computer is null, 1 if computer added else 0 and -1 if error
+	 * @return -2 if computer is null, 1 if computer added else 0 and -1 if error Date
 	 */
 	public int updateComputer(Computer computer) throws NotFoundComputerException;
+	
+	
 	
 }
