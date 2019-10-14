@@ -12,18 +12,17 @@ public class Computer {
 	private LocalDate dateDiscontinued;
 	private Company company;
 	
-	public Computer(String name) {
+	public Computer() {
 		super();
-		this.name = name;
 	}
 	
-	public Computer(long id, String name, LocalDate dateIntroduced, LocalDate dateDiscontinued, Company company){
+	public Computer(ComputerBuilder builder){
 		super();
-		this.id = id;
-		this.name = name;
-		this.dateIntroduced = dateIntroduced;
-		this.dateDiscontinued = dateDiscontinued;
-		this.company = company;
+		this.id = builder.getId();
+		this.name = builder.getName();
+		this.dateIntroduced = builder.getIntroduced();
+		this.dateDiscontinued = builder.getDiscontinued();
+		this.company = builder.getCompany();
 	}
 
 	public long getId() {
@@ -39,7 +38,7 @@ public class Computer {
 	}
 
 	public void setName(String name) {
-		if(name != null) this.name = name;
+		this.name = name;
 	}
 	
 	public LocalDate getDateIntroduced() {
@@ -47,21 +46,15 @@ public class Computer {
 	}
 
 	public void setDateIntroduced(LocalDate dateIntroduced) {
-		if(dateIntroduced != null) this.dateIntroduced = dateIntroduced;
+		this.dateIntroduced = dateIntroduced;
 	}
 
 	public LocalDate getDateDiscontinued() {
 		return dateDiscontinued;
 	}
 
-	public void setDateDiscontinued(LocalDate dateDiscontinued) throws DateBeforeDiscontinuedException {
-		if(dateDiscontinued != null && dateIntroduced != null) {
-			if(dateIntroduced.isBefore(dateDiscontinued)) {
-				this.dateDiscontinued = dateDiscontinued;
-			}else {
-				throw new DateBeforeDiscontinuedException("your date " + dateDiscontinued + " is before date introduced : " + dateIntroduced);
-			}
-		}
+	public void setDateDiscontinued(LocalDate dateDiscontinued) {
+		this.dateDiscontinued = dateDiscontinued;
 	}
 
 	public Company getCompany() {
@@ -69,7 +62,7 @@ public class Computer {
 	}
 
 	public void setCompany(Company company) {
-		if(company != null) this.company = company;
+		this.company = company;
 	}
 
 	@Override

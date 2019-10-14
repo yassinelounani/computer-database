@@ -6,23 +6,55 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
-
+import static dao.ConnectionToDb.closeConnectionAndStetement;
 import api.Page;
-import exception.BadNumberPageException;
-import models.Company;
 import models.Computer;
 import wrappers.HelperDate;
+import wrappers.Mapper;
 
 public class ComputerDao implements Dao {
 	
 	private static final Logger LOGGER = Logger.getLogger(ComputerDao.class);
 	
-	ConnectionToDb connexionToDb;
+	private static final String GET_ALL_COMPUTERS = 
+			  "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, computer.company_id, company.name "
+			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id;";
+	
+	private static final String GET_ALL_COMPUTERS_WITH_PAGE = 
+			  "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, computer.company_id, company.name "
+			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
+			+ "LIMIT ?, ?";
+		
+	private static final String GET_COMPUTER_BY_ID = 
+			  "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, computer.company_id, company.name "
+			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
+			+ "WHERE computer.id=?;";
+	
+	private static final String INSERT_COMPUTER = 
+			  "INSERT INTO computer(id, name, introduced, discontinued, company_id) "
+			+ "VALUES(?, ?, ?, ?, ?);";
+	
+	private static final String UPDATE_COMPUTER = 
+			  "UPDATE computer "
+			+ "SET name = ?, introduced = ?, discontinued = ?, company_id = ? "
+			+ "WHERE id = ?";
+	
+	private static final String DELETE_COMPUTER =
+			  "DELETE FROM computer "
+		    + "WHERE computer.id =?";
+	
+	private static final int NO_CONNECTION = -1;
+	
+	private static final boolean IS_UPDATE = true;
+	
+	private static final boolean IS_INSERT = false;
+	
+	private ConnectionToDb connexionToDb;
     
 	private ComputerDao(ConnectionToDb connexionToDb) {
         super();
@@ -38,210 +70,146 @@ public class ComputerDao implements Dao {
         return INSTANCE;
     }
 
-    public List<Computer> getComputers() throws SQLException {
+    public List<Computer> getComputers() {
+    	Statement statement = null;
     	List<Computer> computers = new ArrayList<>();
-    	Connection connexion = null;
+    	Optional<Connection>  connection = connexionToDb.getConnectionDb();
+    	if(!connection.isPresent()) return computers;
+    	LOGGER.info("connection well-established to the database ...................");	
     	try {
-    		
-    		connexion = connexionToDb.getConnectionDb();
-    		LOGGER.info("connection well-established to the database ...................");
-	    	final String query = "SELECT * FROM computer INNER JOIN company ON computer.company_id = company.id;";
-	    	LOGGER.info("query : "+ query);
-	    	Statement statement = connexion.createStatement();
-	    	ResultSet results = statement.executeQuery(query);
-	    	while (results.next()) { 
-	    		long id = results.getLong ("id");
-	    		String name = results.getString ("name");
-	    		LocalDate introduced = results.getObject("introduced", LocalDate.class);
-	    		LocalDate discontinued = results.getObject("discontinued", LocalDate.class);
-	    		long idCompany = results.getLong("company_id");
-	    		String nameCompany = results.getString("name");
-	    		Company company = new Company(idCompany, nameCompany);
-	    		computers.add(new Computer(id, name, introduced, discontinued, company));
-	    	}
-				
-		} catch (ClassNotFoundException e) {
-			e.getMessage();
+		    	statement = connection.get().createStatement();
+		    	LOGGER.info("query : " + GET_ALL_COMPUTERS);
+		    	ResultSet results = statement.executeQuery(GET_ALL_COMPUTERS);
+		    	while (results.next()) {
+		    	   computers.add(Mapper.mapResultSetToComputer(results)); 			
+		    	}	
+    	} catch (SQLException e) {
+    			System.out.println(e.getMessage());
+    			computers.clear();
+    	} finally {
+    		closeConnectionAndStetement(connection.get(), statement);
+    	}
+    	return computers;
+    }
+    
+    public List<Computer> getComputersWithPage(Page page) {
+    	List<Computer> computers = new ArrayList<>();
+    	Optional<Connection> connection = connexionToDb.getConnectionDb();
+    	PreparedStatement preparedStatement = null;
+    	if(!connection.isPresent()) return computers;
+    	LOGGER.info("connection well-established to the database ...................");
+    	try {
+    			LOGGER.info("query : " + GET_ALL_COMPUTERS_WITH_PAGE );
+		    	preparedStatement  = connection.get().prepareStatement(GET_ALL_COMPUTERS_WITH_PAGE);
+		    	ResultSet results = prepareStetementAndExecureQuerytWithPage(page, preparedStatement);
+		    	while (results.next()) { 
+		    		computers.add(Mapper.mapResultSetToComputer(results));
+		    	}
+		    	LOGGER.info("List computer is successfly loaded");
+		} catch (SQLException e) {
+				System.out.println(e.getMessage());
+				computers.clear();
 		} finally {
-			connexion.close();
-			LOGGER.info("Connexion Closed successfly...............!");	
+				closeConnectionAndStetement(connection.get(), preparedStatement);
 		}
     	return computers;
     }
     
-    public List<Computer> getComputersWithPage(Page page) throws SQLException, BadNumberPageException {
-    	List<Computer> computers = new ArrayList<>();
-    	Connection connexion = null;
-    	try {
-    		connexion = connexionToDb.getConnectionDb();
-    		LOGGER.info("connection well-established to the database ...................");
-    		
-    		int totalComputers = getCountComputers();
-    		int numPage = totalComputers / page.getSize();
-			int numberPagePossible = totalComputers % page.getSize() == 0 ? numPage : numPage + 1;  
-			if(page.getNumber() > numberPagePossible ) {
-				throw new BadNumberPageException("Number of page is More than exist in base");
-			}
-    		
-	    	final String query = "SELECT * FROM computer INNER JOIN company ON computer.company_id = company.id LIMIT ?, ?";
-	    	LOGGER.info("query : "+ query);
-	    	PreparedStatement preparedStatement  = connexion.prepareStatement(query);
-	    	int offset = (page.getNumber() - 1) * page.getSize();
-	    	int limit = page.getSize();
-	    	preparedStatement.setInt(1, offset);
-	    	preparedStatement.setInt(2, limit);
-	    	ResultSet results = preparedStatement.executeQuery();
-	    	while (results.next()) { 
-	    		long id = results.getLong ("id");
-	    		String name = results.getString ("name");
-	    		LocalDate introduced = results.getObject("introduced", LocalDate.class);
-	    		LocalDate discontinued = results.getObject("discontinued", LocalDate.class);
-	    		long idCompany = results.getLong("company_id");
-	    		String nameCompany = results.getString("name");
-	    		Company company = new Company(idCompany, nameCompany);
-	    		computers.add(new Computer(id, name, introduced, discontinued, company));
-	    	}
-	    	LOGGER.info("List computer is successfly loaded");
-				
-		} catch (ClassNotFoundException e) {
-			e.getMessage();
-		} finally {
-			connexion.close();
-			LOGGER.info("Connexion Closed successfly...............!");	
-		}
-    	return computers;
-    }
-    
-    private int getCountComputers() throws SQLException {
-    	Connection connexion = null;
-    	int total = 0;
-    	try {
-    		connexion = connexionToDb.getConnectionDb();
-    		LOGGER.info("connection well-established to the database ...................");
-	    	final String query = "SELECT COUNT(id) as total FROM computer";
-	    	LOGGER.info("query : "+ query);
-	    	Statement statement = connexion.createStatement();
-	    	ResultSet results = statement.executeQuery(query);
-	    	while (results.next()) { 
-	    		total = results.getInt("total");	
-	    	}
-				
-		} catch (ClassNotFoundException e) {
-			System.out.println(e.getMessage());
-		} finally {
-			connexion.close();
-			LOGGER.info("Connexion Closed successfly...............!");	
-		}
-    	return total;
-    }
-
-    public Computer getComputerById(long id) throws SQLException {
-    	Connection connexion = null;
+    public Optional<Computer> getComputerById(long id) {
     	Computer computer = null;
+    	PreparedStatement preparedStatement = null;
+    	Optional<Connection> connection = connexionToDb.getConnectionDb();
+    	if(!connection.isPresent()) return Optional.empty();
+    	LOGGER.info("connection well-established to the database ...................");
     	try {
-    		connexion = connexionToDb.getConnectionDb();
-    		LOGGER.info("connection well-established to the database ...................");
-	    	final String query = "SELECT * FROM computer INNER JOIN company ON computer.company_id = company.id WHERE computer.id=?;";
-	    	LOGGER.info("query : "+ query);
-	    	PreparedStatement preparedStatement  = connexion.prepareStatement(query);
-	    	preparedStatement.setLong(1, id);
-	    	ResultSet results = preparedStatement.executeQuery();
-	    	while (results.next()) { 
-		    	long idComputer = results.getLong("id");
-		    	String name = results.getString("name");
-		    	LocalDate dateIntroduced = results.getObject("introduced", LocalDate.class);
-		    	LocalDate dateDiscontinued = results.getObject("discontinued", LocalDate.class);
-		    	long idCompany = results.getLong("company_id");
-	    		String nameCompany = results.getString("name");
-	    		Company company = new Company(idCompany, nameCompany);
-    		
-	    		computer =  new Computer(idComputer, name, dateIntroduced, dateDiscontinued, company);
-	    	}
-	    	return computer;
-	    	
-		} catch (ClassNotFoundException e) {
-			e.getMessage();
+		    	LOGGER.info("query : "+ GET_COMPUTER_BY_ID);
+		    	preparedStatement  = connection.get().prepareStatement(GET_COMPUTER_BY_ID);
+		    	preparedStatement.setLong(1, id);
+		    	ResultSet results = preparedStatement.executeQuery();
+		    	while (results.next()) { 
+		    		computer = Mapper.mapResultSetToComputer(results);
+		    	}
+		} catch (SQLException e) {
+				System.out.println(e.getMessage());
 		} finally {
-			connexion.close();
-			LOGGER.info("Connexion Closed successfly...............!");
+				closeConnectionAndStetement(connection.get(), preparedStatement);
 		}
-    	return null;
-
+    	return Optional.ofNullable(computer);
+    }
+    
+    public int addComputer(Computer computer) {
+    	return addComputerOrUpdateIt(computer, IS_INSERT);
+    }
+    
+    public int updateComputer(Computer computer) {
+    	return addComputerOrUpdateIt(computer, IS_UPDATE);
+    }
+    
+    public int deleteComputerById(long id) {
+    	int executeDelete = 0;
+    	Optional<Connection> connection = connexionToDb.getConnectionDb();
+    	if(!connection.isPresent()) return NO_CONNECTION;
+    	LOGGER.info("connection well-established to the database ...................");
+    	PreparedStatement preparedStatement = null;
+    	try {
+	    		LOGGER.info("query : "+ DELETE_COMPUTER);
+	    		preparedStatement  = connection.get().prepareStatement(DELETE_COMPUTER);
+	    		preparedStatement.setLong(1, id);
+	    		executeDelete = preparedStatement.executeUpdate();
+    	} catch (SQLException e) {
+    			System.out.println(e.getMessage());
+		} finally {
+				closeConnectionAndStetement(connection.get(), preparedStatement);
+		}
+    	return executeDelete;	
     }
 
-    public int addComputer(Computer computer) throws SQLException {
-    	Connection connexion = null;
+    private int addComputerOrUpdateIt(Computer computer, boolean isUpdate) {
+    	int executeUpdate = 0;
+    	Optional<Connection> connection = connexionToDb.getConnectionDb();
+    	if(!connection.isPresent()) return NO_CONNECTION;
+    	LOGGER.info("connection well-established to the database ...................");
+    	PreparedStatement preparedStatement = null;
     	try {
-    		connexion = connexionToDb.getConnectionDb();
-    		LOGGER.info("connection well-established to the database ...................");
-	    	final String query = "INSERT INTO computer(id, name, introduced, discontinued, company_id) VALUES(?, ?, ?, ?, ?);";
-	    	LOGGER.info("query : "+ query);
-	    	PreparedStatement preparedStatement  = connexion.prepareStatement(query);
-	    	preparedStatement.setLong(1, computer.getId());
-	    	preparedStatement.setString(2, computer.getName());
-	    	preparedStatement.setDate(3, HelperDate.dateToSql(computer.getDateIntroduced()));
-	    	preparedStatement.setDate(4, HelperDate.dateToSql(computer.getDateDiscontinued()));
-	    	if(computer.getCompany().getId() > 0 ) {
-	    		preparedStatement.setLong(5, computer.getCompany().getId());
-	    	} else {
-	    		preparedStatement.setNull(5, Types.DATE);
-	    	}
-	    	
-	    	return preparedStatement.executeUpdate();
-	    	
-		} catch (ClassNotFoundException e) {
-			e.getMessage();
+    			executeUpdate = preparStatementAndExecuteUpdate(computer, connection.get(), isUpdate);
+		} catch (SQLException e) {
+				System.out.println(e.getMessage());
 		} finally {
-			connexion.close();
-			LOGGER.info("Connexion Closed successfly...............!");
+				closeConnectionAndStetement(connection.get(), preparedStatement);
 		}
-    	return -1;
-
+    	return executeUpdate;
     }
-
-    public int deleteComputerById(long id) throws SQLException {
-    	Connection connexion = null;
-    	try {
-    		connexion = connexionToDb.getConnectionDb();
-    		LOGGER.info("connection well-established to the database ...................");
-	    	final String query = "DELETE FROM computer WHERE computer.id =?";
-	    	LOGGER.info("query : "+ query);
-	    	PreparedStatement preparedStatement  = connexion.prepareStatement(query);
-	    	preparedStatement.setLong(1, id);
-	    	
-	    	return preparedStatement.executeUpdate();
-    	} catch (ClassNotFoundException e) {
-			e.getMessage();
-		} finally {
-			connexion.close();
-			LOGGER.info("Connexion Closed successfly...............!");
-		}
-    	return -1;	
+    
+    private ResultSet prepareStetementAndExecureQuerytWithPage(Page page, PreparedStatement preparedStatement) throws SQLException {
+    	int offset = (page.getNumber() - 1) * page.getSize();
+    	int limit = page.getSize();
+    	preparedStatement.setInt(1, offset);
+    	preparedStatement.setInt(2, limit);
+    	return preparedStatement.executeQuery();
     }
-
-    public int updateComputer(Computer computer) throws SQLException {
-        Connection connexion = null;
-    	try {
-    		connexion = connexionToDb.getConnectionDb();
-    		LOGGER.info("connection well-established to the database ...................");
-	    	final String query = "UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?";
-	    	LOGGER.info("query : "+ query);
-	    	PreparedStatement preparedStatement  = connexion.prepareStatement(query);
-	    	preparedStatement.setString(1, computer.getName());
-	    	preparedStatement.setDate(2, HelperDate.dateToSql(computer.getDateIntroduced()));
-	    	preparedStatement.setDate(3, HelperDate.dateToSql(computer.getDateDiscontinued()));
-	    	preparedStatement.setLong(4, computer.getCompany().getId());
-	    	preparedStatement.setLong(5, computer.getId());
-	    	
-	    	return preparedStatement.executeUpdate();
-    	} catch (ClassNotFoundException e) {
-			e.getMessage();
-		} finally {
-			connexion.close();
-			LOGGER.info("Connexion Closed successfly...............!");
-		}
-    	return -1;	
+    
+    private int preparStatementAndExecuteUpdate(Computer computer, Connection connection, boolean isUpdate) throws SQLException {
+    	int index = 1;
+    	String query = INSERT_COMPUTER;
+    	if(isUpdate) {
+    		index = 0;
+    		query = UPDATE_COMPUTER;
+    	}
+    	LOGGER.info("query : "+ query);
+    	PreparedStatement preparedStatement  = connection.prepareStatement(query);
+    	if(! isUpdate) preparedStatement.setLong(index, computer.getId());
+    	preparedStatement.setString(index + 1 , computer.getName());
+    	preparedStatement.setDate(index + 2, HelperDate.dateToSql(computer.getDateIntroduced()));
+    	preparedStatement.setDate(index + 3, HelperDate.dateToSql(computer.getDateDiscontinued()));
+    	if(computer.getCompany().getId() > 0) {
+    		preparedStatement.setLong(index + 4, computer.getCompany().getId());
+    	} else {
+    		preparedStatement.setNull(index + 4, Types.DATE);
+    	}
+    	if (isUpdate) {
+    		preparedStatement.setLong(index + 5, computer.getId());
+    	}
+    	return preparedStatement.executeUpdate();
     }
-
-
+    
 }

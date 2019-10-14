@@ -8,10 +8,10 @@ public class Page {
 	private int number;
 	private int size;
 	
-	public Page(int number, int size) throws BadNumberPageException, BadSizePageException {
+	public Page(int number, int size) {
 		super();
-		this.setNumber(number);
-		this.setSize(size);
+		this.number = number;
+		this.size = size;
 	}
 
 	public int getNumber() {
@@ -19,9 +19,6 @@ public class Page {
 	}
 
 	public void setNumber(int number) throws BadNumberPageException {
-		if(number < 1) {
-			throw new BadNumberPageException("Number Page Not be null or negative number first Page start at 1");
-		}
 		this.number = number;
 	}
 
@@ -30,9 +27,6 @@ public class Page {
 	}
 
 	public void setSize(int size) throws BadSizePageException {
-		if(size <= 0) {
-			throw new BadSizePageException("Size of Page Not be null or negative");
-		}
 		this.size = size;
 	}
 

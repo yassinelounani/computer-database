@@ -2,9 +2,7 @@ package api;
 
 import java.util.List;
 
-import exception.BadNumberPageException;
 import exception.NotFoundCompanyException;
-import exception.NotFoundComputerException;
 import models.Company;
 
 public interface CompanyService {
@@ -12,9 +10,8 @@ public interface CompanyService {
 	/**
 	 * get all company
 	 * @return company list of computers, null if null
-	 * @throws NotFoundComputerException throw exception if any computer founded
 	 */
-	public List<Company> getCompanies() throws NotFoundCompanyException;
+	public List<Company> getCompanies();
 	
 	/**
 	 * get all company with page
@@ -22,6 +19,6 @@ public interface CompanyService {
 	 * @return company list of computers, null if null
 	 * @throws NotFoundCompanyException throw exception if any computer founded
 	 */
-	public List<Company> getCompaniesWithPage(Page page) throws NotFoundCompanyException, BadNumberPageException;
+	public List<Company> getCompaniesWithPage(Page page);
 
 }

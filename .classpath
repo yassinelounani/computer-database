@@ -14,5 +14,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/junit5-1.26.116.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mockito-core-3.1.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/modelmapper-2.3.0.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

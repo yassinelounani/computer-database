@@ -1,6 +1,7 @@
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 import org.apache.log4j.BasicConfigurator;
@@ -13,13 +14,12 @@ import dao.ComputerDao;
 import dao.ConnectionToDb;
 import dao.DaoFactory;
 import dao.TypeDao;
-import exception.BadNumberPageException;
-import exception.BadSizePageException;
-import exception.DateBeforeDiscontinuedException;
 import exception.NotFoundCompanyException;
 import exception.NotFoundComputerException;
 import models.Company;
+import models.CompanyBuilder;
 import models.Computer;
+import models.ComputerBuilder;
 import services.CompanyServiceExporter;
 import services.ComputerServiceExporter;
 import wrappers.HelperDate;
@@ -27,6 +27,16 @@ import wrappers.HelperDate;
 public class Main {
 	
 	private static Scanner sc = new Scanner(System.in);
+	
+	private static String NO_COMPUTERS = "No computer Founded";
+	private static String NO_COMPANIES = "No computer Founded";
+	private static String ASK_ID_COMPUTER = "Please Entrer id of of Computer : ";
+	private static String ASK_NAME_COMPUTER = "Please Entrer Name of Computer : ";
+	private static String ASK_DATE_INTRODUCED = "Please Entrer date introduced of Computer (format yyyy-mm-dd or dd/mm/yyyy) :";
+	private static String ASK_DATE_DISCONTINUED = "Please Entrer date discontinued of Computer (format yyyy-mm-dd or dd/mm/yyyy) :";
+	private static String ASK_COMPANY_ID = "Please Entrer id of company of Computer if not please entre 0:";
+	private static String ID_NOT_BE_NULL = "Id Not be null or Negative";
+	
 	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		BasicConfigurator.configure();
@@ -38,7 +48,6 @@ public class Main {
 	
 		ComputerDao computerDao = (ComputerDao) factory.getDao(TypeDao.COMPUTER);
 		CompanyDao companyDao =  (CompanyDao) factory.getDao(TypeDao.COMPANY);
-		
 		ComputerService computerService = new ComputerServiceExporter(computerDao, companyDao);
 		CompanyService companyService = new CompanyServiceExporter(companyDao);
 		
@@ -67,7 +76,7 @@ public class Main {
 		
 	}
 	public static void printMenu() {
-		System.out.println("====================================================");
+		System.out.println("\n====================================================");
 		System.out.println("                    MENU                             ");
 		System.out.println("====================================================");
 		System.out.println("Choose one option please, Entrer number of operation.");
@@ -83,45 +92,38 @@ public class Main {
 		
 	}
 	
-	public static void printComputers(ComputerService computerService) {
-		try {
-			List<Computer> computers = computerService.getComputers();
-			computers.forEach(System.out::println);
-		} catch (NotFoundComputerException e) {
-			System.out.println(e.getMessage());
+	public static void printComputers(ComputerService computerService ) {
+		List<Computer> computers = computerService.getComputers();
+		printList(computers, NO_COMPUTERS);
+	}
+	
+	public static <E> void printList(List<E> list, String message) {
+		if (list.isEmpty()) {
+			System.out.println(message);
+			return;
 		}
+		list.forEach(System.out::println);
 	}
 	
 	
 	public static void printComputerswithPage(ComputerService computerService) {
-		Page page = askPage();
-		if(page != null) {
-			try {
-				List<Computer> computers = computerService.getComputersWithPage(page);
-				computers.forEach(System.out::println);
-			} catch (NotFoundComputerException e) {
-				System.out.println(e.getMessage());
-			} catch (BadNumberPageException e) {
-				System.out.println(e.getMessage());
-			}
+		Optional<Page> page = askPage();
+		if(page.isPresent()) {
+			List<Computer> computers = computerService.getComputersWithPage(page.get());
+			printList(computers, NO_COMPUTERS);		
 		}
 	}
 	
-	public static Page askPage() {
+	public static Optional<Page> askPage() {
 		System.out.print("Please Entrer your number page (!! first page begin at 1 !!): ");
 		int numberPage = sc.nextInt();
+		if ( numberPage < 1) {
+			System.out.println("Sorry the number of Page start with number 1");
+			return Optional.empty();
+		}
 		System.out.print("Please Entrer your size page : ");
 		int sizePage = sc.nextInt();
-		
-		try {
-			return new Page(numberPage, sizePage);
-		} catch (BadNumberPageException e) {
-			System.out.println(e.getMessage());
-			return null;
-		}catch (BadSizePageException e) {
-			System.out.println(e.getMessage());
-			return null;
-		}
+		return Optional.ofNullable(new Page(numberPage, sizePage));
 	}
 	
 	public static boolean isListWithPage() {
@@ -147,43 +149,36 @@ public class Main {
 	}
 	
 	public static void printCompanies(CompanyService companyService) {
-		try {
-			List<Company> companies = companyService.getCompanies();
-			companies.forEach(System.out::println);
-		} catch (NotFoundCompanyException e) {
-			System.out.println(e.getMessage());
-		}
+		List<Company> companies = companyService.getCompanies();
+		printList(companies, NO_COMPANIES);
 	}
 	
 	public static void printCompaniesWithPage(CompanyService companyService) {
-		Page page = askPage();
-		if(page != null) {
-			try {
-				List<Company> companies = companyService.getCompaniesWithPage(page);
-				companies.forEach(System.out::println);
-			} catch (NotFoundCompanyException e) {
-				System.out.println(e.getMessage());
-			}catch(BadNumberPageException e) {
-				System.out.println(e.getMessage());
-			}
+		Optional<Page> page = askPage();
+		if(page.isPresent()) {
+			List<Company> computers = companyService.getCompaniesWithPage(page.get());
+			printList(computers, NO_COMPUTERS);		
 		}
 	}
 	
 	public static void printDetailsComputer(ComputerService computerService) {
 		System.out.print("Entrer l'ID du computer : ");
 		long id = sc.nextLong();
-		try {
-			Computer computer = computerService.getComputerById(id);
-			System.out.println(computer);
-		} catch (NotFoundComputerException e) {
-			System.out.println(e.getMessage());
+		if (id < 1) {
+			System.out.print(ID_NOT_BE_NULL);
+			return ;
+		}
+		Optional<Computer> computer = computerService.getComputerById(id);
+		if(computer.isPresent()) {
+			System.out.println("\n"+ computer.get());
+		} else {
+			System.out.println(NO_COMPUTERS);
 		}
 	}
 	public static int insertChoice() {
 		boolean hasInt = false;
 		int choice = 0;
 		do {
-			
 			hasInt = sc.hasNextInt();
 			if(!hasInt) {
 				continue;
@@ -194,91 +189,88 @@ public class Main {
 		return choice;
 	}
 	public static void createComputer(ComputerService computerService) {
-		System.out.print("Please Entrer id of of Computer : ");
+		System.out.println("......................ADD COMPUTER..........................");
+		Optional<Computer> computer = askComputer();
+		if(!computer.isPresent()) return;
+		try {
+				int addCmputer = computerService.addComputer(computer.get());
+				switch(addCmputer) {
+					case 0 : System.out.println("Computer is not added"); break;
+					case 1 : System.out.println("Computer is added"); break;
+				}
+		} catch (NotFoundCompanyException e) {
+				System.out.println(e.getMessage());
+		}	
+	}
+	public static Optional<Computer> askComputer() {
+		System.out.print(ASK_ID_COMPUTER);
 		long id = sc.nextLong();
 		sc.nextLine();
-		System.out.print("Please Entrer name Computer :");
+		if (id <= 0) {
+			System.out.println(ID_NOT_BE_NULL);
+			return Optional.empty();
+		}
+		System.out.print(ASK_NAME_COMPUTER);
 		String name = sc.nextLine();
-		System.out.print("Please Entrer date introduced of Computer (format yyyy-mm-dd or dd/mm/yyyy) :");
+		System.out.print(ASK_DATE_INTRODUCED);
 		String stringDateIntroduced = sc.nextLine();
-		System.out.print("Please Entrer date discontinued of Computer (format yyyy-mm-dd or dd/mm/yyyy) :");
+		System.out.print(ASK_DATE_DISCONTINUED);
 		String StringDateDiscontinued = sc.nextLine();
-		System.out.print("Please Entrer id of company of Computer if not please entre 0:");
+		System.out.print(ASK_COMPANY_ID);
 		long company_id = sc.nextLong();
 		LocalDate dateIntroduced = HelperDate.StringDateToLocalDate(stringDateIntroduced);
 		LocalDate dateDiscontinued = HelperDate.StringDateToLocalDate(StringDateDiscontinued);
 		if(! dateIntroduced.isBefore(dateDiscontinued)) {
 			System.out.println("Date Disontinued (" + dateDiscontinued + ") is not after (" + dateIntroduced + ")");
-			System.out.println("Computer is not added");
-			return;
+			return Optional.empty();
 		}
-		Company company = new Company(company_id, null);
-		Computer computer = new Computer(id, name, dateIntroduced, dateDiscontinued, company);
-		try {
-			int addCmputer = computerService.addComputer(computer);
-			switch(addCmputer) {
-			case 0 : System.out.println("Computer is not added"); break;
-			case 1 : System.out.println("Computer is added"); break;
-			case 2 : System.out.println("Your id is negative or null"); break;
-			}
-		} catch (NotFoundCompanyException e) {
-			System.out.println(e.getMessage());
-		}	
+		Company company = CompanyBuilder.newInstance()
+										.setId(company_id)
+										.setName(null)
+										.build();
+		Computer computer = ComputerBuilder.newInstance()
+										  .setId(id)
+										  .setName(name)
+										  .setIntroduced(dateIntroduced)
+										  .setDicontinued(dateDiscontinued)
+										  .setCompany(company)
+										  .build();
+		return Optional.ofNullable(computer);
 	}
 	
 	public static void deleteComputer(ComputerService computerService) {
-		System.out.print("Please Entrer id of of Computer to delete :");
+		System.out.println("......................DELETE COMPUTER..........................");
+		System.out.print(ASK_ID_COMPUTER);
 		long id = sc.nextLong();
-		int delete = computerService.deleteComputerById(id);
+		if (id <= 0) {
+			System.out.println(ID_NOT_BE_NULL);
+			return;
+		}
+		int delete = 0;
+		try {
+			delete = computerService.deleteComputerById(id);
+		} catch (NotFoundComputerException e) {
+			System.out.println(e.getMessage());
+			return;
+		}
 		switch(delete) {
 			case 0 : System.out.println("Computer is not deleted"); break;
 			case 1 : System.out.println("Computer is deleted"); break;
-			case 2 : System.out.println("Your id is negative or null"); break;
 		}	
 	}
 	
 	public static void updateComputer(ComputerService computerService) {
-		System.out.print("Please Entrer id of of Computer to update :");
-		long id = sc.nextLong();
-		sc.nextLine();
-		System.out.print("Please Entrer new name for Computer:");
-		String name = sc.nextLine();
-		System.out.print("Please Entrer new date introduced of Computer (format yyyy-mm-dd or dd/mm/yyyy) :");
-		String stringDateIntroduced = sc.nextLine();
-		System.out.print("Please Entrer new date discontinued of Computer (format yyyy-mm-dd or dd/mm/yyyy) :");
-		String StringDateDiscontinued = sc.nextLine();
-		System.out.print("Please Entrer id of company of Computer if not please entre 0:");
-		long company_id = sc.nextLong();
-		
-		LocalDate dateIntroduced = HelperDate.StringDateToLocalDate(stringDateIntroduced);
-		LocalDate dateDiscontinued = HelperDate.StringDateToLocalDate(StringDateDiscontinued);
-		
-		Company company = new Company(company_id, null);
-		Computer computer = new Computer(name);
-		computer.setId(id);
-		computer.setDateIntroduced(dateIntroduced);
-		try{
-			computer.setDateDiscontinued(dateDiscontinued);
-		}catch (DateBeforeDiscontinuedException e) {
-			System.out.println(e.getMessage());
-			System.out.println("Computer not updated");
-			return;
-		}
-		computer.setCompany(company);
-		
+		System.out.println("......................UPDATE COMPUTER..........................");
+		Optional<Computer> computer = askComputer();
+		if(!computer.isPresent()) return;
 		try {
-			int update = computerService.updateComputer(computer);
+			int update = computerService.updateComputer(computer.get());
 			switch(update) {
-				case -1 : System.out.println("Error update in date discontinued "); break;
 				case 0 : System.out.println("Computer not updated"); break;
 				case 1 : System.out.println("Computer is updated"); break;
-				case 2 : System.out.println("Computer to update is null"); break;
 			}
 		} catch (NotFoundComputerException e) {
 			System.out.println(e.getMessage());
 		} 
-		
 	}
-	
-	
 }

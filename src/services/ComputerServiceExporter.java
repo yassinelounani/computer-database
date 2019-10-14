@@ -1,8 +1,7 @@
 package services;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 
@@ -10,8 +9,6 @@ import api.ComputerService;
 import api.Page;
 import dao.CompanyDao;
 import dao.ComputerDao;
-import exception.BadNumberPageException;
-import exception.DateBeforeDiscontinuedException;
 import exception.NotFoundCompanyException;
 import exception.NotFoundComputerException;
 import models.Company;
@@ -30,122 +27,65 @@ public class ComputerServiceExporter implements ComputerService {
 		this.companyDao = companyDao;
 	}
 	
-	public List<Computer> getComputers() throws NotFoundComputerException {
-		List<Computer> computers = new ArrayList<>();
-		try {
-			computers = computerDao.getComputers();
-			if(computers.isEmpty()) {
-				throw new NotFoundComputerException("Any Computer found in DataBase");
-			}
-			LOGGER.info("get all Computers from Dao Computer");
-			return computers;
-			
-		} catch (SQLException e) {
-			e.getMessage();
-		}
+	public List<Computer> getComputers() {
+		List<Computer> computers = computerDao.getComputers();
+		LOGGER.info("get all Computers from Dao Computer");
 		return computers; 
 	}
 	
-	public List<Computer> getComputersWithPage(Page page) throws NotFoundComputerException, BadNumberPageException {
-		List<Computer> computers = new ArrayList<>();
-		
-		try {
-			computers = computerDao.getComputersWithPage(page);
-			if(computers.isEmpty()) {
-				throw new NotFoundComputerException("Any Computer found in DataBase");
-			}
-			LOGGER.info("get all Computers with page " + page.getNumber() + "from Dao Computer");
-			return computers;
-			
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-		return computers; 
+	public List<Computer> getComputersWithPage(Page page) {
+		List<Computer> computers = computerDao.getComputersWithPage(page);
+		LOGGER.info("get all Computers with page " + page.getNumber() + "from Dao Computer");
+		return computers;
 	}
 	
-	public Computer getComputerById(long id) throws NotFoundComputerException {
-		if(id <= 0) return null;
-		try {
-			Computer computer = computerDao.getComputerById(id);
-			if(computer == null) {
-				throw new NotFoundComputerException("Computer Not Found");
-			}
-			LOGGER.info("get Computer with id : " + id + " from Dao Computer");
-			return computer;
-		}
-		catch (SQLException e) {
-			e.getMessage();
-		}
-		return null;
+	public Optional<Computer> getComputerById(long id) {
+		Optional<Computer> computer = computerDao.getComputerById(id);
+		LOGGER.info("get Computer with id : " + id + " from Dao Computer");
+		return computer;
 	}
 	
 	public int addComputer(Computer computer) throws NotFoundCompanyException {
-		if(computer == null) {
-			return -2;
-		}
 		String id = String.valueOf(computer.getId());
-		try {
-			if(computer.getCompany().getId() > 0) {
-				Company company = companyDao.getCompanyByID(computer.getCompany().getId());
-				if(company == null) {
-					throw new NotFoundCompanyException("Company with id :"+ id+" not Exist");
-				} else {
-					return computerDao.addComputer(computer);
-				}
-			}
-			else {
+		if(computer.getCompany().getId() > 0) {
+			Optional<Company> company = companyDao.getCompanyById(computer.getCompany().getId());
+			if(!company.isPresent()) {
+					throw new NotFoundCompanyException("Company with id :"+ id+" not Exist referenced by company_id");
+			} else {
 				return computerDao.addComputer(computer);
 			}
-			
-		} catch( SQLException e) {
-			System.out.println(e.getMessage());
-			return -1;
 		}
-				
+		else {
+			return computerDao.addComputer(computer);
+		}		
 	}
 	
-	public int deleteComputerById(long id) {
-		if(id <= 0) {
-			return -2; 
+	public int deleteComputerById(long id) throws NotFoundComputerException {
+		Optional<Computer> getComputer = getComputerById(id);
+		if(!getComputer.isPresent()) {
+			throw new NotFoundComputerException("Company with id :"+ id +" not Exist");
 		}
-		try {
-			return computerDao.deleteComputerById(id);
-		}catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-		return -1;
+		return computerDao.deleteComputerById(id);
 	}
 	
-	public int updateComputer(Computer computer) throws NotFoundComputerException{
-		if(computer == null) {
-			return -2;
-		}
-		try {
-			Computer getComputer = getComputerById(computer.getId());
+	public int updateComputer(Computer computer) throws NotFoundComputerException {
+			Optional<Computer> getComputer = getComputerById(computer.getId());
+			if(!getComputer.isPresent()) {
+				throw new NotFoundComputerException("Company with id :"+ computer.getId() +" not Exist");
+			}
 			if(computer.getName().isEmpty()) {
-				computer.setName(getComputer.getName());
+				computer.setName(getComputer.get().getName());
 			}
 			if(computer.getDateIntroduced() == null) {
-				computer.setDateIntroduced(getComputer.getDateIntroduced());
+				computer.setDateIntroduced(getComputer.get().getDateIntroduced());
 			}
 			if(computer.getDateDiscontinued() == null) {
-				try {
-					computer.setDateDiscontinued(getComputer.getDateDiscontinued());
-				} catch (DateBeforeDiscontinuedException e) {
-					
-					System.out.println(e.getMessage());
-					return -1;
-				}
+				computer.setDateDiscontinued(getComputer.get().getDateDiscontinued());	
 			}
 			if(computer.getCompany().getId() <= 0) {
-				computer.setCompany(getComputer.getCompany());
+				computer.setCompany(getComputer.get().getCompany());
 			}
-			return computerDao.updateComputer(computer);
-		} catch( SQLException e) {
-			e.getMessage();
-			return -3;
-		}
-		
+			return computerDao.updateComputer(computer);	
 	}
 
 }

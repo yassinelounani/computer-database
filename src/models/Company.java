@@ -4,18 +4,13 @@ public class Company {
 
 	private long id;
 	private String name;
-
-	public Company(String name) {
+	
+	public Company(CompanyBuilder builder) {
 		super();
-		this.name = name;
+		this.id = builder.getId();
+		this.name = builder.getName();
 	}
 	
-	public Company(long id, String name) {
-		super();
-		this.id = id;
-		this.name = name;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -37,6 +32,4 @@ public class Company {
 		return "Company [id=" + id + ", name=" + name + "]";
 	}
 	
-	
-		
 }
