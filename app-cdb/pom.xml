@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+  
+  <!-- =============================================================== -->
+  <!-- Informations of project -->
+  <!-- =============================================================== -->
+  <!-- ===== Informations Maven ===== -->
+  <groupId>fr.excilys.cdb</groupId>
+  <artifactId>app-cdb</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>app-cdb</name>
+  <url>http://maven.apache.org</url>
+  
+  <!-- =============================================================== -->
+  <!-- Properties -->
+  <!-- =============================================================== -->
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <self4j-api-version>1.7.28</self4j-api-version>
+    <mysql-connector-mysql-version>5.1.6</mysql-connector-mysql-version>
+    <version-project>1.0-SNAPSHOT</version-project>
+    <junit-jupiter-version>5.4.2</junit-jupiter-version>
+    <mockito-all.version>1.9.5</mockito-all.version>
+  </properties>
+  
+  <!-- =============================================================== -->
+  <!-- Dependency management -->
+  <!-- =============================================================== -->
+  <dependencies>
+    <!-- ===== Modules ===== -->
+
+    
+    <!-- ===== Third-party libraries ===== -->
+    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${self4j-api-version}</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysql-connector-mysql-version}</version>
+    </dependency>
+
+
+  </dependencies>
+  
+  	<!-- =============================================================== -->
+    <!-- Management Dependency -->
+    <!-- =============================================================== -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- ===== Modules ===== -->
+            <dependency>
+                <groupId>fr.excilys.cdb</groupId>
+                <artifactId>cdb-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+          
+            <dependency>
+                <groupId>fr.excilys.cdb</groupId>
+                <artifactId>cdb-business</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.excilys.cdb</groupId>
+                <artifactId>cdb-</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.excilys.cdb</groupId>
+                <artifactId>cdb-persistence</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- ===== Bibliothèques tierces ===== -->
+       
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- =============================================================== -->
+    <!-- Modules -->
+    <!-- =============================================================== -->
+  
+  <modules>
+    <module>cdb-business</module>
+    <module>cdb-api</module>
+    <module>cdb-persistence</module>
+  </modules>
+      
+
+
+</project>
