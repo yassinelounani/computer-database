@@ -1,12 +1,15 @@
 package fr.excilys.cdb.persistence.dao;
 
+import java.sql.Connection;
+import java.util.Optional;
+
 public class DaoFactory {
 
-    ConnectionToDb connexion;
+    ConnectionToDb connectionToDb;
 
-    public DaoFactory(ConnectionToDb connexion) {
+    public DaoFactory(ConnectionToDb connectionToDb) {
         super();
-    	this.connexion = connexion;
+    	this.connectionToDb = connectionToDb;
     }
 
     public Dao getDao(TypeDao type){
@@ -14,10 +17,10 @@ public class DaoFactory {
             return null;
         }
         if(type.equals(TypeDao.COMPUTER)){
-            return ComputerDao.getInstance(connexion);
+            return ComputerDao.getInstance(connectionToDb);
         }
         else if(type.equals(TypeDao.COMPANY)) {
-            return CompanyDao.getInstance(connexion);
+            return CompanyDao.getInstance(connectionToDb);
         }
 
         return null;

@@ -1,5 +1,7 @@
 package fr.excilys.cdb.persistence.models;
 
+import java.util.Objects;
+
 public class CompanyEntity {
 
 	private long id;
@@ -30,6 +32,16 @@ public class CompanyEntity {
 	@Override
 	public String toString() {
 		return "Company [id=" + id + ", name=" + name + "]";
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (o == null) return false;
+	    if (getClass() != o.getClass()) return false;
+	    CompanyEntity company = (CompanyEntity) o;
+	    return Objects.equals(id, company.id)
+	            && Objects.equals(name, company.name);
 	}
 	
 }

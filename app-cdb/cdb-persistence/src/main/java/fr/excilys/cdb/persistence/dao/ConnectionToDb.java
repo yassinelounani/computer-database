@@ -17,29 +17,34 @@ import org.slf4j.LoggerFactory;
 import fr.excilys.cdb.persistence.models.Pageable;
 
 public class ConnectionToDb {
+	
+	private Connection connection;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionToDb.class);;
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionToDb.class);
     
 	public ConnectionToDb() {
         super();
     }
-
-	public Optional<Connection> getConnectionDb() {
-		Connection connection = null;
-		String url = Configuration.getUrl();
+	
+	public Optional<Connection> getConnection(){
+		String url = null;
         LOGGER.info("Construction of url connection data base");
         try {
-        	 connection = DriverManager.getConnection(url, USER, PASSWORD);
-        	 return Optional.of(connection);
-        } catch (SQLException e) {
-        	System.out.println(e.getMessage());
-        	return Optional.empty();
-        }
-    }
+			if(connection == null || connection.isClosed()) {
+				url = Configuration.getUrl();
+				connection = DriverManager.getConnection(url, USER, PASSWORD);
+				return Optional.of(connection);
+						
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+        return Optional.of(connection);
+	}
 	
 	public static void closeConnectionAndStetement(Connection conncetion, Statement statement) {
 		try {
-			if (statement != null) {
+			if (statement != null && !statement.isClosed()) {
 				statement.close();
 				LOGGER.info("Statement Closed successfly...............!");
 			}
@@ -48,7 +53,7 @@ public class ConnectionToDb {
 	    		LOGGER.info("Stetement Bad Closed...............!");
     	}
 		try {
-			if (conncetion != null ) {
+			if (conncetion != null && !conncetion.isClosed() ) {
 				conncetion.close();
 				LOGGER.info("Connexion Closed successfly...............!");
 			}	

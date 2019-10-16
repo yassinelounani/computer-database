@@ -23,17 +23,19 @@
   
 
   	<!-- ===== Third-party libraries ===== -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
+    
+    <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+	<dependency>
+       <groupId>com.h2database</groupId>
+       <artifactId>h2</artifactId>
+       <version>${h2-database-version}</version>
+       <scope>test</scope>
+	</dependency>
     
     <dependency>
-    <groupId>org.modelmapper</groupId>
-    <artifactId>modelmapper</artifactId>
-    <version>2.3.5</version>
+       <groupId>org.modelmapper</groupId>
+       <artifactId>modelmapper</artifactId>
+       <version>${modelMapper-version}</version>
 	</dependency>
 	
   </dependencies>

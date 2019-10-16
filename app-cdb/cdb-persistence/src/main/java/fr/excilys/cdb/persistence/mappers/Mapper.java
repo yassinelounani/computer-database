@@ -19,11 +19,13 @@ import fr.excilys.cdb.persistence.models.Pageable;
 
 public class Mapper {
 	
-	public static final String ID = "id";
-	public static final String NAME = "name";
+	public static final String ID_COMPUTER = "computer.id";
+	public static final String ID_COMPANY = "company.id";
+	public static final String NAME = "computer.name";
 	public static final String INTRODUCED = "introduced";
 	public static final String DISCONTINUED = "discontinued";
-	public static final String COMPANY_ID = "company_id";
+	public static final String COMPANY_ID = "computer.company_id";
+	public static final String COMPANY_NAME = "company.name";
 	
 	private static ModelMapper modelMapper;
 
@@ -35,9 +37,9 @@ public class Mapper {
 	
 	
 	public static ComputerEntity mapResultSetToComputer(ResultSet result) throws SQLException {
-		CompanyEntity company = mapResultSetToCompany(result, COMPANY_ID);
+		CompanyEntity company = mapResultSetToCompany(result, ID_COMPANY);
 		return ComputerBuilder.newInstance()
-							  .setId(result.getLong(ID))
+							  .setId(result.getLong(ID_COMPUTER))
 							  .setName(result.getString(NAME))
 							  .setIntroduced(result.getObject(INTRODUCED, LocalDate.class))
 							  .setDicontinued(result.getObject(DISCONTINUED, LocalDate.class))
@@ -49,7 +51,7 @@ public class Mapper {
 	public static CompanyEntity mapResultSetToCompany(ResultSet result, String id) throws SQLException {
 		return CompanyBuilder.newInstance()
 				.setId(result.getLong(id))
-				.setName(result.getString(NAME))
+				.setName(result.getString(COMPANY_NAME))
 				.build();
 	}
 	

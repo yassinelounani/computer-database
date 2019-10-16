@@ -1,6 +1,7 @@
 package fr.excilys.cdb.persistence.models;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class ComputerEntity {
 
@@ -68,6 +69,20 @@ public class ComputerEntity {
 		return "Computer [id=" + id + ", name=" + name + ", dateIntroduce=" + dateIntroduced + ", dateDisconnected="
 				+ dateDiscontinued + ", company=" + company + "]";
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (o == null) return false;
+	    if (getClass() != o.getClass()) return false;
+	    ComputerEntity computer = (ComputerEntity) o;
+	    return Objects.equals(id, computer.id)
+	            && Objects.equals(name, computer.name)
+	            && Objects.equals(dateIntroduced, computer.dateIntroduced)
+	            && Objects.equals(dateDiscontinued, computer.dateDiscontinued)
+	            && Objects.equals(company, computer.company);
+	}
+
 
 	
 }

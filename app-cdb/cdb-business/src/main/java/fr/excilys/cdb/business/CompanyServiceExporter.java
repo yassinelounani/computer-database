@@ -14,6 +14,7 @@ import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.Pageable;
 
 
+
 public class CompanyServiceExporter implements CompanyService{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyServiceExporter.class);

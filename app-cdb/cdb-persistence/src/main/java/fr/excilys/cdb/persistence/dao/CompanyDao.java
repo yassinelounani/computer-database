@@ -1,9 +1,8 @@
 package fr.excilys.cdb.persistence.dao;
 
-
+import static fr.excilys.cdb.persistence.mappers.Mapper.ID_COMPANY;
 import static fr.excilys.cdb.persistence.dao.ConnectionToDb.closeConnectionAndStetement;
 import static fr.excilys.cdb.persistence.dao.ConnectionToDb.prepareStetementAndExecureQuerytWithPage;
-import static fr.excilys.cdb.persistence.mappers.Mapper.ID;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,28 +24,30 @@ public class CompanyDao implements Dao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDao.class);
 	
-	private static final String  GET_ALL_COMPANIES = "SELECT id, name "
+	private static final String  GET_ALL_COMPANIES = "SELECT company.id, company.name "
 												   + "FROM company";
 	
-	private static final String GET_COMPANY_BY_ID = "SELECT id, name "
+	private static final String GET_COMPANY_BY_ID = "SELECT company.id, company.name "
 												  + "FROM company "
 												  + "WHERE company.id= ?";
 	
-	public static final String GET_ALL_COMPANIES_WITH_PAGE = "SELECT * FROM company LIMIT ?, ?;";
+	public static final String GET_ALL_COMPANIES_WITH_PAGE = "SELECT company.id, company.name "
+														   + "FROM company "
+														   + "LIMIT ?, ?;";
 	
-	private ConnectionToDb connexionToDb;
+	private ConnectionToDb connectionTodb;
 	
-    private CompanyDao(ConnectionToDb connexionToDb) {
+    private CompanyDao(ConnectionToDb connectionTodb) {
         super();
-        this.connexionToDb = connexionToDb;
+        this.connectionTodb = connectionTodb;
     }
 
     private static CompanyDao INSTANCE = null;
 
-    public static synchronized CompanyDao getInstance(ConnectionToDb connexionToDb)
+    public static synchronized CompanyDao getInstance(ConnectionToDb connectionTodb)
     {
         if (INSTANCE == null) {
-            INSTANCE = new CompanyDao(connexionToDb);
+            INSTANCE = new CompanyDao(connectionTodb);
         }
         return INSTANCE;
     }
@@ -54,14 +55,14 @@ public class CompanyDao implements Dao {
     public List<CompanyEntity> getCompanies() {
     	Statement statement = null;
     	List<CompanyEntity> companies = new ArrayList<>();
-    	Optional<Connection>  connection = connexionToDb.getConnectionDb();
+    	Optional<Connection> connection = connectionTodb.getConnection();
     	if(!connection.isPresent()) return companies;
     	try {
 	    		statement = connection.get().createStatement();
 		    	LOGGER.info("query : {}", GET_ALL_COMPANIES);
 		    	ResultSet results = statement.executeQuery(GET_ALL_COMPANIES);
 		    	while (results.next()) {
-		    	   companies.add(Mapper.mapResultSetToCompany(results, Mapper.ID)); 			
+		    	   companies.add(Mapper.mapResultSetToCompany(results, Mapper.ID_COMPANY)); 			
 		    	}	
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -74,8 +75,8 @@ public class CompanyDao implements Dao {
       
     public List<CompanyEntity> getCompaniesWithPage(Pageable page) {
     	List<CompanyEntity> companies = new ArrayList<>();
-    	Optional<Connection> connection = connexionToDb.getConnectionDb();
     	PreparedStatement preparedStatement = null;
+    	Optional<Connection> connection = connectionTodb.getConnection();
     	if(!connection.isPresent()) return companies;
     	LOGGER.info("connection well-established to the database ...................");
     	try {
@@ -83,7 +84,7 @@ public class CompanyDao implements Dao {
 		    	preparedStatement  = connection.get().prepareStatement(GET_ALL_COMPANIES_WITH_PAGE);
 		    	ResultSet results = prepareStetementAndExecureQuerytWithPage(page, preparedStatement);
 		    	while (results.next()) { 
-		    		companies.add(Mapper.mapResultSetToCompany(results, ID));
+		    		companies.add(Mapper.mapResultSetToCompany(results, ID_COMPANY));
 		    	}
 		    	LOGGER.info("List computer is successfly loaded");
 		} catch (SQLException e) {
@@ -99,7 +100,7 @@ public class CompanyDao implements Dao {
     public Optional<CompanyEntity> getCompanyById(long id) {
     	CompanyEntity company = null;
     	PreparedStatement preparedStatement = null;
-    	Optional<Connection> connection = connexionToDb.getConnectionDb();
+    	Optional<Connection> connection = connectionTodb.getConnection();
     	if(!connection.isPresent()) return Optional.empty();
     	LOGGER.info("connection well-established to the database ...................");
     	try {
@@ -108,7 +109,7 @@ public class CompanyDao implements Dao {
 		    	preparedStatement.setLong(1, id);
 		    	ResultSet results = preparedStatement.executeQuery();
 		    	while (results.next()) { 
-		    		company = Mapper.mapResultSetToCompany(results, ID);
+		    		company = Mapper.mapResultSetToCompany(results, ID_COMPANY);
 		    	}
 		} catch (SQLException e) {
 				System.out.println(e.getMessage());
