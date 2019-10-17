@@ -1,8 +1,8 @@
 package fr.excilys.cdb.persistence.dao;
 
-import static fr.excilys.cdb.persistence.mappers.Mapper.ID_COMPANY;
 import static fr.excilys.cdb.persistence.dao.ConnectionToDb.closeConnectionAndStetement;
 import static fr.excilys.cdb.persistence.dao.ConnectionToDb.prepareStetementAndExecureQuerytWithPage;
+import static fr.excilys.cdb.persistence.mappers.Mapper.ID_COMPANY;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,25 +23,23 @@ import fr.excilys.cdb.persistence.models.Pageable;
 public class CompanyDao implements Dao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDao.class);
-	
 	private static final String  GET_ALL_COMPANIES = "SELECT company.id, company.name "
 												   + "FROM company";
-	
+
 	private static final String GET_COMPANY_BY_ID = "SELECT company.id, company.name "
 												  + "FROM company "
 												  + "WHERE company.id= ?";
-	
+
 	public static final String GET_ALL_COMPANIES_WITH_PAGE = "SELECT company.id, company.name "
 														   + "FROM company "
 														   + "LIMIT ?, ?;";
-	
+
 	private ConnectionToDb connectionTodb;
-	
+
     private CompanyDao(ConnectionToDb connectionTodb) {
         super();
         this.connectionTodb = connectionTodb;
     }
-
     private static CompanyDao INSTANCE = null;
 
     public static synchronized CompanyDao getInstance(ConnectionToDb connectionTodb)
@@ -51,7 +49,6 @@ public class CompanyDao implements Dao {
         }
         return INSTANCE;
     }
-
     public List<CompanyEntity> getCompanies() {
     	Statement statement = null;
     	List<CompanyEntity> companies = new ArrayList<>();
@@ -72,7 +69,6 @@ public class CompanyDao implements Dao {
 		}
     	return companies;
     }
-      
     public List<CompanyEntity> getCompaniesWithPage(Pageable page) {
     	List<CompanyEntity> companies = new ArrayList<>();
     	PreparedStatement preparedStatement = null;
@@ -95,8 +91,6 @@ public class CompanyDao implements Dao {
 		}
     	return companies;
     }
-   
-    
     public Optional<CompanyEntity> getCompanyById(long id) {
     	CompanyEntity company = null;
     	PreparedStatement preparedStatement = null;
@@ -118,6 +112,4 @@ public class CompanyDao implements Dao {
 		}
     	return Optional.ofNullable(company);
     }
-
-
 }

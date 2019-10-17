@@ -33,7 +33,7 @@ public class CompanyServiceExporter implements CompanyService{
 		return Mapper.mapAll(companies, Company.class);
 	}
 	public List<Company> getCompaniesWithPage(Page page) {
-		Pageable pageable = Mapper.mapToPageable(page.getNumber(), page.getSize());
+		Pageable pageable = Mapper.map(page, Pageable.class);
 		List<CompanyEntity> companies = companyDao.getCompaniesWithPage(pageable);
 		LOGGER.info("get all Company page {} from Dao Company", page.getNumber());
 		return Mapper.mapAll(companies, Company.class);

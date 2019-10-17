@@ -12,6 +12,9 @@
   <packaging>jar</packaging>
   
   <name>cdb-business</name>
+  <properties>
+  		<powermock-version>1.7.4</powermock-version>
+  </properties>
   
   <!-- =============================================================== -->
   <!-- Dependency management -->
@@ -41,9 +44,27 @@
     	<version>${mockito-version}</version>
     	<scope>test</scope>
 	</dependency>
-	   
 	
-    
+	<dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito2</artifactId>
+      <version>1.7.0</version>
+      <scope>test</scope>
+    </dependency>
+	
+	<dependency>
+		<groupId>org.powermock</groupId>
+		<artifactId>powermock-module-junit4</artifactId>
+		<version>${powermock-version}</version>
+		<scope>test</scope>
+	</dependency>
+	
+	<dependency>
+    <groupId>org.powermock</groupId>
+    <artifactId>powermock-api-mockito</artifactId>
+    <version>${powermock-version}</version>
+    <scope>test</scope>
+</dependency>
   	<!-- ===== Third-party libraries ===== -->
    </dependencies>
 

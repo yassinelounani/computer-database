@@ -1,7 +1,5 @@
 package fr.excilys.cdb.persistence.dao;
 
-import java.sql.Connection;
-import java.util.Optional;
 
 public class DaoFactory {
 

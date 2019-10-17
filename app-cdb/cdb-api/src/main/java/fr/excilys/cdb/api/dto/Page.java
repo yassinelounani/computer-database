@@ -1,10 +1,10 @@
 package fr.excilys.cdb.api.dto;
 
 public class Page {
-	
+
 	private int number;
 	private int size;
-	
+
 	public Page(int number, int size) {
 		super();
 		this.number = number;
@@ -15,10 +15,9 @@ public class Page {
 		return number;
 	}
 
-	public void setNumber(int number){
+	public void setNumber(int number) {
 		this.number = number;
 	}
-
 	public int getSize() {
 		return size;
 	}
@@ -31,5 +30,4 @@ public class Page {
 	public String toString() {
 		return "Page [number=" + number + ", size=" + size + "]";
 	}
-
 }

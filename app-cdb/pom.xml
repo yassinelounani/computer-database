@@ -129,6 +129,42 @@
     <module>cdb-persistence</module>
   </modules>
       
-
-
+	<build>
+    	<plugins>
+    		<plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-surefire-plugin</artifactId>
+	            <version>2.22.1</version>
+        	</plugin>
+      		<plugin>
+        		<groupId>org.apache.maven.plugins</groupId>
+        		<artifactId>maven-compiler-plugin</artifactId>
+       			 <version>3.8.1</version>
+        	<configuration>
+          		<source>${maven.compiler.source}</source>
+          		<target>${maven.compiler.source}</target>
+        	</configuration>
+      		</plugin>
+      		<!-- checkstyle maven-->
+      		
+      		<plugin>
+	           <groupId>org.apache.maven.plugins</groupId>
+	           <artifactId>maven-checkstyle-plugin</artifactId>
+	           <version>3.0.0</version>
+	          
+	           <configuration>
+	             <configLocation>cheks/checkstyle.xml</configLocation>
+	             <suppressionsLocation>cheks/suppressions.xml</suppressionsLocation>
+	           </configuration>
+	           <executions>
+	             <execution>
+	               <goals>
+	                 <goal>check</goal>
+	               </goals>
+	             </execution>
+	           </executions>
+	         </plugin>
+	  </plugins>
+  </build>
+	   
 </project>

@@ -70,10 +70,4 @@ public class Mapper {
         modelMapper.map(source, destination);
         return destination;
     }
-    
-    public static Pageable mapToPageable(int numPage, int size) {
-    	return new Pageable(numPage, size);
-    }
-	
-	
 }

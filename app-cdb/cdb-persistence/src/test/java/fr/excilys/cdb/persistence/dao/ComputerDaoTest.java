@@ -58,7 +58,9 @@ public class ComputerDaoTest {
 	@Test
 	public void test_getAllComputer_with_Page_expect_success() {
 		//prepare
-		Pageable pageable = new Pageable(PAGE_2, SIZE_5);
+		Pageable pageable = new Pageable()
+				.setNumber(PAGE_2)
+				.setSize(SIZE_5);
 		//execute
 		List<ComputerEntity> computers = computerDao.getComputersWithPage(pageable);
 		//verify
@@ -69,7 +71,9 @@ public class ComputerDaoTest {
 	@Test
 	public void test_getAllComputer_with_Page_expect_first() {
 		//prepare
-		Pageable pageable = new Pageable(PAGE_2, SIZE_5);
+		Pageable pageable = new Pageable()
+				.setNumber(PAGE_2)
+				.setSize(SIZE_5);
 		//execute
 		List<ComputerEntity> computers = computerDao.getComputersWithPage(pageable);
 		//verify

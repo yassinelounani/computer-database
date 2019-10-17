@@ -26,8 +26,20 @@ public class ComputerServiceExporter implements ComputerService {
 	
 	private ComputerDao computerDao;
 	private CompanyDao companyDao;
+	
+	
+	private static ComputerServiceExporter INSTANCE = null;
 
-	public ComputerServiceExporter(ComputerDao computerDao, CompanyDao companyDao) {
+    public static synchronized ComputerServiceExporter getInstance(ComputerDao computerDao, CompanyDao companyDao) {
+        if (INSTANCE == null) {
+            INSTANCE = new ComputerServiceExporter(computerDao, companyDao);
+        }
+        return INSTANCE;
+    }
+    
+	
+	
+	private ComputerServiceExporter(ComputerDao computerDao, CompanyDao companyDao) {
 		super();
 		this.computerDao = computerDao;
 		this.companyDao = companyDao;
@@ -40,7 +52,7 @@ public class ComputerServiceExporter implements ComputerService {
 	}
 	
 	public List<Computer> getComputersWithPage(Page page) {
-		Pageable pageable = Mapper.mapToPageable(page.getNumber(), page.getSize());
+		Pageable pageable = Mapper.map(page, Pageable.class);
 		List<ComputerEntity> computers = computerDao.getComputersWithPage(pageable);
 		LOGGER.info("get all Computers with page {} from Dao Computer", page.getNumber());
 		return Mapper.mapAll(computers, Computer.class);

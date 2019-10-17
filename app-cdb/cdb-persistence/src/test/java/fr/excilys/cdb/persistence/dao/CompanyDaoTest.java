@@ -1,12 +1,12 @@
 package fr.excilys.cdb.persistence.dao;
 
 import static fr.excilys.cdb.persistence.dao.DbInit.COMPANY;
-import static fr.excilys.cdb.persistence.dao.DbInit.ID_100;
 import static fr.excilys.cdb.persistence.dao.DbInit.ID_1;
-import static fr.excilys.cdb.persistence.dao.DbInit.PAGE_2;
-import static fr.excilys.cdb.persistence.dao.DbInit.VALUE_10;
+import static fr.excilys.cdb.persistence.dao.DbInit.ID_100;
 import static fr.excilys.cdb.persistence.dao.DbInit.PAGE_1;
+import static fr.excilys.cdb.persistence.dao.DbInit.PAGE_2;
 import static fr.excilys.cdb.persistence.dao.DbInit.SIZE_5;
+import static fr.excilys.cdb.persistence.dao.DbInit.VALUE_10;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -29,7 +29,6 @@ private CompanyDao companyDao;
 		System.setProperty("testing", "true");
 		ConnectionToDb connectionToDb = new ConnectionToDb();
 		companyDao = CompanyDao.getInstance(connectionToDb);
-		
 	}
 	
 	@Test
@@ -44,7 +43,9 @@ private CompanyDao companyDao;
 	@Test
 	public void test_getAllComputer_with_Page_expect_success() {
 		//prepare
-		Pageable pageable = new Pageable(PAGE_2, SIZE_5);
+		Pageable pageable = new Pageable()
+				.setNumber(PAGE_2)
+				.setSize(SIZE_5);
 		//execute
 		List<CompanyEntity> computers = companyDao.getCompaniesWithPage(pageable);
 		//verify
@@ -55,7 +56,9 @@ private CompanyDao companyDao;
 	@Test
 	public void test_getAllComputer_with_Page_expect_first() {
 		//prepare
-		Pageable pageable = new Pageable(PAGE_1, SIZE_5);
+		Pageable pageable = new Pageable()
+				.setNumber(PAGE_1)
+				.setSize(SIZE_5);
 		//execute
 		List<CompanyEntity> computers = companyDao.getCompaniesWithPage(pageable);
 		//verify
