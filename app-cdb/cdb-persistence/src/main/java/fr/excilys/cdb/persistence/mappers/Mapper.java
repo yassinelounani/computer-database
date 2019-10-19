@@ -14,11 +14,10 @@ import fr.excilys.cdb.persistence.models.CompanyBuilder;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.ComputerBuilder;
 import fr.excilys.cdb.persistence.models.ComputerEntity;
-import fr.excilys.cdb.persistence.models.Pageable;
 
 
 public class Mapper {
-	
+
 	public static final String ID_COMPUTER = "computer.id";
 	public static final String ID_COMPANY = "company.id";
 	public static final String NAME = "computer.name";
@@ -26,7 +25,7 @@ public class Mapper {
 	public static final String DISCONTINUED = "discontinued";
 	public static final String COMPANY_ID = "computer.company_id";
 	public static final String COMPANY_NAME = "company.name";
-	
+
 	private static ModelMapper modelMapper;
 
     static {
@@ -34,8 +33,6 @@ public class Mapper {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
-	
-	
 	public static ComputerEntity mapResultSetToComputer(ResultSet result) throws SQLException {
 		CompanyEntity company = mapResultSetToCompany(result, ID_COMPANY);
 		return ComputerBuilder.newInstance()
@@ -45,20 +42,20 @@ public class Mapper {
 							  .setDicontinued(result.getObject(DISCONTINUED, LocalDate.class))
 							  .setCompany(company)
 							  .build();
-		
 	}
-	
+
+
 	public static CompanyEntity mapResultSetToCompany(ResultSet result, String id) throws SQLException {
 		return CompanyBuilder.newInstance()
 				.setId(result.getLong(id))
 				.setName(result.getString(COMPANY_NAME))
 				.build();
 	}
-	
+
 	public static <D, T> D map(final T entity, Class<D> outClass) {
         return modelMapper.map(entity, outClass);
     }
-	
+
 
     public static <D, T> List<D> mapAll(final Collection<T> entityList, Class<D> outCLass) {
         return entityList.stream()
@@ -67,7 +64,7 @@ public class Mapper {
     }
 
     public static <S, D> D map(final S source, D destination) {
-        modelMapper.map(source, destination);
+       modelMapper.map(source, destination);
         return destination;
     }
 }

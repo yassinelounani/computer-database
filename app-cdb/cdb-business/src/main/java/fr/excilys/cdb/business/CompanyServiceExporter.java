@@ -9,6 +9,7 @@ import fr.excilys.cdb.api.CompanyService;
 import fr.excilys.cdb.api.dto.Company;
 import fr.excilys.cdb.api.dto.Page;
 import fr.excilys.cdb.persistence.dao.CompanyDao;
+import fr.excilys.cdb.persistence.dao.ComputerDao;
 import fr.excilys.cdb.persistence.mappers.Mapper;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.Pageable;
@@ -20,11 +21,20 @@ public class CompanyServiceExporter implements CompanyService{
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyServiceExporter.class);
 	
 	
+	static CompanyServiceExporter instance = null;
+
+    public static synchronized CompanyServiceExporter getInstance() {
+        if (instance == null) {
+            instance = new CompanyServiceExporter();
+        }
+        return instance;
+    }
+    
 	private CompanyDao companyDao;
 
-	public CompanyServiceExporter(CompanyDao companyDao) {
+	private CompanyServiceExporter() {
 		super();
-		this.companyDao = companyDao;
+		this.companyDao = CompanyDao.getInstance();
 	}
 	
 	public List<Company> getCompanies() {

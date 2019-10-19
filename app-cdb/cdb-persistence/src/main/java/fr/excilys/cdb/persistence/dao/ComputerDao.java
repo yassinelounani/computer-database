@@ -51,19 +51,20 @@ public class ComputerDao implements Dao {
 	private static final boolean IS_INSERT = false;
 	private ConnectionToDb connectionToDb;
 
-	private ComputerDao(ConnectionToDb connectionToDb) {
+	private ComputerDao() {
         super();
-        this.connectionToDb = connectionToDb;
+        this.connectionToDb = ConnectionToDb.getInstance();
     }
 
     private static ComputerDao instance = null;
 
-    public static synchronized ComputerDao getInstance(ConnectionToDb connectionToDb) {
+    public static synchronized ComputerDao getInstance() {
         if (instance == null) {
-            instance = new ComputerDao(connectionToDb);
+            instance = new ComputerDao();
         }
         return instance;
     }
+
     public List<ComputerEntity> getComputers() {
     	Statement statement = null;
     	Optional<Connection> connection = connectionToDb.getConnection();
@@ -87,6 +88,7 @@ public class ComputerDao implements Dao {
     	}
     	return computers;
     }
+
     public List<ComputerEntity> getComputersWithPage(Pageable page) {
     	List<ComputerEntity> computers = new ArrayList<>();
     	Optional<Connection> connection = connectionToDb.getConnection();
@@ -111,6 +113,7 @@ public class ComputerDao implements Dao {
 		}
     	return computers;
     }
+
     public Optional<ComputerEntity> getComputerById(long id) {
     	ComputerEntity computer = null;
     	PreparedStatement preparedStatement = null;
@@ -134,12 +137,15 @@ public class ComputerDao implements Dao {
 		}
     	return Optional.ofNullable(computer);
     }
+
     public int addComputer(ComputerEntity computer) {
     	return addComputerOrUpdateIt(computer, IS_INSERT);
     }
+
     public int updateComputer(ComputerEntity computer) {
     	return addComputerOrUpdateIt(computer, IS_UPDATE);
     }
+
     public int deleteComputerById(long id) {
     	int executeDelete = 0;
     	Optional<Connection> connection = connectionToDb.getConnection();
@@ -148,7 +154,7 @@ public class ComputerDao implements Dao {
     	}
     	LOGGER.info("connection well-established to the database ...................");
     	PreparedStatement preparedStatement = null;
-    	try {
+    	try {	
 	    		LOGGER.info("query : {}", DELETE_COMPUTER);
 	    		preparedStatement  = connection.get().prepareStatement(DELETE_COMPUTER);
 	    		preparedStatement.setLong(1, id);
@@ -160,6 +166,7 @@ public class ComputerDao implements Dao {
 		}
     	return executeDelete;
     }
+
     private int addComputerOrUpdateIt(ComputerEntity computer, boolean isUpdate) {
     	int executeUpdate = 0;
     	Optional<Connection> connection = connectionToDb.getConnection();
@@ -177,6 +184,7 @@ public class ComputerDao implements Dao {
 		}
     	return executeUpdate;
     }
+
     private ResultSet prepareStetementAndExecureQuerytWithPage(Pageable page, PreparedStatement preparedStatement) throws SQLException {
     	int offset = (page.getNumber() - 1) * page.getSize();
     	int limit = page.getSize();
@@ -184,6 +192,7 @@ public class ComputerDao implements Dao {
     	preparedStatement.setInt(2, limit);
     	return preparedStatement.executeQuery();
     }
+
     private int preparStatementAndExecuteUpdate(ComputerEntity computer, Connection connection, boolean isUpdate) throws SQLException {
     	int index = 1;
     	String query = INSERT_COMPUTER;

@@ -27,8 +27,7 @@ private CompanyDao companyDao;
 	@BeforeEach
 	public void beforeEach() {
 		System.setProperty("testing", "true");
-		ConnectionToDb connectionToDb = new ConnectionToDb();
-		companyDao = CompanyDao.getInstance(connectionToDb);
+		companyDao = CompanyDao.getInstance();
 	}
 	
 	@Test

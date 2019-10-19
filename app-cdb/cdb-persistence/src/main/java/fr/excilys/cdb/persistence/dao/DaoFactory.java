@@ -15,10 +15,10 @@ public class DaoFactory {
             return null;
         }
         if(type.equals(TypeDao.COMPUTER)){
-            return ComputerDao.getInstance(connectionToDb);
+            return ComputerDao.getInstance();
         }
         else if(type.equals(TypeDao.COMPANY)) {
-            return CompanyDao.getInstance(connectionToDb);
+            return CompanyDao.getInstance();
         }
 
         return null;

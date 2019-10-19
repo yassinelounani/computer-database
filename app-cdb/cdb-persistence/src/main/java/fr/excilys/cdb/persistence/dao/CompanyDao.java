@@ -36,16 +36,16 @@ public class CompanyDao implements Dao {
 
 	private ConnectionToDb connectionTodb;
 
-    private CompanyDao(ConnectionToDb connectionTodb) {
+    private CompanyDao() {
         super();
-        this.connectionTodb = connectionTodb;
+        this.connectionTodb = ConnectionToDb.getInstance();
     }
     private static CompanyDao INSTANCE = null;
 
-    public static synchronized CompanyDao getInstance(ConnectionToDb connectionTodb)
+    public static synchronized CompanyDao getInstance()
     {
         if (INSTANCE == null) {
-            INSTANCE = new CompanyDao(connectionTodb);
+            INSTANCE = new CompanyDao();
         }
         return INSTANCE;
     }

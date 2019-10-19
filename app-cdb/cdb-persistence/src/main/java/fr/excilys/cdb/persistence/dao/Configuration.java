@@ -1,11 +1,16 @@
 package fr.excilys.cdb.persistence.dao;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Configuration {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ComputerDao.class);
 
     public static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     public static final String PORT = "3306";
     public static final String PROTOCOLE_MYSQL = "jdbc:mysql:";
-    public static final String HOST = "127.0.0.1";
+    public static final String HOST = "localhost";
     public static final String DATABASE = "computer-database-db";
     public static final String USER= "admincdb";
     public static final String PASSWORD= "qwerty1234";
@@ -17,9 +22,12 @@ public class Configuration {
     									  
 
     public static String getUrl(){
-    	if(System.getProperty("testing").equals("true")) {
+    	if(System.getProperty("testing") != null && System.getProperty("testing").equals("true")) {
+    		System.out.println("t");
+    		LOGGER.info("Get Url for connection to H2");
     		return getUrlForTest();
     	} else {
+    		LOGGER.info("Get Url for connection Mysql");
     		return getUrlConnection();
     	}
     }

@@ -22,21 +22,31 @@ public class ConnectionToDb {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionToDb.class);
     
+	private static ConnectionToDb instance = null;
+
+    public static synchronized ConnectionToDb getInstance() {
+        if (instance == null) {
+            instance = new ConnectionToDb();
+        }
+        return instance;
+    }
+    
 	public ConnectionToDb() {
         super();
     }
 	
-	public Optional<Connection> getConnection(){
+	public  Optional<Connection> getConnection(){
 		String url = null;
-        LOGGER.info("Construction of url connection data base");
         try {
 			if(connection == null || connection.isClosed()) {
+				Class.forName(Configuration.JDBC_DRIVER);
 				url = Configuration.getUrl();
+				LOGGER.info("Construction of url connection data base");
 				connection = DriverManager.getConnection(url, USER, PASSWORD);
 				return Optional.of(connection);
 						
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			System.out.println(e.getMessage());
 		}
         return Optional.of(connection);

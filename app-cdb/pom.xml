@@ -1,38 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  
   <modelVersion>4.0.0</modelVersion>
-  
   <!-- =============================================================== -->
   <!-- Informations of project -->
   <!-- =============================================================== -->
   <!-- ===== Informations Maven ===== -->
   <groupId>fr.excilys.cdb</groupId>
   <artifactId>app-cdb</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>app-cdb</name>
   <url>http://maven.apache.org</url>
-  
+
   <!-- =============================================================== -->
   <!-- Properties -->
   <!-- =============================================================== -->
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-  
-   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <self4j-api-version>1.7.28</self4j-api-version>
-    <mysql-connector-mysql-version>5.1.6</mysql-connector-mysql-version>
+    <mysql-connector-mysql-version>8.0.18</mysql-connector-mysql-version>
     <junit-jupiter-version>5.4.2</junit-jupiter-version>
     <mockito-version>3.1.0</mockito-version>
     <modelMapper-version>2.3.5</modelMapper-version>
     <h2-database-version>1.4.200</h2-database-version>
     <assertj-version>3.13.2</assertj-version>
-    <logback-version>1.0.1</logback-version>
-  
+    <logback-version>1.0.13</logback-version>
+    <checkstyle-maven-version>3.0.0</checkstyle-maven-version>
+    <maven-compiler-version>3.8.1</maven-compiler-version>
+    <maven-surefire-version>2.22.1</maven-surefire-version>
+    <maven.test.skip>true</maven.test.skip>
   </properties>
   
   <!-- =============================================================== -->
@@ -40,131 +39,126 @@
   <!-- =============================================================== -->
   <dependencies>
     <!-- ===== Modules ===== -->
-
-    
     <!-- ===== Third-party libraries ===== -->
     <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>${self4j-api-version}</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${self4j-api-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>${mysql-connector-mysql-version}</version>
     </dependency>
 
     <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>${mysql-connector-mysql-version}</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit-jupiter-version}</version>
+      <scope>test</scope>
     </dependency>
-    
+    	
     <dependency>
-		<groupId>org.junit.jupiter</groupId>
-		<artifactId>junit-jupiter-api</artifactId>
-		<version>${junit-jupiter-version}</version>
-		<scope>test</scope>
-	</dependency>
-	
-	<dependency>
-		<groupId>org.junit.jupiter</groupId>
-		<artifactId>junit-jupiter-engine</artifactId>
-		<version>${junit-jupiter-version}</version>
-		<scope>test</scope>
-	</dependency>
-	<dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-commons</artifactId>
-            <version>1.5.2</version>
-	 </dependency>
-
-	<dependency>
-    	<groupId>org.assertj</groupId>
-    	<artifactId>assertj-core</artifactId>
-    	<version>${assertj-version}</version>
-    	<scope>test</scope>
-	</dependency>
-		
-	
-
-
-  </dependencies> 
-  
-  	<!-- =============================================================== -->
-    <!-- Management Dependency -->
-    <!-- =============================================================== -->
-    <dependencyManagement>
-        <dependencies>
-            <!-- ===== Modules ===== -->
-            <dependency>
-                <groupId>fr.excilys.cdb</groupId>
-                <artifactId>cdb-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-          
-            <dependency>
-                <groupId>fr.excilys.cdb</groupId>
-                <artifactId>cdb-business</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.excilys.cdb</groupId>
-                <artifactId>cdb-</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.excilys.cdb</groupId>
-                <artifactId>cdb-persistence</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <!-- ===== Third-party libraries ===== -->
-   
-        </dependencies>
-    </dependencyManagement>
-
-    <!-- =============================================================== -->
-    <!-- Modules -->
-    <!-- =============================================================== -->
-  
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit-jupiter-version}</version>
+      <scope>test</scope>
+    </dependency>
+    	
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-commons</artifactId>
+      <version>1.5.2</version>
+      	 
+    </dependency>
+    	
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj-version}</version>
+      <scope>test</scope>
+    </dependency>
+    		
+  </dependencies>
+  <!-- =============================================================== -->
+  <!-- Management Dependency -->
+      
+  <!-- =============================================================== -->
+      
+  <dependencyManagement>
+    <dependencies>
+      <!-- ===== Modules ===== -->
+      <dependency>
+        <groupId>fr.excilys.cdb</groupId>
+        <artifactId>cdb-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+            
+      <dependency>
+        <groupId>fr.excilys.cdb</groupId>
+        <artifactId>cdb-business</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+                  
+      <dependency>
+        <groupId>fr.excilys.cdb</groupId>
+        <artifactId>cdb-</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+                  
+      <dependency>
+        <groupId>fr.excilys.cdb</groupId>
+        <artifactId>cdb-persistence</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <!-- ===== Third-party libraries ===== -->
+    </dependencies>
+        
+  </dependencyManagement>
+  <!-- =============================================================== -->
+  <!-- Modules -->
+  <!-- =============================================================== -->
   <modules>
     <module>cdb-business</module>
     <module>cdb-api</module>
     <module>cdb-persistence</module>
+    <module>cdb-webapp</module>
   </modules>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven-surefire-version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-version}</version>
+        <configuration>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.source}</target>
+        </configuration>
+      </plugin>
+      <!-- checkstyle maven-->
+<!--       <plugin> -->
+<!-- 	        <groupId>org.apache.maven.plugins</groupId> -->
+<!-- 	        <artifactId>maven-checkstyle-plugin</artifactId> -->
+<!-- 	        <version>${checkstyle-maven-version}</version> -->
+<!-- 	        <configuration> -->
+<!-- 	          <configLocation>cheks/checkstyle.xml</configLocation> -->
+<!-- 	          <suppressionsLocation>cheks/suppressions.xml</suppressionsLocation> -->
+<!-- 	        </configuration> -->
+<!-- 	        <executions> -->
+<!-- 	          <execution> -->
+<!-- 	            <goals> -->
+<!-- 	              <goal>check</goal> -->
+<!-- 	            </goals> -->
+<!-- 	          </execution> -->
+<!-- 	        </executions> -->
+<!--       </plugin> -->
       
-	<build>
-    	<plugins>
-    		<plugin>
-	            <groupId>org.apache.maven.plugins</groupId>
-	            <artifactId>maven-surefire-plugin</artifactId>
-	            <version>2.22.1</version>
-        	</plugin>
-      		<plugin>
-        		<groupId>org.apache.maven.plugins</groupId>
-        		<artifactId>maven-compiler-plugin</artifactId>
-       			 <version>3.8.1</version>
-        	<configuration>
-          		<source>${maven.compiler.source}</source>
-          		<target>${maven.compiler.source}</target>
-        	</configuration>
-      		</plugin>
-      		<!-- checkstyle maven-->
-      		
-      		<plugin>
-	           <groupId>org.apache.maven.plugins</groupId>
-	           <artifactId>maven-checkstyle-plugin</artifactId>
-	           <version>3.0.0</version>
-	          
-	           <configuration>
-	             <configLocation>cheks/checkstyle.xml</configLocation>
-	             <suppressionsLocation>cheks/suppressions.xml</suppressionsLocation>
-	           </configuration>
-	           <executions>
-	             <execution>
-	               <goals>
-	                 <goal>check</goal>
-	               </goals>
-	             </execution>
-	           </executions>
-	         </plugin>
-	  </plugins>
+    </plugins>
   </build>
-	   
+  
 </project>

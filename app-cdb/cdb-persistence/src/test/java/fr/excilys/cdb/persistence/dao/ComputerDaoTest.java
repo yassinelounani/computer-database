@@ -41,8 +41,7 @@ public class ComputerDaoTest {
 	@BeforeEach
 	public void beforeEach() {
 		System.setProperty("testing", "true");
-		ConnectionToDb connectionToDb = new ConnectionToDb();
-		computerDao = ComputerDao.getInstance(connectionToDb);
+		computerDao = ComputerDao.getInstance();
 		
 	}
 	
