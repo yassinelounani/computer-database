@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 
 import fr.excilys.cdb.api.dto.Company;
 import fr.excilys.cdb.persistence.dao.CompanyDao;
-import fr.excilys.cdb.persistence.mappers.Mapper;
-import fr.excilys.cdb.persistence.models.CompanyBuilder;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
+import static fr.excilys.cdb.persistence.mappers.Mapper.mapAll;
+import fr.excilys.cdb.persistence.models.CompanyEntity.CompanyBuilder;
 
 public class CompanyServiceExporterTest {
 	
@@ -38,12 +38,12 @@ public class CompanyServiceExporterTest {
 		CompanyServiceExporter.instance = null;
 	}
 	
-	
+	@Test
 	public void test_getComputers_expect_success() {
 		//prepare
 		CompanyDao mock = mock(CompanyDao.class);
 		List<CompanyEntity> companyEntities = Arrays.asList(COMPANY_APPLE, COMPANY_HP);
-		List<Company> companies = Mapper.mapAll(companyEntities, Company.class);
+		List<Company> companies = mapAll(companyEntities, Company.class);
 		doReturn(companyEntities).when(mock).getCompanies();
 		companyService = CompanyServiceExporter.getInstance();
 		System.out.println(companyService);

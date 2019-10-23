@@ -6,22 +6,26 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
 import fr.excilys.cdb.api.dto.Computer;
+import fr.excilys.cdb.api.dto.ComputerId;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 import fr.excilys.cdb.persistence.dao.CompanyDao;
 import fr.excilys.cdb.persistence.dao.ComputerDao;
 import fr.excilys.cdb.persistence.mappers.Mapper;
-import fr.excilys.cdb.persistence.models.CompanyBuilder;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
-import fr.excilys.cdb.persistence.models.ComputerBuilder;
+import fr.excilys.cdb.persistence.models.CompanyEntity.CompanyBuilder;
 import fr.excilys.cdb.persistence.models.ComputerEntity;
+import fr.excilys.cdb.persistence.models.ComputerEntity.ComputerBuilder;
 
 public class ComputerServiceExporterTest {
 
@@ -64,7 +68,7 @@ public class ComputerServiceExporterTest {
 		ComputerServiceExporter.instance = null;
 	}
 
-	
+	@Test
 	public void test_getComputers_expect_success() {
 		//prepare
 		ComputerDao mockDao = mock(ComputerDao.class);
@@ -78,7 +82,7 @@ public class ComputerServiceExporterTest {
 		assertThat(getComputers).containsExactlyElementsOf(computer);
 	}
 
-	
+	@Test
 	public void test_getComputerById_expect_success() {
 		//prepare
 		ComputerDao mockDao = mock(ComputerDao.class);
@@ -87,12 +91,13 @@ public class ComputerServiceExporterTest {
 		computerService = ComputerServiceExporter.getInstance();
 		System.out.println(computerService);
 		//execute
-		Computer computer = computerService.getComputerById(ID_1).get();
+		ComputerId computerId = new ComputerId(ID_1);
+		Computer computer = computerService.getComputerById(computerId).get();
 		//verify
 		assertThat(computer).isEqualToComparingFieldByField(computer);
 	}
 
-	
+	@Test
 	public void test_addComputer_expect_exception() {
 		//prepare
 		CompanyDao mockCompany = mock(CompanyDao.class);
@@ -105,7 +110,7 @@ public class ComputerServiceExporterTest {
 				.hasMessageContaining("Company with id :"+ ID_2 + " not Exist referenced by company_id");
 	}
 
-	
+	@Test
 	public void test_addComputer_expect_success() {
 		//prepare
 		CompanyDao mockCompany = mock(CompanyDao.class);

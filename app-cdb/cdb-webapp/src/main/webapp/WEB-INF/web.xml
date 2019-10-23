@@ -3,6 +3,26 @@
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
+	<servlet>
+		<servlet-name>AddComputerSurvelet</servlet-name>
+		<display-name>AddComputerSurvelet</display-name>
+		<description></description>
+		<servlet-class>fr.excelys.cdb.AddComputerSurvelet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>EditComputer</servlet-name>
+		<display-name>EditComputer</display-name>
+		<description></description>
+		<servlet-class>fr.excelys.cdb.EditComputer</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddComputerSurvelet</servlet-name>
+		<url-pattern>/AddComputerSurvelet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>EditComputer</servlet-name>
+		<url-pattern>/EditComputer</url-pattern>
+	</servlet-mapping>
 <taglib>
     <taglib-uri>http://java.sun.com/jstl/core_rt</taglib-uri>
     <taglib-location>/WEB-INF/tld/c-rt.tld</taglib-location>

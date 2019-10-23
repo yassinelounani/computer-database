@@ -4,12 +4,8 @@
 <%@page import="java.util.List"%>
 <%@page import="fr.excilys.cdb.api.dto.Computer"%>
 <%@ page isELIgnored ="false" %>
-<!-- controle, iterations, tests, variables -->
+<!-- control, iterations, tests, variables -->
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!-- traitement XML -->
-<%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
-<!-- formattage des donnees -->
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
@@ -44,7 +40,7 @@
                     </form>
                 </div>
                 <div class="pull-right">
-                    <a class="btn btn-success" id="addComputer" href="addComputer.html">Add Computer</a> 
+                    <a class="btn btn-success" id="addComputer" href="addComputer">Add Computer</a> 
                     <a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Edit</a>
                 </div>
             </div>
@@ -87,18 +83,17 @@
                     </tr>
                 </thead>
                 <!-- Browse attribute computers -->
-                
                 	<tbody id="results">
 	                    <c:forEach var="item" items="${computers}">
 	                    <tr>
 	                        <td class="editMode">
-	                            <input type="checkbox" name="cb" class="cb" value="0" >
+	                            <input type="checkbox" name="cb" class="cb" value="${item.id}" >
 	                        </td>
 	                        <td>
-	                            <a href="editComputer.html" onclick=""> ${item.name }</a>
+	                            <a href="editComputer?id=${item.id}" onclick=""> ${item.name }</a>
 	                        </td>
-	                        <td>${item.dateIntroduced}</td>
-	                        <td>${item.dateDiscontinued}</td>
+	                        <td>${item.introduced}</td>
+	                        <td>${item.discontinued}</td>
 	                        <td>${item.nameCompany}</td>
 	                    </tr>
 	                    </c:forEach>
@@ -111,29 +106,44 @@
     <footer class="navbar-fixed-bottom">
         <div class="container text-center">
             <ul class="pagination">
-                <li>
-                    <a href="#" aria-label="Previous">
-                      <span aria-hidden="true">&laquo;</span>
-                  </a>
-              </li>
-              <li><a href="#">1</a></li>
-              <li><a href="#">2</a></li>
-              <li><a href="#">3</a></li>
-              <li><a href="#">4</a></li>
-              <li><a href="#">5</a></li>
-              <li>
-                <a href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-
+                <c:if test="${currentPage != 1}">
+           			 <li class="page-item"><a class="page-link" 
+                		href="dashboard?page=${currentPage - 1}&size=${size}">Previous</a>
+            		</li>
+            	</c:if>
+             	<c:forEach begin="${startPage}" end="${endPage}" var="i">
+            		<c:choose>
+	                	<c:when test="${currentPage eq i}">
+	                    	<li class="page-item active"><a class="page-link">
+	                            ${i} <span class="sr-only">(current)</span></a>
+	                    	</li>
+	                	</c:when>
+	                	<c:otherwise>
+	                    	<li class="page-item"><a class="page-link" 
+	                        href="dashboard?page=${i}&size=${size}">${i}</a>
+	                    	</li>
+	                	</c:otherwise>
+            		</c:choose>
+       		 	</c:forEach>
+              
+        		<c:if test="${currentPage lt totalOfPages}">
+           			<li class="page-item"><a class="page-link" href="dashboard?page=${currentPage +1}&size=${size}">Next</a>
+           			</li>
+        		</c:if> 
+       		 </ul>
+		
         <div class="btn-group btn-group-sm pull-right" role="group" >
-            <button type="button" class="btn btn-default">10</button>
-            <button type="button" class="btn btn-default">50</button>
-            <button type="button" class="btn btn-default">100</button>
+            	<a class="page-link" href="dashboard?page=${1}&size=${10}">
+            		<button type="button" class="btn btn-default">10</button>
+           	 	</a>
+            	<a class="page-link" href="dashboard?page=${1}&size=${50}">
+            		<button type="button" class="btn btn-default">50</button>
+           		</a>
+            	<a class="page-link" href="dashboard?page=${1}&size=${100}">
+            		<button type="button" class="btn btn-default">100</button>
+            	</a>
         </div>
-
+       </div>
     </footer>
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>

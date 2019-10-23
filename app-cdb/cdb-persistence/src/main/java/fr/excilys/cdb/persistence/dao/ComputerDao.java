@@ -1,6 +1,7 @@
 package fr.excilys.cdb.persistence.dao;
 
 import static fr.excilys.cdb.persistence.dao.ConnectionToDb.closeConnectionAndStetement;
+import static fr.excilys.cdb.persistence.dao.ConnectionToDb.prepareStetementAndExecureQuerytWithPage;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,6 +29,9 @@ public class ComputerDao implements Dao {
 	private static final String GET_ALL_COMPUTERS = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id;";
 
+	private static final String GET_TOTAL_PAGES = "SELECT COUNT(computer.id) "
+			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id;";
+
 	private static final String GET_ALL_COMPUTERS_WITH_PAGE = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
 			+ "LIMIT ?, ?";
@@ -45,6 +49,8 @@ public class ComputerDao implements Dao {
 
 	private static final String DELETE_COMPUTER = "DELETE FROM computer "
 		    + "WHERE computer.id = ?";
+
+	private static final String GET_MAX = "SELECT MAX(computer.id) as max FROM computer";
 
 	private static final int NO_CONNECTION = -1;
 	private static final boolean IS_UPDATE = true;
@@ -69,11 +75,12 @@ public class ComputerDao implements Dao {
     	Statement statement = null;
     	Optional<Connection> connection = connectionToDb.getConnection();
     	List<ComputerEntity> computers = new ArrayList<>();
-    	if (!connection.isPresent()) {
-    		return computers;
-    	}
-    	LOGGER.info("connection well-established to the database ...................");
     	try {
+	    	if (!connection.isPresent()) {
+	    		return computers;
+	    	}
+	    	LOGGER.info("connection well-established to the database ...................");
+    	
 		    	statement = connection.get().createStatement();
 		    	LOGGER.info("query : {}", GET_ALL_COMPUTERS);
 		    	ResultSet results = statement.executeQuery(GET_ALL_COMPUTERS);
@@ -112,6 +119,10 @@ public class ComputerDao implements Dao {
 				closeConnectionAndStetement(connection.get(), preparedStatement);
 		}
     	return computers;
+    }
+
+    public long totalOfelements() {
+    	return aggregatedOperation(GET_TOTAL_PAGES);
     }
 
     public Optional<ComputerEntity> getComputerById(long id) {
@@ -185,14 +196,6 @@ public class ComputerDao implements Dao {
     	return executeUpdate;
     }
 
-    private ResultSet prepareStetementAndExecureQuerytWithPage(Pageable page, PreparedStatement preparedStatement) throws SQLException {
-    	int offset = (page.getNumber() - 1) * page.getSize();
-    	int limit = page.getSize();
-    	preparedStatement.setInt(1, offset);
-    	preparedStatement.setInt(2, limit);
-    	return preparedStatement.executeQuery();
-    }
-
     private int preparStatementAndExecuteUpdate(ComputerEntity computer, Connection connection, boolean isUpdate) throws SQLException {
     	int index = 1;
     	String query = INSERT_COMPUTER;
@@ -206,8 +209,8 @@ public class ComputerDao implements Dao {
     		preparedStatement.setLong(index, computer.getId());
     	}
     	preparedStatement.setString(index + 1, computer.getName());
-    	preparedStatement.setDate(index + 2, HelperDate.dateToSql(computer.getDateIntroduced()));
-    	preparedStatement.setDate(index + 3, HelperDate.dateToSql(computer.getDateDiscontinued()));
+    	preparedStatement.setDate(index + 2, HelperDate.dateToSql(computer.getIntroduced()));
+    	preparedStatement.setDate(index + 3, HelperDate.dateToSql(computer.getDiscontinued()));
     	if (computer.getCompany().getId() > 0) {
     		preparedStatement.setLong(index + 4, computer.getCompany().getId());
     	} else {
@@ -217,5 +220,33 @@ public class ComputerDao implements Dao {
     		preparedStatement.setLong(index + 5, computer.getId());
     	}
     	return preparedStatement.executeUpdate();
+    }
+
+    public long getMaxIdComputer() {
+    	return aggregatedOperation(GET_MAX);
+    }
+
+    private long aggregatedOperation(String query) {
+    	Optional<Connection> connection = connectionToDb.getConnection();
+    	Statement statement = null;
+    	long value = 0;
+    	if (!connection.isPresent()) {
+    		return NO_CONNECTION;
+    	}
+    	LOGGER.info("connection well-established to the database...................");
+    	try {
+    		statement = connection.get().createStatement();
+	    	LOGGER.info("query : {}", GET_MAX);
+	    	ResultSet results = statement.executeQuery(GET_MAX);
+	    	if (results.first()) {
+	    		value = results.getLong("max");
+	    		LOGGER.info("GET AGGREGATION....................................");
+	    	}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			closeConnectionAndStetement(connection.get(), statement);
+		}
+    	return value;
     }
 }

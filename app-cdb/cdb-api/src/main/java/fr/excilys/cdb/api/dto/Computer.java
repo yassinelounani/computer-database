@@ -2,56 +2,76 @@ package fr.excilys.cdb.api.dto;
 
 import java.util.Objects;
 
+import javax.validation.constraints.NotBlank;
+
+import fr.excilys.cdb.api.validation.IntroducedBeforeDiscontinued;
+import fr.excilys.cdb.api.validation.ValidDateFormat;
+
+@IntroducedBeforeDiscontinued
 public class Computer {
 
 	private long id;
+	@NotBlank
 	private String name;
-	private String dateIntroduced;
-	private String dateDiscontinued;
-	private String idCompany;
+	
+	@ValidDateFormat(date = "introduced")
+	private String introduced;
+	@ValidDateFormat(date = "discontibued")
+	private String discontinued;
+	private long idCompany;
 	private String nameCompany;
-
+	
 	public Computer() {
 		super();
+	}
+	
+	private Computer(Builder builder) {
+		super();
+		this.id = builder.id;
+		this.name = builder.name;
+		this.introduced = builder.introduced;
+		this.discontinued = builder.discontinued;
+		this.idCompany = builder.idCompany;
+		this.nameCompany = builder.nameCompany;
 	}
 
 	public long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return name;
+	}
+
+	public String getIntroduced() {
+		return introduced;
+	}
+
+	public String getDiscontinued() {
+		return discontinued;
+	}
+
+	public long getIdCompany() {
+		return idCompany;
+	}	
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public String getDateIntroduced() {
-		return dateIntroduced;
+	public void setIntroduced(String introduced) {
+		this.introduced = introduced;
 	}
 
-	public void setDateIntroduced(String dateIntroduced) {
-		this.dateIntroduced = dateIntroduced;
+	public void setDiscontinued(String discontinued) {
+		this.discontinued = discontinued;
 	}
 
-	public String getDateDiscontinued() {
-		return dateDiscontinued;
-	}
-
-	public void setDateDiscontinued(String dateDiscontinued) {
-		this.dateDiscontinued = dateDiscontinued;
-	}
-
-	public String getIdCompany() {
-		return idCompany;
-	}
-
-	public void setIdCompany(String idCompany) {
+	public void setIdCompany(long idCompany) {
 		this.idCompany = idCompany;
 	}
 
@@ -65,8 +85,8 @@ public class Computer {
 
 	@Override
 	public String toString() {
-		return "Computer [id=" + id + ", name=" + name + ", dateIntroduced=" + dateIntroduced + ", dateDiscontinued="
-				+ dateDiscontinued + ", idCompany=" + idCompany + ", nameCompany=" + nameCompany + "]";
+		return "Computer [id=" + id + ", name=" + name + ", introduced=" + introduced + ", discontinued="
+				+ discontinued + ", idCompany=" + idCompany + "]";
 	}
 
 	@Override
@@ -83,12 +103,64 @@ public class Computer {
 	    Computer computer = (Computer) o;
 	    return Objects.equals(id, computer.id)
 	            && Objects.equals(name, computer.name)
-	            && Objects.equals(dateIntroduced, computer.dateIntroduced)
-	            && Objects.equals(dateDiscontinued, computer.dateDiscontinued);
+	            && Objects.equals(introduced, computer.introduced)
+	            && Objects.equals(discontinued, computer.discontinued)
+	            && Objects.equals(idCompany, computer.idCompany);
 	}
 
 	@Override
 	public int hashCode() {
-		 return Objects.hash(id, name, dateIntroduced, dateDiscontinued);
+		 return Objects.hash(id, name, introduced, discontinued, idCompany);
 	}
+
+	public static class Builder {
+
+		private long id;
+		private String name;
+		private String introduced;
+		private String discontinued;
+		private long idCompany;
+		private String nameCompany;
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private Builder() {}
+		
+		public Builder setId(long id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder setName(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Builder setIntroduced(String introduced) {
+			this.introduced = introduced;
+			return this;
+		}
+
+		public Builder setDicontinued(String discontinued) {
+			this.discontinued = discontinued;
+			return this;
+		}
+
+		public Builder setIdCompany(long idCompany) {
+			this.idCompany = idCompany;
+			return this;
+		}
+
+		public Computer build() {
+			return new Computer(this);
+		}
+
+		public Builder setNameComapny(String nameCompany) {
+			this.nameCompany = nameCompany;
+			return this;
+		}
+	}
+
 }

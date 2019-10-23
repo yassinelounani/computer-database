@@ -2,10 +2,10 @@ package fr.excilys.cdb.persistence.dao;
 
 import java.time.LocalDate;
 
-import fr.excilys.cdb.persistence.models.CompanyBuilder;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
-import fr.excilys.cdb.persistence.models.ComputerBuilder;
+import fr.excilys.cdb.persistence.models.CompanyEntity.CompanyBuilder;
 import fr.excilys.cdb.persistence.models.ComputerEntity;
+import fr.excilys.cdb.persistence.models.ComputerEntity.ComputerBuilder;
 
 public class DbInit {
 	

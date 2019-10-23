@@ -23,6 +23,7 @@
     <self4j-api-version>1.7.28</self4j-api-version>
     <mysql-connector-mysql-version>8.0.18</mysql-connector-mysql-version>
     <junit-jupiter-version>5.4.2</junit-jupiter-version>
+    <junit-commons-version>1.5.2</junit-commons-version>
     <mockito-version>3.1.0</mockito-version>
     <modelMapper-version>2.3.5</modelMapper-version>
     <h2-database-version>1.4.200</h2-database-version>
@@ -45,6 +46,7 @@
       <artifactId>slf4j-api</artifactId>
       <version>${self4j-api-version}</version>
     </dependency>
+
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
@@ -57,34 +59,42 @@
       <version>${junit-jupiter-version}</version>
       <scope>test</scope>
     </dependency>
-    	
+	
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit-jupiter-version}</version>
       <scope>test</scope>
     </dependency>
-    	
+
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-commons</artifactId>
-      <version>1.5.2</version>
-      	 
+      <version>${junit-commons-version}</version>
     </dependency>
-    	
+
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <version>${assertj-version}</version>
       <scope>test</scope>
     </dependency>
+
+	<dependency>
+    <groupId>javax.validation</groupId>
+    <artifactId>validation-api</artifactId>
+    <version>2.0.1.Final</version>
+</dependency> 
+<dependency>
+    <groupId>javax.xml.bind</groupId>
+    <artifactId>jaxb-api</artifactId>
+    <version>2.3.1</version>
+</dependency>   
     		
   </dependencies>
   <!-- =============================================================== -->
   <!-- Management Dependency -->
-      
   <!-- =============================================================== -->
-      
   <dependencyManagement>
     <dependencies>
       <!-- ===== Modules ===== -->
@@ -111,7 +121,6 @@
         <artifactId>cdb-persistence</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <!-- ===== Third-party libraries ===== -->
     </dependencies>
         
   </dependencyManagement>
@@ -125,6 +134,9 @@
     <module>cdb-webapp</module>
   </modules>
   <build>
+  <!-- =============================================================== -->
+  <!-- Plugins -->
+  <!-- =============================================================== -->
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

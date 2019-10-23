@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import fr.excilys.cdb.api.dto.Computer;
+import fr.excilys.cdb.api.dto.ComputerId;
 import fr.excilys.cdb.api.dto.Page;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 import fr.excilys.cdb.api.exception.NotFoundComputerException;
@@ -21,11 +22,17 @@ public interface ComputerService {
 	 */
 	List<Computer> getComputersWithPage(Page page);
 	/**
+	 * get number of page with size in parameter
+	 * @param size of page
+	 * @return total page 
+	 */
+	int getTotalOfPages(Page size);
+	/**
 	 * get computer with id
 	 * @param id of computer to find
 	 * @return Optional of computer;
 	 */
-	Optional<Computer> getComputerById(long id);
+	Optional<Computer> getComputerById(ComputerId computerId);
 	/**
 	 * add computer in database
 	 * @param computer to add with all parameters
@@ -38,7 +45,7 @@ public interface ComputerService {
 	 * @throws NotFoundComputerException if id of computer not exist
 	 * @return 1 if computer deleted else 0
 	 */
-	int deleteComputerById(long id) throws NotFoundComputerException;
+	int deleteComputerById(ComputerId computerId) throws NotFoundComputerException;
 	/**
 	 * update computer
 	 * @param computer

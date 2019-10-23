@@ -21,15 +21,14 @@ import fr.excilys.cdb.persistence.models.Pageable;
 
 public class CompanyDaoTest {
 
-private CompanyDao companyDao;
-	
-	
+	private CompanyDao companyDao;
+
 	@BeforeEach
 	public void beforeEach() {
 		System.setProperty("testing", "true");
 		companyDao = CompanyDao.getInstance();
 	}
-	
+
 	@Test
 	public void test_getComputers_expect_success(){
 		//execute
@@ -38,32 +37,27 @@ private CompanyDao companyDao;
 		assertThat(companies).isNotEmpty()
 							 .hasSize(VALUE_10);
 	}
-	
+
 	@Test
 	public void test_getAllComputer_with_Page_expect_success() {
 		//prepare
-		Pageable pageable = new Pageable()
-				.setNumber(PAGE_2)
-				.setSize(SIZE_5);
+		Pageable pageable = new Pageable(PAGE_2,SIZE_5);
 		//execute
 		List<CompanyEntity> computers = companyDao.getCompaniesWithPage(pageable);
 		//verify
 		assertThat(computers).hasSize(5);
 	}
-	
-	
+
 	@Test
 	public void test_getAllComputer_with_Page_expect_first() {
 		//prepare
-		Pageable pageable = new Pageable()
-				.setNumber(PAGE_1)
-				.setSize(SIZE_5);
+		Pageable pageable = new Pageable(PAGE_1, SIZE_5);
 		//execute
 		List<CompanyEntity> computers = companyDao.getCompaniesWithPage(pageable);
 		//verify
 		assertThat(computers).first().isEqualToComparingFieldByField(COMPANY);
 	}
-	
+
 	@Test
 	public void test_getComputerByID_expect_computer_id_1() {
 		//execute
@@ -71,6 +65,7 @@ private CompanyDao companyDao;
 		//verify
 		assertThat(computer).isEqualToComparingFieldByField(COMPANY);
 	}
+
 	@Test
 	public void test_getComputerByID_expect_no_computer() {
 		//execute
@@ -78,8 +73,7 @@ private CompanyDao companyDao;
 		//verify
 		assertThat(computer.isPresent()).isFalse();
 	}
-	
-	
+
 	@AfterEach
 	public void afterAll() {
 		System.setProperty("testing", "false");

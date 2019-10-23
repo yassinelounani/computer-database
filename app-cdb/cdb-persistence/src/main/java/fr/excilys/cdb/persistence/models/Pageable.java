@@ -1,34 +1,34 @@
 package fr.excilys.cdb.persistence.models;
 
 public class Pageable {
+
 	private int number;
 	private int size;
-	
-	public Pageable() {
+
+	public Pageable(int number, int size) {
 		super();
+		this.number = number;
+		this.size = size;
 	}
-	
+
 	public int getNumber() {
 		return number;
 	}
 
-	public Pageable setNumber(int number){
+	public void setNumber(int number){
 		this.number = number;
-		return this;
 	}
 
 	public int getSize() {
 		return size;
 	}
 
-	public Pageable setSize(int size) {
+	public void setSize(int size) {
 		this.size = size;
-		return this;
 	}
 
 	@Override
 	public String toString() {
 		return "Page [number=" + number + ", size=" + size + "]";
 	}
-
 }

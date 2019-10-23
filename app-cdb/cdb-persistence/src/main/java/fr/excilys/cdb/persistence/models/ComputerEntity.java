@@ -7,69 +7,50 @@ public class ComputerEntity {
 
 	private long id;
 	private String name;
-	private LocalDate dateIntroduced;
-	private LocalDate dateDiscontinued;
+	private LocalDate introduced;
+	private LocalDate discontinued;
 	private CompanyEntity company;
-	
-	public ComputerEntity() {
+
+	private ComputerEntity(ComputerBuilder builder){
 		super();
-	}
-	
-	public ComputerEntity(ComputerBuilder builder){
-		super();
-		this.id = builder.getId();
-		this.name = builder.getName();
-		this.dateIntroduced = builder.getIntroduced();
-		this.dateDiscontinued = builder.getDiscontinued();
-		this.company = builder.getCompany();
+		this.id = builder.id;
+		this.name = builder.name;
+		this.introduced = builder.introduced;
+		this.discontinued = builder.discontinued;
+		this.company = builder.company;
 	}
 
 	public long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public LocalDate getDateIntroduced() {
-		return dateIntroduced;
+
+	public LocalDate getIntroduced() {
+		return introduced;
 	}
 
-	public void setDateIntroduced(LocalDate dateIntroduced) {
-		this.dateIntroduced = dateIntroduced;
-	}
-
-	public LocalDate getDateDiscontinued() {
-		return dateDiscontinued;
-	}
-
-	public void setDateDiscontinued(LocalDate dateDiscontinued) {
-		this.dateDiscontinued = dateDiscontinued;
+	public LocalDate getDiscontinued() {
+		return discontinued;
 	}
 
 	public CompanyEntity getCompany() {
 		return company;
 	}
 
-	public void setCompany(CompanyEntity company) {
-		this.company = company;
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	@Override
 	public String toString() {
-		return "Computer [id=" + id + ", name=" + name + ", dateIntroduce=" + dateIntroduced + ", dateDisconnected="
-				+ dateDiscontinued + ", company=" + company + "]";
+		return "Computer [id=" + id + ", name=" + name + ", introduce=" + introduced + ", discontinued="
+				+ discontinued + ", company=" + company + "]";
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 	    if (this == o) return true;
@@ -78,11 +59,52 @@ public class ComputerEntity {
 	    ComputerEntity computer = (ComputerEntity) o;
 	    return Objects.equals(id, computer.id)
 	            && Objects.equals(name, computer.name)
-	            && Objects.equals(dateIntroduced, computer.dateIntroduced)
-	            && Objects.equals(dateDiscontinued, computer.dateDiscontinued)
+	            && Objects.equals(introduced, computer.introduced)
+	            && Objects.equals(discontinued, computer.discontinued)
 	            && Objects.equals(company, computer.company);
 	}
 
+	public static class ComputerBuilder {
 
-	
+		private long id;
+		private String name;
+		private LocalDate introduced;
+		private LocalDate discontinued;
+		private CompanyEntity company;
+
+		public static ComputerBuilder newInstance() {
+			return new ComputerBuilder();
+		}
+		
+		private ComputerBuilder() {}
+		
+		public ComputerBuilder setId(long id) {
+			this.id = id;
+			return this;
+		}
+
+		public ComputerBuilder setName(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public ComputerBuilder setIntroduced(LocalDate introduced) {
+			this.introduced = introduced;
+			return this;
+		}
+
+		public ComputerBuilder setDicontinued(LocalDate discontinued) {
+			this.discontinued = discontinued;
+			return this;
+		}
+
+		public ComputerBuilder setCompany(CompanyEntity company) {
+			this.company = company;
+			return this;
+		}
+
+		public ComputerEntity build() {
+			return new ComputerEntity(this);
+		}
+	}
 }

@@ -10,11 +10,10 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 
-import fr.excilys.cdb.persistence.models.CompanyBuilder;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
-import fr.excilys.cdb.persistence.models.ComputerBuilder;
+import fr.excilys.cdb.persistence.models.CompanyEntity.CompanyBuilder;
 import fr.excilys.cdb.persistence.models.ComputerEntity;
-
+import fr.excilys.cdb.persistence.models.ComputerEntity.ComputerBuilder;
 
 public class Mapper {
 
@@ -44,7 +43,6 @@ public class Mapper {
 							  .build();
 	}
 
-
 	public static CompanyEntity mapResultSetToCompany(ResultSet result, String id) throws SQLException {
 		return CompanyBuilder.newInstance()
 				.setId(result.getLong(id))
@@ -55,7 +53,6 @@ public class Mapper {
 	public static <D, T> D map(final T entity, Class<D> outClass) {
         return modelMapper.map(entity, outClass);
     }
-
 
     public static <D, T> List<D> mapAll(final Collection<T> entityList, Class<D> outCLass) {
         return entityList.stream()

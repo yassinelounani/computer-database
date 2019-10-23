@@ -7,26 +7,18 @@ public class CompanyEntity {
 	private long id;
 	private String name;
 	
-	public CompanyEntity(CompanyBuilder builder) {
+	private CompanyEntity(CompanyBuilder builder) {
 		super();
-		this.id = builder.getId();
-		this.name = builder.getName();
+		this.id = builder.id;
+		this.name = builder.name;
 	}
 	
 	public String getName() {
 		return name;
 	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 	
 	public long getId() {
 		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
 	}
 
 	@Override
@@ -44,4 +36,28 @@ public class CompanyEntity {
 	            && Objects.equals(name, company.name);
 	}
 	
+	public static class CompanyBuilder {
+
+		private long id;
+		private String name;
+
+		private CompanyBuilder() {}
+
+		public static CompanyBuilder newInstance() {
+			return new CompanyBuilder();
+		}
+
+		public CompanyBuilder setId(long id) {
+			this.id = id;
+			return this;
+		}
+		public CompanyBuilder setName(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public CompanyEntity build() {
+			return new CompanyEntity(this);
+		}
+	}
 }

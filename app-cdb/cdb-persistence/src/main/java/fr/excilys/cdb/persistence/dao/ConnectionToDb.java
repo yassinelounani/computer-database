@@ -44,7 +44,6 @@ public class ConnectionToDb {
 				LOGGER.info("Construction of url connection data base");
 				connection = DriverManager.getConnection(url, USER, PASSWORD);
 				return Optional.of(connection);
-						
 			}
 		} catch (SQLException | ClassNotFoundException e) {
 			System.out.println(e.getMessage());

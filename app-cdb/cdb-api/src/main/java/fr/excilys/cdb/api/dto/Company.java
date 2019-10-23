@@ -2,9 +2,13 @@ package fr.excilys.cdb.api.dto;
 
 import java.util.Objects;
 
+import javax.validation.constraints.Min;
+
 public final class Company {
+	@Min(1)
 	private long id;
 	private String name;
+
 	public Company() {
 		super();
 	}

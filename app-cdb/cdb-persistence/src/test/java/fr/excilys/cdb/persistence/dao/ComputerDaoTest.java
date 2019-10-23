@@ -1,5 +1,19 @@
 package fr.excilys.cdb.persistence.dao;
 
+import static fr.excilys.cdb.persistence.dao.DbInit.APPLE_II;
+import static fr.excilys.cdb.persistence.dao.DbInit.COMPANY;
+import static fr.excilys.cdb.persistence.dao.DbInit.COMPUTER;
+import static fr.excilys.cdb.persistence.dao.DbInit.DISCONTINUED;
+import static fr.excilys.cdb.persistence.dao.DbInit.ID_1;
+import static fr.excilys.cdb.persistence.dao.DbInit.ID_100;
+import static fr.excilys.cdb.persistence.dao.DbInit.ID_6;
+import static fr.excilys.cdb.persistence.dao.DbInit.INTRODUCED;
+import static fr.excilys.cdb.persistence.dao.DbInit.PAGE_2;
+import static fr.excilys.cdb.persistence.dao.DbInit.QUNTUM_MAC;
+import static fr.excilys.cdb.persistence.dao.DbInit.SIZE_5;
+import static fr.excilys.cdb.persistence.dao.DbInit.UPDATE_KO;
+import static fr.excilys.cdb.persistence.dao.DbInit.UPDATE_OK;
+import static fr.excilys.cdb.persistence.dao.DbInit.VALUE_20;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -10,41 +24,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import fr.excilys.cdb.persistence.models.CompanyBuilder;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
-import fr.excilys.cdb.persistence.models.ComputerBuilder;
+import fr.excilys.cdb.persistence.models.CompanyEntity.CompanyBuilder;
 import fr.excilys.cdb.persistence.models.ComputerEntity;
+import fr.excilys.cdb.persistence.models.ComputerEntity.ComputerBuilder;
 import fr.excilys.cdb.persistence.models.Pageable;
-
-import static fr.excilys.cdb.persistence.dao.DbInit.APPLE_II;
-import static fr.excilys.cdb.persistence.dao.DbInit.COMPANY;
-import static fr.excilys.cdb.persistence.dao.DbInit.COMPUTER;
-import static fr.excilys.cdb.persistence.dao.DbInit.DISCONTINUED;
-import static fr.excilys.cdb.persistence.dao.DbInit.ID_1;
-import static fr.excilys.cdb.persistence.dao.DbInit.ID_100;
-import static fr.excilys.cdb.persistence.dao.DbInit.ID_6;
-import static fr.excilys.cdb.persistence.dao.DbInit.INTRODUCED;
-import static fr.excilys.cdb.persistence.dao.DbInit.PAGE_2;
-import static fr.excilys.cdb.persistence.dao.DbInit.VALUE_20;
-import static fr.excilys.cdb.persistence.dao.DbInit.QUNTUM_MAC;
-import static fr.excilys.cdb.persistence.dao.DbInit.SIZE_5;
-import static fr.excilys.cdb.persistence.dao.DbInit.UPDATE_KO;
-import static fr.excilys.cdb.persistence.dao.DbInit.UPDATE_OK;
 
 @DisplayName("Test Computer Dao")
 public class ComputerDaoTest {
-	
-	
+
 	private ComputerDao computerDao;
-	
-	
+
+
 	@BeforeEach
 	public void beforeEach() {
 		System.setProperty("testing", "true");
 		computerDao = ComputerDao.getInstance();
-		
 	}
-	
+
 	@Test
 	public void test_getComputers_expect_success(){
 		//execute
@@ -53,32 +50,27 @@ public class ComputerDaoTest {
 		assertThat(computers).isNotEmpty()
 							 .hasSize(VALUE_20);
 	}
-	
+
 	@Test
 	public void test_getAllComputer_with_Page_expect_success() {
 		//prepare
-		Pageable pageable = new Pageable()
-				.setNumber(PAGE_2)
-				.setSize(SIZE_5);
+		Pageable pageable = new Pageable(PAGE_2, SIZE_5);
 		//execute
 		List<ComputerEntity> computers = computerDao.getComputersWithPage(pageable);
 		//verify
 		assertThat(computers).hasSize(5);
 	}
-	
-	
+
 	@Test
 	public void test_getAllComputer_with_Page_expect_first() {
 		//prepare
-		Pageable pageable = new Pageable()
-				.setNumber(PAGE_2)
-				.setSize(SIZE_5);
+		Pageable pageable = new Pageable(PAGE_2, SIZE_5);
 		//execute
 		List<ComputerEntity> computers = computerDao.getComputersWithPage(pageable);
 		//verify
 		assertThat(computers).first().isEqualToComparingFieldByField(COMPUTER);
 	}
-	
+
 	@Test
 	public void test_getComputerByID_expect_computer_id_6() {
 		//execute
@@ -86,6 +78,7 @@ public class ComputerDaoTest {
 		//verify
 		assertThat(computer).isEqualToComparingFieldByField(COMPUTER);
 	}
+
 	@Test
 	public void test_getComputerByID_expect_no_computer() {
 		//execute
@@ -93,6 +86,7 @@ public class ComputerDaoTest {
 		//verify
 		assertThat(computer.isPresent()).isFalse();
 	}
+
 	@Test
 	public void test_addComputer_expect_susses() {
 		//prepare
@@ -107,7 +101,7 @@ public class ComputerDaoTest {
 		//verify
 		assertThat(addValue).isEqualTo(1);
 	}
-	
+
 	@Test
 	public void test_addComputer_expect_faild() {
 		//prepare
@@ -127,6 +121,7 @@ public class ComputerDaoTest {
 		//verify
 		assertThat(addValue).isEqualTo(UPDATE_KO);
 	}
+
 	@Test
 	public void test_deleteComputer_expect_success() {
 		//execute
@@ -134,7 +129,7 @@ public class ComputerDaoTest {
 		//verify
 		assertThat(deleteValue).isEqualTo(UPDATE_OK);
 	}
-	
+
 	@Test
 	public void test_deleteComputer_expect_faild() {
 		//execute
@@ -142,6 +137,7 @@ public class ComputerDaoTest {
 		//verify
 		assertThat(deleteValue).isEqualTo(UPDATE_KO);
 	}
+
 	@Test
 	public void test_updateComputer_expect_success() {
 		//prepare
@@ -157,12 +153,19 @@ public class ComputerDaoTest {
 		//verify
 		assertThat(updatValue).isEqualTo(UPDATE_OK);
 	}
-	
+
+	@Test
+	public void test_MaxIdComputer_expect_success() {
+		//execute
+		long maxVlue = computerDao.getMaxIdComputer();
+		//verify
+		assertThat(maxVlue).isEqualTo(20);
+	}
 	
 	@AfterEach
 	public void afterAll() {
 		//dbInit.deleteAll();
 		System.setProperty("testing", "false");
 	}
-
+	
 }

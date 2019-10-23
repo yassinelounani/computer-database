@@ -11,7 +11,14 @@
   <packaging>war</packaging>
 
   <name>cdb-webapp Maven Webapp</name>
-
+	<properties>
+		<selinuim-java-version>3.141.59</selinuim-java-version>
+		<hibernate-validator-version>6.0.13.Final</hibernate-validator-version>
+		<taglibs-standard-version>1.2.5</taglibs-standard-version>
+		<jstl-version>1.2</jstl-version>
+		<javax.servlet-api-version>3.0.1</javax.servlet-api-version>
+	</properties>
+  
   <dependencies>
     <dependency>
       <groupId>fr.excilys.cdb</groupId>
@@ -21,30 +28,48 @@
     <dependency>
 	    <groupId>javax.servlet</groupId>
 	    <artifactId>javax.servlet-api</artifactId>
-	    <version>3.0.1</version>
+	    <version>${javax.servlet-api-version}</version>
 	    <scope>provided</scope>
     </dependency>
 	<dependency>
 	    <groupId>org.apache.taglibs</groupId>
 	    <artifactId>taglibs-standard-impl</artifactId>
-	    <version>1.2.5</version>
+	    <version>${taglibs-standard-version}</version>
 	</dependency>
 	
 	<dependency>
     <groupId>org.apache.taglibs</groupId>
     <artifactId>taglibs-standard-spec</artifactId>
-    <version>1.2.5</version>
+    <version>${taglibs-standard-version}</version>
 </dependency>
 	
 	<dependency>
 		<groupId>javax.servlet</groupId>
 		<artifactId>jstl</artifactId>
-		<version>1.2</version>
+		<version>${jstl-version}</version>
     </dependency>
     
-    
-  </dependencies>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-validator</artifactId>
+		<version>${hibernate-validator-version}</version>
+	</dependency>
 
+	<dependency>
+	    <groupId>org.seleniumhq.selenium</groupId>
+	    <artifactId>selenium-java</artifactId>
+	    <version>${selinuim-java-version}</version>
+	</dependency>
+
+	<dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj-version}</version>
+      <scope>test</scope>
+    </dependency>
+	
+  </dependencies>
+  
   <build>
     <finalName>cdb-webapp</finalName>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->

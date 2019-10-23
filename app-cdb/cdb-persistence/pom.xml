@@ -13,7 +13,9 @@
   <packaging>jar</packaging>
   <name>cdb-persistence</name>
 	
-	
+  <properties>
+  	<hicariCp-version>3.4.1</hicariCp-version>
+  </properties>	
   
   <!-- =============================================================== -->
   <!-- Dependency management -->
@@ -42,6 +44,12 @@
 	    <groupId>ch.qos.logback</groupId>
 	    <artifactId>logback-classic</artifactId>
 	    <version>${logback-version}</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>com.zaxxer</groupId>
+	    <artifactId>HikariCP</artifactId>
+	    <version>${hicariCp-version}</version>
 	</dependency>
 	
   </dependencies>
