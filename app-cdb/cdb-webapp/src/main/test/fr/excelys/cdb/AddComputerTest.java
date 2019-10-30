@@ -12,6 +12,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
 public class AddComputerTest {
+	  private static final String DISCONTINUED_MUST_BE_BEFORE_THE_INTRODUCED = "The discontinued date must be before the introduced date";
 	  private static final String DATE_2019_10_02 = "2019-10-02";
 	  private static final String TEST_NAME = "test";
 	  private static final String NAME_NOT_NULL = "name ne peut pas être vide";
@@ -72,7 +73,7 @@ public class AddComputerTest {
 	    driver.findElement(By.id("discontinued")).sendKeys(DATE_2019_10_02);
 	    new Select(driver.findElement(By.id("companyId"))).selectByVisibleText(AMIGA_CORPORATION);
 	    try {
-            assertEquals(driver.findElement(By.id("spanIntro")).getText(), "The discontinued date must be before the introduced date");
+            assertEquals(driver.findElement(By.id("spanIntro")).getText(), DISCONTINUED_MUST_BE_BEFORE_THE_INTRODUCED);
         } catch (Error e) {
         	verificationErrors.append(e.toString());
         }

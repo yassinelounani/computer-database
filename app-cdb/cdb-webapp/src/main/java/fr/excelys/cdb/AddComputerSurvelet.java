@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +17,10 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+
 import fr.excilys.cdb.api.CompanyService;
 import fr.excilys.cdb.api.ComputerService;
 import fr.excilys.cdb.api.dto.Company;
@@ -25,18 +30,20 @@ import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 import fr.excilys.cdb.business.CompanyServiceExporter;
 import fr.excilys.cdb.business.ComputerServiceExporter;
 
+@Controller
 @WebServlet(name = "addComputer", urlPatterns = {"/addComputer"})
 public class AddComputerSurvelet extends HttpServlet {
 	private static final long serialVersionUID = 2L;
-
+	@Autowired
 	private CompanyService companyService;
+	@Autowired
 	private ComputerService computerService;
 	
-	public AddComputerSurvelet() {
-        super();
-        this.companyService = CompanyServiceExporter.getInstance();
-        this.computerService = ComputerServiceExporter.getInstance();
-    }
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<Company> companies = companyService.getCompanies();

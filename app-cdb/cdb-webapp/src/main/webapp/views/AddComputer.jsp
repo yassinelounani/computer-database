@@ -46,7 +46,7 @@
            							</c:if>
                             	
                                 <label for="computerName">Computer name</label>
-                                <input type="text" class="form-control" id="computerName" name="name"  value="${computer.name}" placeholder="Computer name" >
+                                <input type="text" class="form-control" id="computerName" name="name"  value="${computer.name}" placeholder="Computer name" required>
                                 <c:if test="${messages.name != null}">
                 					<span id="errorName" style="color: red;">${messages.name}</span>
            						</c:if>

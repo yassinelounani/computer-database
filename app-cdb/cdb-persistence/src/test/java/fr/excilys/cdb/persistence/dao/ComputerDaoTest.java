@@ -23,6 +23,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.CompanyEntity.CompanyBuilder;
@@ -33,13 +34,12 @@ import fr.excilys.cdb.persistence.models.Pageable;
 @DisplayName("Test Computer Dao")
 public class ComputerDaoTest {
 
+	@Autowired
 	private ComputerDao computerDao;
-
 
 	@BeforeEach
 	public void beforeEach() {
 		System.setProperty("testing", "true");
-		computerDao = ComputerDao.getInstance();
 	}
 
 	@Test
@@ -161,10 +161,9 @@ public class ComputerDaoTest {
 		//verify
 		assertThat(maxVlue).isEqualTo(20);
 	}
-	
+
 	@AfterEach
 	public void afterAll() {
-		//dbInit.deleteAll();
 		System.setProperty("testing", "false");
 	}
 	

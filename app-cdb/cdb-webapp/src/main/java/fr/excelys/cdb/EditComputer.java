@@ -7,42 +7,47 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+
 import fr.excilys.cdb.api.CompanyService;
 import fr.excilys.cdb.api.ComputerService;
 import fr.excilys.cdb.api.dto.Company;
 import fr.excilys.cdb.api.dto.Computer;
-import fr.excilys.cdb.api.dto.ComputerId;
+import fr.excilys.cdb.api.dto.Identifier;
 import fr.excilys.cdb.api.exception.NotFoundComputerException;
 import fr.excilys.cdb.business.CompanyServiceExporter;
 import fr.excilys.cdb.business.ComputerServiceExporter;
 
+@Controller
 @WebServlet(name = "editComputer", urlPatterns = {"/editComputer"})
 public class EditComputer extends HttpServlet {
 
 	private static final long serialVersionUID = 3L;
-
+	@Autowired
 	private ComputerService computerService;
+	@Autowired
 	private CompanyService companyService;
 	
-	public EditComputer() {
-        super();
-        computerService = ComputerServiceExporter.getInstance();
-        companyService = CompanyServiceExporter.getInstance();
-    }
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String id = request.getParameter("id");
 		long idComputer = Long.parseLong(id);
-		ComputerId computerId = new ComputerId(idComputer);
-		System.err.println(computerId);
+		Identifier computerId = new Identifier(idComputer);
 		Computer computer = computerService.getComputerById(computerId).get();
-		System.err.println(computer);
 		List<Company> companies = companyService.getCompanies();
 		
 		request.setAttribute("computer", computer);
@@ -52,10 +57,14 @@ public class EditComputer extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String id = request.getParameter("id");
+		long idComputer = Long.parseLong(id);
 		Computer computer = buildComputer(request);
+		computer.setId(idComputer);
 		Map<String, String> messages = checkError(computer);
+		System.err.println(messages);
 		updateComputer(request, computer, messages);
-		
+		request.setAttribute("messages", messages);
 		request.getRequestDispatcher("/views/EditComputer.jsp").forward(request, response);
 	}
 	

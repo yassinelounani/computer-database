@@ -13,22 +13,26 @@ public final class Company {
 		super();
 	}
 
-	public String getName() {
-		return name;
+	public Company(Builder builder) {
+		super();
+		this.id = builder.id;
+		this.name = builder.name;
 	}
 
-	public Company setName(String name) {
-		this.name = name;
-		return this;
+	public String getName() {
+		return name;
 	}
 
 	public long getId() {
 		return id;
 	}
 
-	public Company setId(long id) {
+	public void setId(long id) {
 		this.id = id;
-		return this;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override
@@ -55,6 +59,29 @@ public final class Company {
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, name);
+	}
+	
+	public static class Builder {
+		private long id;
+		private String name;
+		
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private Builder() {}
+
+		public void setId(long id) {
+			this.id = id;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+		public Company build() {
+			return new Company(this);
+		}
 	}
 
 }

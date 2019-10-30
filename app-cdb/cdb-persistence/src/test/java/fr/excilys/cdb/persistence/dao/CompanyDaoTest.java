@@ -15,18 +15,19 @@ import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.Pageable;
 
 public class CompanyDaoTest {
 
+	@Autowired
 	private CompanyDao companyDao;
 
 	@BeforeEach
 	public void beforeEach() {
 		System.setProperty("testing", "true");
-		companyDao = CompanyDao.getInstance();
 	}
 
 	@Test

@@ -3,13 +3,13 @@ package fr.excilys.cdb.api.dto;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-public final class ComputerId {
+public final class Identifier {
 	
 	@NotNull
 	@Min(1)
 	private long id;
 
-	public ComputerId(long id) {
+	public Identifier(long id) {
 		super();
 		this.id = id;
 	}

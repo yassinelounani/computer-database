@@ -13,14 +13,15 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 
 import fr.excilys.cdb.api.dto.Computer;
+import fr.excilys.cdb.api.dto.Sort;
 import fr.excilys.cdb.persistence.mappers.HelperDate;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
-import fr.excilys.cdb.persistence.models.ComputerEntity;
 import fr.excilys.cdb.persistence.models.CompanyEntity.CompanyBuilder;
+import fr.excilys.cdb.persistence.models.ComputerEntity;
 import fr.excilys.cdb.persistence.models.ComputerEntity.ComputerBuilder;
+import fr.excilys.cdb.persistence.models.SortDao;
 
 public class Helper {
-
 	public static ComputerEntity mapToComputerEntity(Computer computer) {
 		return ComputerBuilder.newInstance()
 					.setId(computer.getId())
@@ -59,5 +60,10 @@ public class Helper {
 		Validator validator = factory.getValidator();
         Set<ConstraintViolation<E>> violations = validator.validate(bean);
         return violations.isEmpty();
+	}
+
+	public static SortDao mapToSortDao(Sort sort) {
+		ModelMapper modelMapper = new ModelMapper();
+		return modelMapper.map(sort, SortDao.class);
 	}
 }

@@ -10,17 +10,17 @@ public class DaoFactory {
     	this.connectionToDb = connectionToDb;
     }
 
-    public Dao getDao(TypeDao type){
-        if(type == null){
-            return null;
-        }
-        if(type.equals(TypeDao.COMPUTER)){
-            return ComputerDao.getInstance();
-        }
-        else if(type.equals(TypeDao.COMPANY)) {
-            return CompanyDao.getInstance();
-        }
-
-        return null;
-    }
+//    public Dao getDao(TypeDao type){
+//        if(type == null){
+//            return null;
+//        }
+//        if(type.equals(TypeDao.COMPUTER)){
+//            return ComputerDao.getInstance();
+//        }
+//        else if(type.equals(TypeDao.COMPANY)) {
+//            return CompanyDao.getInstance();
+//        }
+//
+//        return null;
+//    }
 }

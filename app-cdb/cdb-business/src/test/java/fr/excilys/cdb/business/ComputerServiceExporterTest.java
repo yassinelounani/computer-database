@@ -15,9 +15,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.excilys.cdb.api.dto.Computer;
-import fr.excilys.cdb.api.dto.ComputerId;
+import fr.excilys.cdb.api.dto.Identifier;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 import fr.excilys.cdb.persistence.dao.CompanyDao;
 import fr.excilys.cdb.persistence.dao.ComputerDao;
@@ -59,14 +60,9 @@ public class ComputerServiceExporterTest {
 			.setDicontinued(DISCONTINUED_HP)
 			.setCompany(COMPANY)
 			.build();
-	
 
+	@Autowired
 	private ComputerServiceExporter computerService;
-
-	@BeforeEach
-	public void before() {
-		ComputerServiceExporter.instance = null;
-	}
 
 	@Test
 	public void test_getComputers_expect_success() {
@@ -75,7 +71,6 @@ public class ComputerServiceExporterTest {
 		List<ComputerEntity> computerEntities = Arrays.asList(COMPUTER_HP, COMPUTER_MAC);
 		List<Computer> computer = Mapper.mapAll(computerEntities, Computer.class);
 		when(mockDao.getComputers()).thenReturn(computerEntities);
-		computerService = ComputerServiceExporter.getInstance();
 		//execute
 		List<Computer> getComputers = computerService.getComputers();
 		//verify
@@ -88,10 +83,8 @@ public class ComputerServiceExporterTest {
 		ComputerDao mockDao = mock(ComputerDao.class);
 		Mockito.reset(mockDao);
 		doReturn(Optional.of(COMPUTER_MAC)).when(mockDao).getComputerById(ID_1);
-		computerService = ComputerServiceExporter.getInstance();
-		System.out.println(computerService);
 		//execute
-		ComputerId computerId = new ComputerId(ID_1);
+		Identifier computerId = new Identifier(ID_1);
 		Computer computer = computerService.getComputerById(computerId).get();
 		//verify
 		assertThat(computer).isEqualToComparingFieldByField(computer);
@@ -103,7 +96,6 @@ public class ComputerServiceExporterTest {
 		CompanyDao mockCompany = mock(CompanyDao.class);
 		Computer computer = Mapper.map(COMPUTER_HP, Computer.class);
 		doReturn(Optional.empty()).when(mockCompany).getCompanyById(ID_2);
-		computerService = ComputerServiceExporter.getInstance();
 		//execute
 		assertThatThrownBy(() -> { computerService.addComputer(computer);})
 				.isInstanceOf(NotFoundCompanyException.class)
@@ -119,7 +111,6 @@ public class ComputerServiceExporterTest {
 		Computer computer = Mapper.map(COMPUTER_MAC, Computer.class);
 		doReturn(Optional.of(COMPANY)).when(mockCompany).getCompanyById(ID_1);
 		doReturn(UPDATE_OK).when(mockComputer).addComputer(COMPUTER_MAC);
-		computerService = ComputerServiceExporter.getInstance();
 		//execute && verify 
 		assertThatCode(() -> { 
 			int addValue = computerService.addComputer(computer);

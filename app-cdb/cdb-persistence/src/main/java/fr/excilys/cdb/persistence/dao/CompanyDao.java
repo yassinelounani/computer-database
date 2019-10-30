@@ -15,11 +15,14 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import fr.excilys.cdb.persistence.mappers.Mapper;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.Pageable;
 
+@Component
 public class CompanyDao implements Dao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDao.class);
@@ -33,26 +36,34 @@ public class CompanyDao implements Dao {
 	public static final String GET_ALL_COMPANIES_WITH_PAGE = "SELECT company.id, company.name "
 														   + "FROM company "
 														   + "LIMIT ?, ?;";
+	public static final String DELETE_COMPANY_BY_ID = "DELETE "
+													+ "FROM company "
+													+ "WHERE id=?";
+	@Autowired
+	private ConnectionToDb connectionToDb;
+	
+//    private CompanyDao() {
+//        super();
+//        //this.connectionToDb = ConnectionToDb.getInstance();
+//    }
 
-	private ConnectionToDb connectionTodb;
+//    private static CompanyDao INSTANCE = null;
+//
+//    public static synchronized CompanyDao getInstance() {
+//        if (INSTANCE == null) {
+//            INSTANCE = new CompanyDao();
+//        }
+//        return INSTANCE;
+//    }
+    
+	public void setConnectionToDb(ConnectionToDb connectionToDb) {
+		this.connectionToDb = connectionToDb;
+	}
 
-    private CompanyDao() {
-        super();
-        this.connectionTodb = ConnectionToDb.getInstance();
-    }
-    private static CompanyDao INSTANCE = null;
-
-    public static synchronized CompanyDao getInstance()
-    {
-        if (INSTANCE == null) {
-            INSTANCE = new CompanyDao();
-        }
-        return INSTANCE;
-    }
-    public List<CompanyEntity> getCompanies() {
+	public List<CompanyEntity> getCompanies() {
     	Statement statement = null;
     	List<CompanyEntity> companies = new ArrayList<>();
-    	Optional<Connection> connection = connectionTodb.getConnection();
+    	Optional<Connection> connection = connectionToDb.getConnection();
     	if(!connection.isPresent()) return companies;
     	try {
 	    		statement = connection.get().createStatement();
@@ -69,10 +80,11 @@ public class CompanyDao implements Dao {
 		}
     	return companies;
     }
+
     public List<CompanyEntity> getCompaniesWithPage(Pageable page) {
     	List<CompanyEntity> companies = new ArrayList<>();
     	PreparedStatement preparedStatement = null;
-    	Optional<Connection> connection = connectionTodb.getConnection();
+    	Optional<Connection> connection = connectionToDb.getConnection();
     	if(!connection.isPresent()) return companies;
     	LOGGER.info("connection well-established to the database ...................");
     	try {
@@ -91,18 +103,19 @@ public class CompanyDao implements Dao {
 		}
     	return companies;
     }
-    public Optional<CompanyEntity> getCompanyById(long id) {
+
+    public Optional<CompanyEntity> getCompanyById(long companyId) {
     	CompanyEntity company = null;
     	PreparedStatement preparedStatement = null;
-    	Optional<Connection> connection = connectionTodb.getConnection();
+    	Optional<Connection> connection = connectionToDb.getConnection();
     	if(!connection.isPresent()) return Optional.empty();
     	LOGGER.info("connection well-established to the database ...................");
     	try {
 		    	LOGGER.info("query : {}",GET_COMPANY_BY_ID);
 		    	preparedStatement  = connection.get().prepareStatement(GET_COMPANY_BY_ID);
-		    	preparedStatement.setLong(1, id);
+		    	preparedStatement.setLong(1, companyId);
 		    	ResultSet results = preparedStatement.executeQuery();
-		    	while (results.next()) { 
+		    	if (results.first()) { 
 		    		company = Mapper.mapResultSetToCompany(results, ID_COMPANY);
 		    	}
 		} catch (SQLException e) {
