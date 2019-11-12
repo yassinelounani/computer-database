@@ -3,7 +3,7 @@ package fr.excilys.cdb.api.dto;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-public class PageAndSort {
+public final class PageAndSort {
 	@Valid
 	private Page page;
 	@NotNull

@@ -1,63 +1,79 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>fr.excilys.cdb</groupId>
-    <artifactId>app-cdb</artifactId>
-    <version>1.1-SNAPSHOT</version>
-  </parent>
+	<parent>
+		<groupId>fr.excilys.cdb</groupId>
+		<artifactId>app-cdb</artifactId>
+		<version>1.1-SNAPSHOT</version>
+	</parent>
 
-  <artifactId>cdb-persistence</artifactId>
-  <packaging>jar</packaging>
-  <name>cdb-persistence</name>
-	
-  <properties>
-  	<hicariCp-version>3.4.1</hicariCp-version>
-  </properties>	
-  
-  <!-- =============================================================== -->
-  <!-- Dependency management -->
-  <!-- =============================================================== -->
-  <dependencies>
-  	<!-- ===== Modules ===== -->
-  
+	<artifactId>cdb-persistence</artifactId>
+	<packaging>jar</packaging>
+	<name>cdb-persistence</name>
 
-  	<!-- ===== Third-party libraries ===== -->
-    
-    <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
-	<dependency>
-       <groupId>com.h2database</groupId>
-       <artifactId>h2</artifactId>
-       <version>${h2-database-version}</version>
-       <scope>test</scope>
-	</dependency>
-    
-    <dependency>
-       <groupId>org.modelmapper</groupId>
-       <artifactId>modelmapper</artifactId>
-       <version>${modelMapper-version}</version>
-	</dependency>
-	
-	<dependency>
-	    <groupId>ch.qos.logback</groupId>
-	    <artifactId>logback-classic</artifactId>
-	    <version>${logback-version}</version>
-	</dependency>
-	<dependency>
+	<properties>
+		<hicariCp-version>3.4.1</hicariCp-version>
+	</properties>
+
+	<!-- =============================================================== -->
+	<!-- Dependency management -->
+	<!-- =============================================================== -->
+	<dependencies>
+		<!-- ===== Modules ===== -->
+
+
+		<!-- ===== Third-party libraries ===== -->
+
+		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2-database-version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>${modelMapper-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback-version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>${spring-version}</version>
 		</dependency>
-		
-	
-	<dependency>
-	    <groupId>com.zaxxer</groupId>
-	    <artifactId>HikariCP</artifactId>
-	    <version>${hicariCp-version}</version>
-	</dependency>
-	
-  </dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>${hicariCp-version}</version>
+		</dependency>
+
+	</dependencies>
 
 </project>

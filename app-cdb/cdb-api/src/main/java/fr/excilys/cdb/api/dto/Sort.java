@@ -2,7 +2,7 @@ package fr.excilys.cdb.api.dto;
 
 import javax.validation.constraints.NotBlank;
 
-public class Sort {
+public final class Sort {
 	@NotBlank
 	private String Property;
 	@NotBlank

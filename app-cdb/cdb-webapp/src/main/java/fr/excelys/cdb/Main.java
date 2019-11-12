@@ -14,8 +14,6 @@ import fr.excilys.cdb.api.dto.Identifier;
 import fr.excilys.cdb.api.dto.Page;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 import fr.excilys.cdb.api.exception.NotFoundComputerException;
-import fr.excilys.cdb.business.CompanyServiceExporter;
-import fr.excilys.cdb.business.ComputerServiceExporter;
 
 public class Main {
 	private static Scanner sc = new Scanner(System.in);

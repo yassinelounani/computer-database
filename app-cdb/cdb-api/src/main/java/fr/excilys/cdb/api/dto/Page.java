@@ -2,7 +2,7 @@ package fr.excilys.cdb.api.dto;
 
 import javax.validation.constraints.Min;
 
-public class Page {
+public final class Page {
 	@Min(1)
 	private int number;
 	@Min(1)

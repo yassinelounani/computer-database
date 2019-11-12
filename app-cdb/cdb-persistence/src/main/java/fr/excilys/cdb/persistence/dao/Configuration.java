@@ -15,30 +15,21 @@ public class Configuration {
     public static final String USER= "admincdb";
     public static final String PASSWORD= "qwerty1234";
     public static final String TIMEZONE = "serverTimezone=UTC";
-    public static final String JDBC_DRIVER_H2 = "jdbc:h2:mem:";
+    public static final String PROTOCOLE_H2 = "jdbc:h2:mem:";
     public static final String DATABASE_TEST = "test;";
     public static final String INIT_DB_H2 = "INIT=RUNSCRIPT FROM 'resources/1-SCHEMA.sql'";
-    									  
+    public static final String JDBC_DRIVER_H2 = "org.h2.Driver";
+    public static final String SA = "sa";									  
 
-    public static String getUrl(){
-    	if (System.getProperty("testing") != null && System.getProperty("testing").equals("true")) {
-    		LOGGER.info("Get Url for connection to H2");
-    		return getUrlForTest();
-    	} else {
-    		LOGGER.info("Get Url for connection Mysql");
-    		return getUrlConnection();
-    	}
-    }
-
-    private static String getUrlForTest() {
+    public static String getUrlForTest() {
     	StringBuilder url = new StringBuilder();
-    	url.append(JDBC_DRIVER_H2)
+    	url.append(PROTOCOLE_H2)
 	       .append(DATABASE_TEST)
 	       .append(INIT_DB_H2);
     	return url.toString();
     }
 
-    private static String getUrlConnection() {
+    public static String getUrl() {
     	StringBuilder url = new StringBuilder();
         url.append(PROTOCOLE_MYSQL)
            .append("//")

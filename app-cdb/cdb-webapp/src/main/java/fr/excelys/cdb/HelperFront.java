@@ -12,7 +12,6 @@ import javax.validation.ValidatorFactory;
 
 import fr.excilys.cdb.api.dto.Computer;
 import fr.excilys.cdb.api.dto.Computer.Builder;
-import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 
 public class HelperFront {
 

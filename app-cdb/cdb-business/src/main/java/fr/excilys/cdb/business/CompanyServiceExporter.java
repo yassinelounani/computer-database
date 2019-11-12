@@ -23,22 +23,8 @@ public class CompanyServiceExporter implements CompanyService{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyServiceExporter.class);
 	
-
-//	static CompanyServiceExporter instance = null;
-//
-//    public static synchronized CompanyServiceExporter getInstance() {
-//        if (instance == null) {
-//            instance = new CompanyServiceExporter();
-//        }
-//        return instance;
-//    }
     @Autowired
 	private CompanyDao companyDao;
-
-//	private CompanyServiceExporter() {
-//		super();
-//		//this.companyDao = CompanyDao.getInstance();
-//	}
 
 	public List<Company> getCompanies() {
 		List<CompanyEntity> companies = companyDao.getCompanies();

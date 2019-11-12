@@ -4,7 +4,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 
-public class NameAndPage {
+public final class NameAndPage {
 	
 	@NotBlank
 	private String name;
@@ -19,15 +19,19 @@ public class NameAndPage {
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public Page getPage() {
 		return page;
 	}
+
 	public void setPage(Page page) {
 		this.page = page;
 	}
+
 	@Override
 	public String toString() {
 		return "NameAndPage [name=" + name + ", page=" + page + "]";

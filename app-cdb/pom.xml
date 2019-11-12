@@ -52,7 +52,7 @@
 			<type>pom</type>
 			<scope>import</scope>
 		</dependency>
-		
+
 		<!-- ===== Third-party libraries ===== -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -166,22 +166,22 @@
 				</configuration>
 			</plugin>
 			<!-- checkstyle maven -->
-			<!-- <plugin> -->
-			<!-- <groupId>org.apache.maven.plugins</groupId> -->
-			<!-- <artifactId>maven-checkstyle-plugin</artifactId> -->
-			<!-- <version>${checkstyle-maven-version}</version> -->
-			<!-- <configuration> -->
-			<!-- <configLocation>cheks/checkstyle.xml</configLocation> -->
-			<!-- <suppressionsLocation>cheks/suppressions.xml</suppressionsLocation> -->
-			<!-- </configuration> -->
-			<!-- <executions> -->
-			<!-- <execution> -->
-			<!-- <goals> -->
-			<!-- <goal>check</goal> -->
-			<!-- </goals> -->
-			<!-- </execution> -->
-			<!-- </executions> -->
-			<!-- </plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${checkstyle-maven-version}</version>
+				<configuration>
+					<configLocation>cheks/checkstyle.xml</configLocation>
+					<suppressionsLocation>cheks/suppressions.xml</suppressionsLocation>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
 		</plugins>
 	</build>

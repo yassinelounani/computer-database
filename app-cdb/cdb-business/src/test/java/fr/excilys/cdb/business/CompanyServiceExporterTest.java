@@ -37,7 +37,6 @@ public class CompanyServiceExporterTest {
 		List<CompanyEntity> companyEntities = Arrays.asList(COMPANY_APPLE, COMPANY_HP);
 		List<Company> companies = mapAll(companyEntities, Company.class);
 		doReturn(companyEntities).when(mock).getCompanies();
-		System.out.println(companyService);
 		//execute
 		List<Company> getComputers = companyService.getCompanies();
 		//verify

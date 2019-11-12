@@ -27,8 +27,6 @@ import fr.excilys.cdb.api.dto.Company;
 import fr.excilys.cdb.api.dto.Computer;
 import fr.excilys.cdb.api.dto.Computer.Builder;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
-import fr.excilys.cdb.business.CompanyServiceExporter;
-import fr.excilys.cdb.business.ComputerServiceExporter;
 
 @Controller
 @WebServlet(name = "addComputer", urlPatterns = {"/addComputer"})

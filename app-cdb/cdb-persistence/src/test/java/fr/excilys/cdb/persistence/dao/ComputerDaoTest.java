@@ -1,12 +1,12 @@
 package fr.excilys.cdb.persistence.dao;
 
-import static fr.excilys.cdb.persistence.dao.DbInit.APPLE_II;
+import static fr.excilys.cdb.persistence.dao.DbInit.CM_2A;
 import static fr.excilys.cdb.persistence.dao.DbInit.COMPANY;
 import static fr.excilys.cdb.persistence.dao.DbInit.COMPUTER;
 import static fr.excilys.cdb.persistence.dao.DbInit.DISCONTINUED;
 import static fr.excilys.cdb.persistence.dao.DbInit.ID_1;
 import static fr.excilys.cdb.persistence.dao.DbInit.ID_100;
-import static fr.excilys.cdb.persistence.dao.DbInit.ID_6;
+import static fr.excilys.cdb.persistence.dao.DbInit.ID_2;
 import static fr.excilys.cdb.persistence.dao.DbInit.INTRODUCED;
 import static fr.excilys.cdb.persistence.dao.DbInit.PAGE_2;
 import static fr.excilys.cdb.persistence.dao.DbInit.QUNTUM_MAC;
@@ -19,11 +19,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.CompanyEntity.CompanyBuilder;
@@ -31,17 +34,15 @@ import fr.excilys.cdb.persistence.models.ComputerEntity;
 import fr.excilys.cdb.persistence.models.ComputerEntity.ComputerBuilder;
 import fr.excilys.cdb.persistence.models.Pageable;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {LoadApplicationContext.class})
+@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @DisplayName("Test Computer Dao")
 public class ComputerDaoTest {
-
+	
 	@Autowired
 	private ComputerDao computerDao;
-
-	@BeforeEach
-	public void beforeEach() {
-		System.setProperty("testing", "true");
-	}
-
+	
 	@Test
 	public void test_getComputers_expect_success(){
 		//execute
@@ -74,7 +75,7 @@ public class ComputerDaoTest {
 	@Test
 	public void test_getComputerByID_expect_computer_id_6() {
 		//execute
-		ComputerEntity computer = computerDao.getComputerById(ID_6).get();
+		ComputerEntity computer = computerDao.getComputerById(ID_2).get();
 		//verify
 		assertThat(computer).isEqualToComparingFieldByField(COMPUTER);
 	}
@@ -99,7 +100,7 @@ public class ComputerDaoTest {
 		//execute
 		int addValue = computerDao.addComputer(computer);
 		//verify
-		assertThat(addValue).isEqualTo(1);
+		assertThat(addValue).isEqualTo(UPDATE_OK);
 	}
 
 	@Test
@@ -107,7 +108,7 @@ public class ComputerDaoTest {
 		//prepare
 		CompanyEntity company = CompanyBuilder.newInstance()
 											  .setId(ID_100)
-											  .setName(APPLE_II)
+											  .setName(CM_2A)
 											  .build();
 		
 		ComputerEntity computer = ComputerBuilder.newInstance()
@@ -125,7 +126,7 @@ public class ComputerDaoTest {
 	@Test
 	public void test_deleteComputer_expect_success() {
 		//execute
-		int deleteValue = computerDao.deleteComputerById(ID_6);
+		int deleteValue = computerDao.deleteComputerById(ID_2);
 		//verify
 		assertThat(deleteValue).isEqualTo(UPDATE_OK);
 	}
@@ -160,11 +161,6 @@ public class ComputerDaoTest {
 		long maxVlue = computerDao.getMaxIdComputer();
 		//verify
 		assertThat(maxVlue).isEqualTo(20);
-	}
-
-	@AfterEach
-	public void afterAll() {
-		System.setProperty("testing", "false");
 	}
 	
 }

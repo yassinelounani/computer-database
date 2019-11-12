@@ -33,19 +33,6 @@ public class ConnectionToDb {
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionToDb.class);
-    
-//	private static ConnectionToDb instance = null;
-//
-//    public static synchronized ConnectionToDb getInstance() {
-//        if (instance == null) {
-//            instance = new ConnectionToDb();
-//        }
-//        return instance;
-//    }
-//    
-//	public ConnectionToDb() {
-//        super();
-//    }
 	
 	public  Optional<Connection> getConnection(){
         try {

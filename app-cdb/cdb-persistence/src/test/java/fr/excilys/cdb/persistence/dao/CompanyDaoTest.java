@@ -1,6 +1,6 @@
 package fr.excilys.cdb.persistence.dao;
 
-import static fr.excilys.cdb.persistence.dao.DbInit.COMPANY;
+import static fr.excilys.cdb.persistence.dao.DbInit.APPLE;
 import static fr.excilys.cdb.persistence.dao.DbInit.ID_1;
 import static fr.excilys.cdb.persistence.dao.DbInit.ID_100;
 import static fr.excilys.cdb.persistence.dao.DbInit.PAGE_1;
@@ -12,23 +12,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.Pageable;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {LoadApplicationContext.class})
 public class CompanyDaoTest {
 
 	@Autowired
 	private CompanyDao companyDao;
-
-	@BeforeEach
-	public void beforeEach() {
-		System.setProperty("testing", "true");
-	}
 
 	@Test
 	public void test_getComputers_expect_success(){
@@ -56,7 +54,7 @@ public class CompanyDaoTest {
 		//execute
 		List<CompanyEntity> computers = companyDao.getCompaniesWithPage(pageable);
 		//verify
-		assertThat(computers).first().isEqualToComparingFieldByField(COMPANY);
+		assertThat(computers).first().isEqualToComparingFieldByField(APPLE);
 	}
 
 	@Test
@@ -64,7 +62,7 @@ public class CompanyDaoTest {
 		//execute
 		CompanyEntity computer = companyDao.getCompanyById(ID_1).get();
 		//verify
-		assertThat(computer).isEqualToComparingFieldByField(COMPANY);
+		assertThat(computer).isEqualToComparingFieldByField(APPLE);
 	}
 
 	@Test
@@ -75,8 +73,4 @@ public class CompanyDaoTest {
 		assertThat(computer.isPresent()).isFalse();
 	}
 
-	@AfterEach
-	public void afterAll() {
-		System.setProperty("testing", "false");
-	}
 }

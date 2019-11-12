@@ -24,8 +24,6 @@ import fr.excilys.cdb.api.dto.Company;
 import fr.excilys.cdb.api.dto.Computer;
 import fr.excilys.cdb.api.dto.Identifier;
 import fr.excilys.cdb.api.exception.NotFoundComputerException;
-import fr.excilys.cdb.business.CompanyServiceExporter;
-import fr.excilys.cdb.business.ComputerServiceExporter;
 
 @Controller
 @WebServlet(name = "editComputer", urlPatterns = {"/editComputer"})
