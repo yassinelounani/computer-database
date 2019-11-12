@@ -20,7 +20,7 @@ import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.Pageable;
 
 @Component
-public class CompanyDao implements Dao {
+public class CompanyDao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDao.class);
 	private static final String GET_ALL_COMPANIES = "SELECT company.id, company.name " + "FROM company";

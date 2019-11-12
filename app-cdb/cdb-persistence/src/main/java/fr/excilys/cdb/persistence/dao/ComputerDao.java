@@ -1,59 +1,61 @@
 package fr.excilys.cdb.persistence.dao;
 
 import static fr.excilys.cdb.persistence.dao.ConnectionToDb.closeConnectionAndStetement;
-import static fr.excilys.cdb.persistence.dao.ConnectionToDb.prepareStetementAndExecureQuerytWithPage;
-import static fr.excilys.cdb.persistence.mappers.Mapper.mapResultSetToComputer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Types;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
+import fr.excilys.cdb.persistence.mappers.ComputerRowMapper;
 import fr.excilys.cdb.persistence.mappers.HelperDate;
 import fr.excilys.cdb.persistence.models.ComputerEntity;
 import fr.excilys.cdb.persistence.models.Pageable;
 import fr.excilys.cdb.persistence.models.SortDao;
 
 @Component
-public class ComputerDao implements Dao {
+public class ComputerDao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ComputerDao.class);
 
 	private static final String GET_ALL_COMPUTERS = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
-			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id ORDER BY computer.name, company.name ;";
+			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id ORDER BY computer.name, company.name";
 
 	private static final String GET_TOTAL_PAGES = "SELECT COUNT(computer.id) "
-			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id;";
+			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id";
 
 	private static final String GET_ALL_COMPUTERS_WITH_PAGE = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
 			+ "ORDER BY ";
 	private static final String ORDER_BY = "computer.name ";
-	private static final String LIMIT = "LIMIT ?, ?";
+	private static final String LIMIT = "LIMIT :offset, :limit";
 
 	private static final String GET_COMPUTER_BY_ID = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
-			+ "WHERE computer.id=?;";
+			+ "WHERE computer.id= :id";
 
 	private static final String INSERT_COMPUTER = "INSERT INTO computer(id, name, introduced, discontinued, company_id) "
-			+ "VALUES(?, ?, ?, ?, ?);";
+			+ "VALUES(?, ?, ?, ?, ?)";
 
 	private static final String UPDATE_COMPUTER = "UPDATE computer "
 			+ "SET name = ?, introduced = ?, discontinued = ?, company_id = ? "
 			+ "WHERE id = ?";
 
 	private static final String DELETE_COMPUTER = "DELETE FROM computer "
-			+ "WHERE computer.id = ?";
+			+ "WHERE computer.id = :id";
 
 	private static final String DELETE_COMPANY = "DELETE FROM company "
 			+ "WHERE company.id = ?";
@@ -65,12 +67,12 @@ public class ComputerDao implements Dao {
 
 	private static final String SERACH_NAME = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
-			+ "WHERE company.name LIKE ? OR computer.name LIKE ? " + "ORDER BY computer.name, company.name "
-			+ "LIMIT ?, ?";
+			+ "WHERE company.name LIKE :computer_name OR computer.name LIKE :company_name " + "ORDER BY computer.name, company.name "
+			+ "LIMIT :offset, :limit";
 
 	private static final String SERACH_TOTAL_COMPUTERS = "SELECT COUNT(computer.id) "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
-			+ "WHERE company.name LIKE ? OR computer.name LIKE ? ";
+			+ "WHERE company.name LIKE :company_name OR computer.name LIKE :computer_name ";
 
 	private static final int NO_CONNECTION = -1;
 	private static final boolean IS_UPDATE = true;
@@ -79,26 +81,15 @@ public class ComputerDao implements Dao {
 	@Autowired
 	private ConnectionToDb connectionToDb;
 
-	public List<ComputerEntity> getComputers() {
-		Statement statement = null;
-		ResultSet results = null;
-		Optional<Connection> connection = connectionToDb.getConnection();
-		if (!connection.isPresent()) {
-			return new ArrayList<>();
-		}
-		LOGGER.info("connection well-established to the database ..........");
-		try {
-			statement = connection.get().createStatement();
-			LOGGER.info("query : {}", GET_ALL_COMPUTERS);
-			results = statement.executeQuery(GET_ALL_COMPUTERS);
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			closeConnectionAndStetement(connection.get(), statement);
-			return new ArrayList<>();
-		} 
-		return getComputersFromResultSet(results, statement, connection.get());
-	}
+	@Autowired
+	private NamedParameterJdbcTemplate jdbcTemplate;
 
+	public List<ComputerEntity> getComputers() {
+		RowMapper<ComputerEntity> vRowMapper = new ComputerRowMapper();
+        List<ComputerEntity> computers = jdbcTemplate.query(GET_ALL_COMPUTERS, vRowMapper);
+        return computers;
+	}
+	
 	public List<ComputerEntity> getComputersWithPage(Pageable page) {
 		StringBuilder query = new StringBuilder();
 		query.append(GET_ALL_COMPUTERS_WITH_PAGE)
@@ -115,60 +106,37 @@ public class ComputerDao implements Dao {
 		return getComputersWithPaginate(page, query.toString());
 	}
 
+	private  MapSqlParameterSource addOffsetAndLimit(Pageable page) {
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		int offset = (page.getNumber() - 1) * page.getSize();
+    	int limit = page.getSize();
+    	parameterSource.addValue("offset", offset);
+    	parameterSource.addValue("limit", limit);
+    	return parameterSource;
+    }
+
 	private List<ComputerEntity> getComputersWithPaginate(Pageable page, String query) {
-		PreparedStatement preparedStatement = null;
-		ResultSet results = null;
-		Optional<Connection> connection = connectionToDb.getConnection();
-		if (!connection.isPresent()) {
-			return new ArrayList<>();
-		}
-		LOGGER.info("connection well-established to the database ...................");
-		try {
-			preparedStatement = connection.get().prepareStatement(query);
-			LOGGER.info("query : {}", query);
-			results = prepareStetementAndExecureQuerytWithPage(page, preparedStatement);
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			closeConnectionAndStetement(connection.get(), preparedStatement);
-			return new ArrayList<>();
-		}
-		return getComputersFromResultSet(results, preparedStatement, connection.get());
+		MapSqlParameterSource parameterSource = addOffsetAndLimit(page);
+		
+		RowMapper<ComputerEntity> computerRowMapper = new ComputerRowMapper();
+        List<ComputerEntity> computers = jdbcTemplate.query(query, parameterSource, computerRowMapper);
+        return computers;
 	}
-
-	private List<ComputerEntity> getComputersFromResultSet(ResultSet results, Statement statement, Connection connection) {
-		List<ComputerEntity> computers = new ArrayList<>();
-		try {
-			while (results.next()) {
-				computers.add(mapResultSetToComputer(results));
-			}
-			LOGGER.info("List computer is successfly loaded");
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			computers.clear();
-		} finally {
-			closeConnectionAndStetement(connection, statement);
-		}
-		return computers;
-	}
-
+	
 	public List<ComputerEntity> getSerchComputersWithPage(Pageable page, String name) {
-		Optional<Connection> connection = connectionToDb.getConnection();
-		PreparedStatement preparedStatement = null;
-		ResultSet results = null;
-		if (!connection.isPresent()) {
-			return new ArrayList<>();
-		}
-		LOGGER.info("connection well-established to the database..............................");
-		try {
-			preparedStatement = connection.get().prepareStatement(SERACH_NAME);
-			LOGGER.info("query : {}", SERACH_NAME);
-			results = prepareStetementAndSearchWithPage(page, name, preparedStatement);
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			closeConnectionAndStetement(connection.get(), preparedStatement);
-			return new ArrayList<>();
-		}
-		return getComputersFromResultSet(results, preparedStatement, connection.get());
+		MapSqlParameterSource parameterSource = addNameParameter(name);
+		parameterSource.addValues(addOffsetAndLimit(page).getValues());
+		RowMapper<ComputerEntity> computerRowMapper = new ComputerRowMapper();
+        List<ComputerEntity> computers = jdbcTemplate.query(SERACH_NAME, parameterSource, computerRowMapper);
+        return computers;
+	}
+
+	private MapSqlParameterSource addNameParameter(String name) {
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		String nameRequest = "%" + name.trim() + "%";
+		parameterSource.addValue("computer_name", nameRequest);
+		parameterSource.addValue("company_name", nameRequest);
+		return parameterSource;
 	}
 
 	public long totalOfelements() {
@@ -176,27 +144,10 @@ public class ComputerDao implements Dao {
 	}
 
 	public Optional<ComputerEntity> getComputerById(long id) {
-		ComputerEntity computer = null;
-		PreparedStatement preparedStatement = null;
-		Optional<Connection> connection = connectionToDb.getConnection();
-		if (!connection.isPresent()) {
-			return Optional.empty();
-		}
-		LOGGER.info("connection well-established to the database ...................");
-		try {
-			LOGGER.info("query : {}", GET_COMPUTER_BY_ID);
-			preparedStatement = connection.get().prepareStatement(GET_COMPUTER_BY_ID);
-			preparedStatement.setLong(1, id);
-			ResultSet results = preparedStatement.executeQuery();
-			while (results.next()) {
-				computer = mapResultSetToComputer(results);
-			}
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		} finally {
-			closeConnectionAndStetement(connection.get(), preparedStatement);
-		}
-		return Optional.ofNullable(computer);
+		SqlParameterSource parameterSource = new MapSqlParameterSource("id", id);
+		RowMapper<ComputerEntity> computerRowMapper = new ComputerRowMapper();
+        ComputerEntity computer = (ComputerEntity) jdbcTemplate.query(GET_COMPUTER_BY_ID, parameterSource, computerRowMapper);
+        return Optional.ofNullable(computer);
 	}
 
 	public int addComputer(ComputerEntity computer) {
@@ -208,24 +159,8 @@ public class ComputerDao implements Dao {
 	}
 
 	public int deleteComputerById(long id) {
-		int executeDelete = 0;
-		Optional<Connection> connection = connectionToDb.getConnection();
-		if (!connection.isPresent()) {
-			return NO_CONNECTION;
-		}
-		LOGGER.info("connection well-established to the database ...................");
-		PreparedStatement preparedStatement = null;
-		try {
-			LOGGER.info("query : {}", DELETE_COMPUTER);
-			preparedStatement = connection.get().prepareStatement(DELETE_COMPUTER);
-			preparedStatement.setLong(1, id);
-			executeDelete = preparedStatement.executeUpdate();
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		} finally {
-			closeConnectionAndStetement(connection.get(), preparedStatement);
-		}
-		return executeDelete;
+		SqlParameterSource parameterSource = new MapSqlParameterSource("id", id);
+		return jdbcTemplate.update(DELETE_COMPUTER, parameterSource);
 	}
 
 	public int deleteCompany(long companyId) {
@@ -315,72 +250,12 @@ public class ComputerDao implements Dao {
 	}
 
 	private long aggregatedOperation(String query) {
-		Optional<Connection> connection = connectionToDb.getConnection();
-		Statement statement = null;
-		long value = 0;
-		if (!connection.isPresent()) {
-			return NO_CONNECTION;
-		}
-		LOGGER.info("connection well-established to the database...................");
-		try {
-			statement = connection.get().createStatement();
-			LOGGER.info("query : {}", query);
-			ResultSet results = statement.executeQuery(query);
-			if (results.first()) {
-				value = results.getLong(1);
-				LOGGER.info("GET AGGREGATION....................................");
-			}
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		} finally {
-			closeConnectionAndStetement(connection.get(), statement);
-		}
-		return value;
+		return jdbcTemplate.queryForObject(query, (SqlParameterSource) null, Long.class);
 	}
 
 	public long totalComputersFounded(String name) {
-		Optional<Connection> connection = connectionToDb.getConnection();
-		PreparedStatement preparedStatement = null;
-		long value = 0;
-		if (!connection.isPresent()) {
-			return NO_CONNECTION;
-		}
-		LOGGER.info("connection well-established to the database...................");
-		try {
-			preparedStatement = connection.get().prepareStatement(SERACH_TOTAL_COMPUTERS);
-			ResultSet results = prepareStetementCountSearch(name, preparedStatement);
-			if (results.first()) {
-				value = results.getLong(1);
-				LOGGER.info("GET AGGREGATION.......................................");
-			}
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		} finally {
-			closeConnectionAndStetement(connection.get(), preparedStatement);
-		}
-		return value;
-	}
-
-	private ResultSet prepareStetementAndSearchWithPage(Pageable page, String name, PreparedStatement preparedStatement)
-			throws SQLException {
-		int offset = (page.getNumber() - 1) * page.getSize();
-		int limit = page.getSize();
-		prepareNameForSearch(name, preparedStatement);
-		preparedStatement.setInt(3, offset);
-		preparedStatement.setInt(4, limit);
-		return preparedStatement.executeQuery();
-	}
-
-	private ResultSet prepareStetementCountSearch(String name, PreparedStatement preparedStatement)
-			throws SQLException {
-		prepareNameForSearch(name, preparedStatement);
-		return preparedStatement.executeQuery();
-	}
-
-	private void prepareNameForSearch(String name, PreparedStatement preparedStatement) throws SQLException {
-		String nameRequest = "%" + name.trim() + "%";
-		preparedStatement.setString(1, nameRequest);
-		preparedStatement.setString(2, nameRequest);
+		MapSqlParameterSource parameterSource = addNameParameter(name);
+		return jdbcTemplate.queryForObject(SERACH_TOTAL_COMPUTERS, parameterSource, Long.class);
 	}
 
 	private String getSortQuery(SortDao sort) {
