@@ -54,7 +54,6 @@ public class DashboardServelet extends HttpServlet {
 		String sizeRequest = request.getParameter("size");
 		String sortRequest = request.getParameter("sort");
 		String sortByRequest = request.getParameter("by");
-		System.err.println(sortRequest);
 		int currentPage = (pageRequest != null) ? Integer.parseInt(pageRequest) : FIRST_PAGINATE;
 		int  currentsize = (sizeRequest != null) ? Integer.parseInt(sizeRequest) : SIZE_PAGE;
 		Page page = new Page(currentPage, currentsize);

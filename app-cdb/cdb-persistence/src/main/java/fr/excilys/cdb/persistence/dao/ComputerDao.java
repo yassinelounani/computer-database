@@ -1,31 +1,22 @@
 package fr.excilys.cdb.persistence.dao;
 
-import static fr.excilys.cdb.persistence.dao.ConnectionToDb.closeConnectionAndStetement;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
-
+import org.springframework.transaction.annotation.Transactional;
 import fr.excilys.cdb.persistence.mappers.ComputerRowMapper;
-import fr.excilys.cdb.persistence.mappers.HelperDate;
 import fr.excilys.cdb.persistence.models.ComputerEntity;
 import fr.excilys.cdb.persistence.models.Pageable;
 import fr.excilys.cdb.persistence.models.SortDao;
-
+import static fr.excilys.cdb.persistence.mappers.Mapper.addOffsetAndLimit;
 @Component
 public class ComputerDao {
 
@@ -45,23 +36,23 @@ public class ComputerDao {
 
 	private static final String GET_COMPUTER_BY_ID = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
-			+ "WHERE computer.id= :id";
+			+ "WHERE computer.id=:id";
 
 	private static final String INSERT_COMPUTER = "INSERT INTO computer(id, name, introduced, discontinued, company_id) "
-			+ "VALUES(?, ?, ?, ?, ?)";
+			+ "VALUES(:id, :name, :introduced, :discontinued, :company.id)";
 
 	private static final String UPDATE_COMPUTER = "UPDATE computer "
-			+ "SET name = ?, introduced = ?, discontinued = ?, company_id = ? "
-			+ "WHERE id = ?";
+			+ "SET name = :name, introduced = :introduced, discontinued = :discontinued, company_id = :company.id "
+			+ "WHERE id = :id";
 
 	private static final String DELETE_COMPUTER = "DELETE FROM computer "
 			+ "WHERE computer.id = :id";
 
 	private static final String DELETE_COMPANY = "DELETE FROM company "
-			+ "WHERE company.id = ?";
+			+ "WHERE company.id = :id";
 
 	private static final String DELETE_COMPUTER_BY_COMPANY = "DELETE FROM computer "
-			+ "WHERE company_id = ?";
+			+ "WHERE company_id = :id";
 
 	private static final String GET_MAX = "SELECT MAX(computer.id) as max FROM computer";
 
@@ -74,19 +65,13 @@ public class ComputerDao {
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
 			+ "WHERE company.name LIKE :company_name OR computer.name LIKE :computer_name ";
 
-	private static final int NO_CONNECTION = -1;
-	private static final boolean IS_UPDATE = true;
-	private static final boolean IS_INSERT = false;
-
-	@Autowired
-	private ConnectionToDb connectionToDb;
 
 	@Autowired
 	private NamedParameterJdbcTemplate jdbcTemplate;
 
 	public List<ComputerEntity> getComputers() {
-		RowMapper<ComputerEntity> vRowMapper = new ComputerRowMapper();
-        List<ComputerEntity> computers = jdbcTemplate.query(GET_ALL_COMPUTERS, vRowMapper);
+		RowMapper<ComputerEntity> computerRowMapper = new ComputerRowMapper();
+        List<ComputerEntity> computers = jdbcTemplate.query(GET_ALL_COMPUTERS, computerRowMapper);
         return computers;
 	}
 	
@@ -106,15 +91,6 @@ public class ComputerDao {
 		return getComputersWithPaginate(page, query.toString());
 	}
 
-	private  MapSqlParameterSource addOffsetAndLimit(Pageable page) {
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		int offset = (page.getNumber() - 1) * page.getSize();
-    	int limit = page.getSize();
-    	parameterSource.addValue("offset", offset);
-    	parameterSource.addValue("limit", limit);
-    	return parameterSource;
-    }
-
 	private List<ComputerEntity> getComputersWithPaginate(Pageable page, String query) {
 		MapSqlParameterSource parameterSource = addOffsetAndLimit(page);
 		
@@ -127,7 +103,10 @@ public class ComputerDao {
 		MapSqlParameterSource parameterSource = addNameParameter(name);
 		parameterSource.addValues(addOffsetAndLimit(page).getValues());
 		RowMapper<ComputerEntity> computerRowMapper = new ComputerRowMapper();
-        List<ComputerEntity> computers = jdbcTemplate.query(SERACH_NAME, parameterSource, computerRowMapper);
+        List<ComputerEntity> computers = jdbcTemplate.query(
+        		SERACH_NAME,
+        		parameterSource,
+        		computerRowMapper);
         return computers;
 	}
 
@@ -146,16 +125,19 @@ public class ComputerDao {
 	public Optional<ComputerEntity> getComputerById(long id) {
 		SqlParameterSource parameterSource = new MapSqlParameterSource("id", id);
 		RowMapper<ComputerEntity> computerRowMapper = new ComputerRowMapper();
-        ComputerEntity computer = (ComputerEntity) jdbcTemplate.query(GET_COMPUTER_BY_ID, parameterSource, computerRowMapper);
+        ComputerEntity computer = jdbcTemplate.queryForObject(
+				GET_COMPUTER_BY_ID,
+				parameterSource,
+				computerRowMapper);
         return Optional.ofNullable(computer);
 	}
 
 	public int addComputer(ComputerEntity computer) {
-		return addComputerOrUpdateIt(computer, IS_INSERT);
+		return jdbcTemplate.update(INSERT_COMPUTER, new BeanPropertySqlParameterSource(computer));
 	}
 
 	public int updateComputer(ComputerEntity computer) {
-		return addComputerOrUpdateIt(computer, IS_UPDATE);
+		return jdbcTemplate.update(UPDATE_COMPUTER, new BeanPropertySqlParameterSource(computer));
 	}
 
 	public int deleteComputerById(long id) {
@@ -163,86 +145,11 @@ public class ComputerDao {
 		return jdbcTemplate.update(DELETE_COMPUTER, parameterSource);
 	}
 
+	@Transactional
 	public int deleteCompany(long companyId) {
-		int executeDelete = 0;
-		Optional<Connection> connection = connectionToDb.getConnection();
-		if (!connection.isPresent()) {
-			return NO_CONNECTION;
-		}
-		LOGGER.info("connection well-established to the database ...................");
-		try {
-			connection.get().setAutoCommit(false);
-			prepareAndExecute(companyId, connection.get(), DELETE_COMPUTER_BY_COMPANY);
-			executeDelete = prepareAndExecute(companyId, connection.get(), DELETE_COMPANY);
-			connection.get().commit();
-			connection.get().setAutoCommit(true);
-		} catch (SQLException e) {
-			try {
-				connection.get().rollback();
-			} catch (SQLException e1) {
-				System.out.println(e1.getMessage());
-			}
-			System.out.println(e.getMessage());
-		} finally {
-			closeConnectionAndStetement(connection.get(), null);
-		}
-		return executeDelete;
-	}
-
-	private int prepareAndExecute(long id, Connection connection, String query) throws SQLException {
-		int executeDelete;
-		PreparedStatement preparedStatement;
-		LOGGER.info("query : {}", query);
-		preparedStatement = connection.prepareStatement(query);
-		preparedStatement.setLong(1, id);
-		executeDelete = preparedStatement.executeUpdate();
-		return executeDelete;
-	}
-
-	private int addComputerOrUpdateIt(ComputerEntity computer, boolean isUpdate) {
-		int executeUpdate = 0;
-		Optional<Connection> connection = connectionToDb.getConnection();
-		if (!connection.isPresent()) {
-			return NO_CONNECTION;
-		}
-		LOGGER.info("connection well-established to the database ...................");
-		PreparedStatement preparedStatement = null;
-		try {
-			executeUpdate = preparStatementAndExecuteUpdate(computer, connection.get(), isUpdate);
-			connection.get().commit();
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		} finally {
-			closeConnectionAndStetement(connection.get(), preparedStatement);
-		}
-		return executeUpdate;
-	}
-
-	private int preparStatementAndExecuteUpdate(ComputerEntity computer, Connection connection, boolean isUpdate)
-			throws SQLException {
-		int index = 1;
-		String query = INSERT_COMPUTER;
-		if (isUpdate) {
-			index = 0;
-			query = UPDATE_COMPUTER;
-		}
-		LOGGER.info("query : {}", query);
-		PreparedStatement preparedStatement = connection.prepareStatement(query);
-		if (!isUpdate) {
-			preparedStatement.setLong(index, computer.getId());
-		}
-		preparedStatement.setString(index + 1, computer.getName());
-		preparedStatement.setDate(index + 2, HelperDate.dateToSql(computer.getIntroduced()));
-		preparedStatement.setDate(index + 3, HelperDate.dateToSql(computer.getDiscontinued()));
-		if (computer.getCompany().getId() > 0) {
-			preparedStatement.setLong(index + 4, computer.getCompany().getId());
-		} else {
-			preparedStatement.setNull(index + 4, Types.DATE);
-		}
-		if (isUpdate) {
-			preparedStatement.setLong(index + 5, computer.getId());
-		}
-		return preparedStatement.executeUpdate();
+		SqlParameterSource parameterSource = new MapSqlParameterSource("id", companyId);
+		jdbcTemplate.update(DELETE_COMPUTER_BY_COMPANY, parameterSource);
+		return jdbcTemplate.update(DELETE_COMPANY, parameterSource);
 	}
 
 	public long getMaxIdComputer() {
@@ -260,7 +167,10 @@ public class ComputerDao {
 
 	private String getSortQuery(SortDao sort) {
 		StringBuilder orderBy = new StringBuilder();
-		orderBy.append(sort.getProperty()).append(".name").append(" ").append(sort.getOrder().getSort()).append(" ");
+		orderBy.append(sort.getProperty())
+			   .append(".name")
+			   .append(" ")
+			   .append(sort.getOrder().getSort()).append(" ");
 		return orderBy.toString();
 	}
 

@@ -16,7 +16,7 @@ public class CompanyEntity {
 	public String getName() {
 		return name;
 	}
-	
+
 	public long getId() {
 		return id;
 	}
@@ -25,7 +25,7 @@ public class CompanyEntity {
 	public String toString() {
 		return "Company [id=" + id + ", name=" + name + "]";
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 	    if (this == o) return true;
@@ -35,7 +35,7 @@ public class CompanyEntity {
 	    return Objects.equals(id, company.id)
 	            && Objects.equals(name, company.name);
 	}
-	
+
 	public static class CompanyBuilder {
 
 		private long id;

@@ -60,7 +60,6 @@ public class EditComputer extends HttpServlet {
 		Computer computer = buildComputer(request);
 		computer.setId(idComputer);
 		Map<String, String> messages = checkError(computer);
-		System.err.println(messages);
 		updateComputer(request, computer, messages);
 		request.setAttribute("messages", messages);
 		request.getRequestDispatcher("/views/EditComputer.jsp").forward(request, response);

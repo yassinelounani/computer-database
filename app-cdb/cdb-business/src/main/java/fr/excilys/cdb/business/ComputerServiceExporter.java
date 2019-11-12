@@ -112,11 +112,9 @@ public class ComputerServiceExporter implements ComputerService {
 
 	public Optional<Computer> getComputerById(Identifier computerId) {
 		if (isValidBean(computerId)) {
-			System.err.println(computerId + "is Valid");
 			Optional<ComputerEntity> computerEntity = computerDao.getComputerById(computerId.getId());
 			LOGGER.info("get Computer with id : {} from Dao Computer", computerId.getId());
 			Computer computer =  mapToComputer(computerEntity.get());
-			System.err.println(computer);
 			return Optional.of(computer);
 		}
 		return Optional.empty();
@@ -169,17 +167,12 @@ public class ComputerServiceExporter implements ComputerService {
 		int updateValue = 0;
 		if ( isValidBean(computer)) {
 			Identifier computerId = new Identifier(computer.getId());
-			System.err.println(computerId);
 			Optional<Computer> getComputer = getComputerById(computerId);
-			System.err.println("get Computer");
-			System.err.println(getComputer);
 			if (!getComputer.isPresent()) {
 				throw new NotFoundComputerException("Company with id :"+ computer.getId() +" not Exist");
 			}
 			computer = prepareComputerToUpdate(computer, getComputer.get());
-			System.err.println(computer);
 			ComputerEntity entity = mapToComputerEntity(computer);
-			System.err.println(entity);
 			updateValue = computerDao.updateComputer(entity);
 		}
 		return updateValue;
