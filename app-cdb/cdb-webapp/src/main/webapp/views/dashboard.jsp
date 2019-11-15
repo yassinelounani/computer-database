@@ -2,6 +2,8 @@
 	pageEncoding="UTF-8"%>
 <%@page import="java.util.List"%>
 <%@page import="fr.excilys.cdb.api.dto.Computer"%>
+<%@page import="fr.excilys.cdb.api.dto.Pagination"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page isELIgnored="false"%>
 <!-- control, iterations, tests, variables -->
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -15,14 +17,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8">
 <!-- Bootstrap -->
-<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-<link href="css/font-awesome.css" rel="stylesheet" media="screen">
-<link href="css/main.css" rel="stylesheet" media="screen">
+<link href="<c:url value="/resources/css/bootstrap.css"/>" rel="stylesheet" media="screen">
+<link href="<c:url value="/resources/css/font-awesome.css"/>" rel="stylesheet" media="screen">
+<link href="<c:url value="/resources/css/main.css"/>" rel="stylesheet" media="screen">
 </head>
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboard.html"> Application -
+			<a class="navbar-brand" href="dashboard"> Application -
 				Computer Database </a>
 		</div>
 	</header>
@@ -31,16 +33,16 @@
 		<div class="container">
 			<h1 id="homeTitle">
 				<c:out value="${fn:length(computers)}"></c:out>
-				Computers found
+				<spring:message code="dashboard.numberOfComputers"/>
 			</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="dashboard" method="GET"
 						class="form-inline">
-
-						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name" /> <input
-							type="submit" id="searchsubmit" value="Filter by name"
+						<input type="search" id="searchbox" name="name"
+							class="form-control" placeholder="<spring:message code="dashboard.placeholderSearch"/>" value ="${name}"/>
+						 <input
+							type="submit" id="searchsubmit" value="<spring:message code="dashboard.btnSearch"/>"
 							class="btn btn-primary" />
 					</form>
 				</div>
@@ -49,37 +51,34 @@
 			<div class="col-md-6 select-outline">
 				<form id="sortForm" action="dashboard" method="GET">
 					<div class="col-md-4">
-						<select class="form-control" name="sort">
-							<option value="" disabled selected>Order By</option>
+						<select class="form-control" name="property">
+							<option value="" selected><spring:message code="dashboard.orderBy"/></option>
 							<option value='computer'
-								<c:if test="${sort == 'computer'}">selected="selected"</c:if>>Computer
-								Name</option>
+								<c:if test="${sort.property == 'computer'}">selected="selected"</c:if>><spring:message code="dashboard.computerName"/></option>
 							<option value='company'
-								<c:if test="${sort == 'company'}">selected="selected"</c:if>>Company
-								Name</option>
+								<c:if test="${sort.property == 'company'}">selected="selected"</c:if>><spring:message code="dashboard.companyName"/></option>
 						</select>
 					</div>
 					<div class="col-md-4">
-						<select class="form-control" name="by">
-							<option value="" disabled selected>TYPE</option>
+						<select class="form-control" name="order">
+							<option value="" selected><spring:message code="dashboard.type"/></option>
 							<option value="ASC"
-								<c:if test="${by == 'ASC'}">selected="selected"</c:if>>ASC</option>
+								<c:if test="${sort.order == 'ASC'}">selected="selected"</c:if>>ASC</option>
 							<option value="DESC"
-								<c:if test="${by == 'DESC'}">selected="selected"</c:if>>DESC</option>
+								<c:if test="${sort.order == 'DESC'}">selected="selected"</c:if>>DESC</option>
 						</select>
 					</div>
-					<input type="submit" id="searchsubmit" value="Submit"
+					<input type="submit" id="searchsubmit" value="<spring:message code="dashboard.btnSubmit"/>"
 						class="btn btn-primary" />
 				</form>
 			</div>
 			<div class="pull-right">
-				<a class="btn btn-success" id="addComputer" href="addComputer">Add
-					Computer</a> <a class="btn btn-default" id="editComputer" href="#"
-					onclick="$.fn.toggleEditMode();">Edit</a>
+				<a class="btn btn-success" id="addComputer" href="<c:url value="addComputer"/>"><spring:message code="dashboard.btnAddComputer"/></a> <a class="btn btn-default" id="editComputer" href="#"
+					onclick="$.fn.toggleEditMode();"><spring:message code="dashboard.btnEdit"/></a>
 			</div>
 
 		</div>
-		<form id="deleteForm" action="dashboard" method="POST">
+		<form id="deleteForm" action="dashboard/delete" method="POST">
 			<input type="hidden" name="selection" value="${computer.id}">
 		</form>
 		<div class="container" style="margin-top: 10px;">
@@ -96,16 +95,13 @@
 									class="fa fa-trash-o fa-lg"></i>
 							</a>
 						</span></th>
-						<th>Computer name</th>
-						<th>Introduced date</th>
-						<!-- Table header for Discontinued Date -->
-						<th>Discontinued date</th>
-						<!-- Table header for Company -->
-						<th>Company</th>
+						<th><spring:message code="dashboard.name"/></th>
+						<th><spring:message code="dashboard.introducedDate"/></th>
+						<th><spring:message code="dashboard.discontinuedDate"/></th>
+						<th><spring:message code="dashboard.company"/></th>
 
 					</tr>
 				</thead>
-				<!-- Browse attribute computers -->
 				<tbody id="results">
 					<c:forEach var="item" items="${computers}">
 						<tr>
@@ -127,50 +123,50 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-				<c:if test="${currentPage != 1}">
+				<c:if test="${pagination.currentPage != 1}">
 					<li class="page-item"><a class="page-link"
-						href="dashboard?page=${currentPage - 1}&size=${size}&search=${search}&sort=${sort}&by=${by}">Previous</a>
+						href="<c:url value="dashboard?number=${pagination.currentPage - 1}&size=${pagination.size}&name=${name}&property=${sort.property}&order=${sort.order}"/>"><spring:message code="dashboard.previous"/></a>
 					</li>
 				</c:if>
-				<c:forEach begin="${startPage}" end="${endPage}" var="i">
+				<c:forEach begin="${pagination.startPage}" end="${pagination.endPage}" var="i">
 					<c:choose>
-						<c:when test="${currentPage eq i}">
+						<c:when test="${pagination.currentPage eq i}">
 							<li class="page-item active"><a class="page-link"> ${i}
 									<span class="sr-only">(current)</span>
 							</a></li>
 						</c:when>
 						<c:otherwise>
 							<li class="page-item"><a class="page-link"
-								href="dashboard?page=${i}&size=${size}&search=${search}&sort=${sort}&by=${by}">${i}</a>
+								href="<c:url value="dashboard?number=${i}&size=${pagination.size}&name=${name}&property=${sort.property}&order=${sort.order}"/>">${i}</a>
 							</li>
 						</c:otherwise>
 					</c:choose>
 				</c:forEach>
 
-				<c:if test="${currentPage lt totalOfPages}">
+				<c:if test="${pagination.currentPage lt pagination.numbersOfPages}">
 					<li class="page-item"><a class="page-link"
-						href="dashboard?page=${currentPage +1}&size=${size}&search=${search}&sort=${sort}&by=${by}">Next</a>
+						href="<c:url value="dashboard?number=${pagination.currentPage + 1}&size=${pagination.size}&name=${name}&property=${sort.property}&order=${sort.order}"/>"><spring:message code="dashboard.next"/></a>
 					</li>
 				</c:if>
 			</ul>
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
 				<a class="page-link"
-					href="dashboard?page=${1}&size=${10}&search=${search}&sort=${sort}&by=${by}">
+					href="dashboard?number=${1}&size=${10}&name=${name}&property=${property}&order=${order}">
 					<button type="button" class="btn btn-default">10</button>
 				</a> <a class="page-link"
-					href="dashboard?page=${1}&size=${50}&search=${search}&sort=${sort}&by=${by}">
+					href="dashboard?number=${1}&size=${50}&name=${name}&property=${property}&order=${order}">
 					<button type="button" class="btn btn-default">50</button>
 				</a> <a class="page-link"
-					href="dashboard?page=${1}&size=${100}&search=${search}&sort=${sort}&by=${by}">
+					href="dashboard?number=${1}&size=${100}&name=${name}&property=${property}&order=${order}">
 					<button type="button" class="btn btn-default">100</button>
 				</a>
 			</div>
 		</div>
 	</footer>
-	<script src="js/jquery.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
-	<script src="js/dashboard.js"></script>
+	<script src="<c:url value="resources/js/jquery.min.js"/>"></script>
+	<script src="<c:url value="resources/js/bootstrap.min.js"/>"></script>
+	<script src="<c:url value="resources/js/dashboard.js"/>"></script>
 </body>
 </body>
 </html>

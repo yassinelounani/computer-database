@@ -1,4 +1,4 @@
-package fr.excelys.cdb;
+package fr.excilys.cdb.main;
 
 import java.sql.SQLException;
 import java.util.List;

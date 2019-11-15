@@ -1,4 +1,4 @@
-package fr.excelys.cdb;
+package fr.excilys.cdb.servelets;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -28,8 +28,6 @@ import fr.excilys.cdb.api.dto.Computer;
 import fr.excilys.cdb.api.dto.Computer.Builder;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 
-@Controller
-@WebServlet(name = "addComputer", urlPatterns = {"/addComputer"})
 public class AddComputerSurvelet extends HttpServlet {
 	private static final long serialVersionUID = 2L;
 	@Autowired
@@ -109,5 +107,6 @@ public class AddComputerSurvelet extends HttpServlet {
 		}
 		return messages;
 	}
+	
 
 }

@@ -3,19 +3,4 @@
          xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
-
-<!--     <display-name>computer-database</display-name> -->
-
-<!--     <listener> -->
-<!--         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class> -->
-<!--     </listener> -->
-
-<!--     <context-param> -->
-<!--         <param-name>contextConfigLocation</param-name> -->
-<!--         <param-value>fr.excilys.cdb.configuration.LoadApplicationContext</param-value> -->
-<!--     </context-param> -->
-<!--     <context-param> -->
-<!--         <param-name>contextClass</param-name> -->
-<!--         <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value> -->
-<!--     </context-param> -->
 </web-app>

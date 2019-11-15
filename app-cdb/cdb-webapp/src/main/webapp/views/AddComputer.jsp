@@ -9,11 +9,11 @@
 		<title>Computer Database</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<!-- Bootstrap -->
-		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-		<link href="css/font-awesome.css" rel="stylesheet" media="screen">
-		<link href="css/main.css" rel="stylesheet" media="screen">
+		<link href="<c:url value="/resources/css/bootstrap.min.css"/>" rel="stylesheet" media="screen">
+		<link href="<c:url value="/resources/css/font-awesome.css"/>" rel="stylesheet" media="screen">
+		<link href="<c:url value="/resources/css/main.css"/>" rel="stylesheet" media="screen">
 		
-		<script src="js/jquery.min.js"></script>
+		<script src="<c:url value="/resources/js/jquery.min.js"/>"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 		
@@ -66,8 +66,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="companyId">Company</label>
-	                                <select class="form-control" id="companyId" name="companyId">
-	                                    <option value="${0}"></option>
+	                                <select class="form-control" id="companyId" name="idCompany">
+	                                    <option value="${computer.idCompany}">${computer.nameCompany}</option>
 	                                    <c:forEach var="item" items="${companies}">
 	                                    <option value="${item.id}">${item.id} -- ${item.name}</option>
 	                                    </c:forEach>
@@ -82,13 +82,13 @@
                         <div class="actions pull-right">
                             <input type="submit" id="submit" value="Add" class="btn btn-primary">
                             or
-                            <a href="dashboard?page=${1}" class="btn btn-default">Cancel</a>
+                            <a href="dashboard?number=${1}&size=${10}" class="btn btn-default">Cancel</a>
                         </div>
                     </form> 
                 </div>
             </div>
         </div>
     </section>
-    <script type="text/javascript" src="js/validation.js"></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/validation.js"/>"></script>
 </body>
 </html>

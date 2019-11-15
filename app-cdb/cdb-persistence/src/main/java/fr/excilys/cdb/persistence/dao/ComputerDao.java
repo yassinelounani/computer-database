@@ -170,7 +170,7 @@ public class ComputerDao {
 		orderBy.append(sort.getProperty())
 			   .append(".name")
 			   .append(" ")
-			   .append(sort.getOrder().getSort()).append(" ");
+			   .append(sort.getOrder()).append(" ");
 		return orderBy.toString();
 	}
 
