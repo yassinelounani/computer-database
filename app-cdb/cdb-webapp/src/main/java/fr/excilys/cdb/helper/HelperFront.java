@@ -1,4 +1,4 @@
-package fr.excelys.cdb;
+package fr.excilys.cdb.helper;
 
 import java.util.HashMap;
 import java.util.Map;

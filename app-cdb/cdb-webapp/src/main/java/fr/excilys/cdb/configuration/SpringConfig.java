@@ -1,7 +1,9 @@
 package fr.excilys.cdb.configuration;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
 import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -9,13 +11,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.web.context.AbstractContextLoaderInitializer;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;;
+import org.springframework.web.WebApplicationInitializer;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;;
+
+
 @Configuration
-@ComponentScan("fr.excilys.cdb")
+@EnableWebMvc
+@ComponentScan(basePackages = {"fr.excilys.cdb.controllers", "fr.excilys.cdb"})
 @PropertySource("application.properties")
-public class LoadApplicationContext extends AbstractContextLoaderInitializer {
+public class SpringConfig implements WebApplicationInitializer {
 
 	@Value("${db.driver}")
 	private String jdbcDriver;
@@ -25,14 +31,7 @@ public class LoadApplicationContext extends AbstractContextLoaderInitializer {
 	private String username;
 	@Value("${db.password}")
 	private String password;
-	
-	@Override
-	protected WebApplicationContext createRootApplicationContext() {
-		AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
-		rootContext.register(LoadApplicationContext.class);
-		return rootContext;
-	}
-	
+
 	@Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -43,10 +42,19 @@ public class LoadApplicationContext extends AbstractContextLoaderInitializer {
  
         return dataSource;
     }
-	
+
 	@Bean
 	public NamedParameterJdbcTemplate namedParameterJdbcTemplate() {
 		return new NamedParameterJdbcTemplate(dataSource());
 	}
-
+	
+	@Override
+	public void onStartup(ServletContext ctx) throws ServletException {
+        AnnotationConfigWebApplicationContext webCtx = new AnnotationConfigWebApplicationContext();
+        webCtx.register(SpringConfig.class, WebAppInitializer.class);
+        webCtx.setServletContext(ctx);
+        ServletRegistration.Dynamic servlet = ctx.addServlet("dispatcher", new DispatcherServlet(webCtx));
+        servlet.setLoadOnStartup(1);
+        servlet.addMapping("/");
+    }
 }

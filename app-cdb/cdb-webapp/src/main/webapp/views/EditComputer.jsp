@@ -8,11 +8,11 @@
 	<title>Computer Database</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- Bootstrap -->
-	<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-	<link href="css/font-awesome.css" rel="stylesheet" media="screen">
-	<link href="css/main.css" rel="stylesheet" media="screen">
+	<link href="<c:url value="/resources/css/bootstrap.min.css"/>" rel="stylesheet" media="screen">
+	<link href="<c:url value="/resources/css/font-awesome.css"/>" rel="stylesheet" media="screen">
+	<link href="<c:url value="/resources/css/main.css"/>" rel="stylesheet" media="screen">
 	
-	<script src="js/jquery.min.js"></script>
+	<script src="<c:url value="/resources/js/jquery.min.js"/>"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 	
@@ -37,8 +37,8 @@
 	                	<span id="success"><strong>Success!</strong> ${messages.success}</span>
 	               	 </div>
 	            	</c:if>
-                    <form action="editComputer?id=${computer.id}" method="POST">
-                        <input type="hidden" value="0" id="id"/> <!-- TODO: Change this value with the computer id -->
+                    <form action="editComputer" method="POST">
+                        <input type="hidden" value="${computer.id}" name="id" id="id"/> 
                         <fieldset>
                             <div class="form-group">
                                 <label for="computerName">Computer name</label>
@@ -62,8 +62,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="companyId">Company</label>
-                                <select class="form-control" id="companyId" name="companyId">
-                                    <option value="${0}"></option>
+                                <select class="form-control" id="companyId" name="idCompany">
+                                    <option value="${computer.idCompany}">${computer.nameCompany}</option>
                                     <c:forEach var="item" items="${companies}">
 	                                    <option value="${item.id}">${item.id} -- ${item.name}</option>
 	                                </c:forEach>
@@ -80,6 +80,6 @@
             </div>
         </div>
     </section>
-    <script type="text/javascript" src="js/validation.js"></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/validation.js"/>"></script>
 </body>
 </html>

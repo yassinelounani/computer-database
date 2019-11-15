@@ -4,40 +4,34 @@ import javax.validation.constraints.NotBlank;
 
 public final class Sort {
 	@NotBlank
-	private String Property;
+	private String property;
 	@NotBlank
-	private Order order;
+	private String order;
 	
-	public Sort(@NotBlank String property, @NotBlank Order order) {
+	public Sort(@NotBlank String property, @NotBlank String order) {
 		super();
-		Property = property;
+		this.property = property;
 		this.order = order;
 	}
 
 	public String getProperty() {
-		return Property;
+		return property;
 	}
 
 	public void setProperty(String property) {
-		Property = property;
+		this.property = property;
 	}
 
-	public Order getOrder() {
+	public String getOrder() {
 		return order;
 	}
 
-	public void setOrder(Order order) {
+	public void setOrder(String order) {
 		this.order = order;
 	}
 
 	@Override
 	public String toString() {
-		return "Sort [Property=" + Property + ", order=" + order + "]";
+		return "Sort [property=" + property + ", order=" + order + "]";
 	}
-
-	public enum Order {
-		ASCENDING,
-		DESCENDING;
-	}
-	
 }

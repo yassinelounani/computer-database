@@ -1,7 +1,7 @@
-package fr.excelys.cdb;
+package fr.excilys.cdb.servelets;
 
-import static fr.excelys.cdb.HelperFront.buildComputer;
-import static fr.excelys.cdb.HelperFront.checkError;
+import static fr.excilys.cdb.helper.HelperFront.buildComputer;
+import static fr.excilys.cdb.helper.HelperFront.checkError;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,8 +25,6 @@ import fr.excilys.cdb.api.dto.Computer;
 import fr.excilys.cdb.api.dto.Identifier;
 import fr.excilys.cdb.api.exception.NotFoundComputerException;
 
-@Controller
-@WebServlet(name = "editComputer", urlPatterns = {"/editComputer"})
 public class EditComputer extends HttpServlet {
 
 	private static final long serialVersionUID = 3L;

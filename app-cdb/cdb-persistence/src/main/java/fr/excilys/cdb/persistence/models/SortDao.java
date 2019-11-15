@@ -2,7 +2,7 @@ package fr.excilys.cdb.persistence.models;
 
 public class SortDao {
 	private String property;
-	private Order order;
+	private String order;
 	
 	public String getProperty() {
 		return property;
@@ -12,31 +12,16 @@ public class SortDao {
 		this.property = property;
 	}
 
-	public Order getOrder() {
+	public String getOrder() {
 		return order;
 	}
 
-	public void setOrder(Order order) {
+	public void setOrder(String order) {
 		this.order = order;
 	}
 
 	@Override
 	public String toString() {
 		return "SortDao [property=" + property + ", order=" + order + "]";
-	}
-
-	public enum Order {
-		ASCENDING("ASC"),
-		DESCENDING("DESC");
-
-		private String sort;
-
-		private Order(String sort) {
-			this.sort = sort;
-		}
-
-		public String getSort() {
-			return sort;
-		}
 	}
 }

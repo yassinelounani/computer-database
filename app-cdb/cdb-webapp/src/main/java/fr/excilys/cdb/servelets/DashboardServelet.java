@@ -1,4 +1,4 @@
-package fr.excelys.cdb;
+package fr.excilys.cdb.servelets;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,13 +6,11 @@ import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import fr.excilys.cdb.api.ComputerService;
@@ -23,11 +21,8 @@ import fr.excilys.cdb.api.dto.NameAndPage.Builder;
 import fr.excilys.cdb.api.dto.Page;
 import fr.excilys.cdb.api.dto.PageAndSort;
 import fr.excilys.cdb.api.dto.Sort;
-import fr.excilys.cdb.api.dto.Sort.Order;
 import fr.excilys.cdb.api.exception.NotFoundComputerException;
 
-@Controller
-@WebServlet(name = "dashboard", urlPatterns = {"/dashboard"})
 public class DashboardServelet extends HttpServlet {
 	private static final int MARGIN_PAGINATE = 4;
 
@@ -57,15 +52,15 @@ public class DashboardServelet extends HttpServlet {
 		int currentPage = (pageRequest != null) ? Integer.parseInt(pageRequest) : FIRST_PAGINATE;
 		int  currentsize = (sizeRequest != null) ? Integer.parseInt(sizeRequest) : SIZE_PAGE;
 		Page page = new Page(currentPage, currentsize);
-		if (nameRequest !=null && !nameRequest.isEmpty()) {
+		if (isNotBlank(nameRequest)) {
 			NameAndPage nameAndPage = Builder.newInstance()
 					.setName(nameRequest)
 					.setPage(page)
 					.build();
 			computers = computerService.getSerchComputersWithPage(nameAndPage);
 			numberOfPages = computerService.getTotalPagesOfSerchedComputers(nameAndPage);
-		} else if (sortRequest !=null && sortByRequest != null && !sortRequest.isEmpty() && !sortByRequest.isEmpty()){
-			Sort sort = new Sort(sortRequest, getOrder(sortByRequest));
+		} else if (isNotBlank(sortRequest) && isNotBlank(sortByRequest)){
+			Sort sort = new Sort(sortRequest, sortByRequest);
 			PageAndSort pageAndSort = new PageAndSort(page, sort);
 			computers = computerService.getComputersWithPageAndSort(pageAndSort);
 			numberOfPages = computerService.getTotalPagesOfComputers(page);
@@ -88,6 +83,10 @@ public class DashboardServelet extends HttpServlet {
         request.setAttribute("sort", sortRequest);
        
         request.getRequestDispatcher("/views/dashboard.jsp").forward(request, response);
+	}
+
+	private boolean isNotBlank(String request) {
+		return request != null && request.isEmpty();
 	}
 
 	private int getBeginPage(int currentPage) {
@@ -128,8 +127,5 @@ public class DashboardServelet extends HttpServlet {
 		return computersIds;
 	}
 
-	private Order getOrder(String sort) {
-		return sort.equals("ASC") ? Order.ASCENDING : Order.DESCENDING;
-	}
 
 }

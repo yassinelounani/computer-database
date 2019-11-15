@@ -26,7 +26,7 @@
 			<groupId>fr.excilys.cdb</groupId>
 			<artifactId>cdb-business</artifactId>
 		</dependency>
-		
+
 		<!-- ===== servlet ===== -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -69,7 +69,7 @@
 			<version>${assertj-version}</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
@@ -95,6 +95,13 @@
 			<artifactId>spring-beans</artifactId>
 			<version>${spring-version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring-version}</version>
+		</dependency>
+
 
 	</dependencies>
 
