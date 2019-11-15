@@ -47,37 +47,37 @@
 
 			</div>
 			<div class="col-md-6 select-outline">
-			<form id="sortForm" action="dashboard" method="GET">
+				<form id="sortForm" action="dashboard" method="GET">
 					<div class="col-md-4">
-							<select
-							class="form-control" name="sort">
+						<select class="form-control" name="sort">
 							<option value="" disabled selected>Order By</option>
-							<option value='computer' 
-								<c:if test="${sort == 'computer'}">selected="selected"</c:if>>Computer Name</option>
-							<option value='company' 
-							<c:if test="${sort == 'company'}">selected="selected"</c:if>>Company Name</option>
-						</select> 
+							<option value='computer'
+								<c:if test="${sort == 'computer'}">selected="selected"</c:if>>Computer
+								Name</option>
+							<option value='company'
+								<c:if test="${sort == 'company'}">selected="selected"</c:if>>Company
+								Name</option>
+						</select>
 					</div>
 					<div class="col-md-4">
-						<select
-							class="form-control" name="by">
+						<select class="form-control" name="by">
 							<option value="" disabled selected>TYPE</option>
-							<option value="ASC" 
+							<option value="ASC"
 								<c:if test="${by == 'ASC'}">selected="selected"</c:if>>ASC</option>
-							<option value="DESC" 
+							<option value="DESC"
 								<c:if test="${by == 'DESC'}">selected="selected"</c:if>>DESC</option>
-						</select> 
+						</select>
 					</div>
 					<input type="submit" id="searchsubmit" value="Submit"
-							class="btn btn-primary" />
-			</form>
+						class="btn btn-primary" />
+				</form>
 			</div>
 			<div class="pull-right">
 				<a class="btn btn-success" id="addComputer" href="addComputer">Add
 					Computer</a> <a class="btn btn-default" id="editComputer" href="#"
 					onclick="$.fn.toggleEditMode();">Edit</a>
 			</div>
-			
+
 		</div>
 		<form id="deleteForm" action="dashboard" method="POST">
 			<input type="hidden" name="selection" value="${computer.id}">
@@ -171,6 +171,6 @@
 	<script src="js/jquery.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/dashboard.js"></script>
-  </body>
+</body>
 </body>
 </html>

@@ -9,10 +9,12 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.CompanyEntity.CompanyBuilder;
 import fr.excilys.cdb.persistence.models.ComputerEntity;
+import fr.excilys.cdb.persistence.models.Pageable;
 import fr.excilys.cdb.persistence.models.ComputerEntity.ComputerBuilder;
 
 public class Mapper {
@@ -64,4 +66,14 @@ public class Mapper {
        modelMapper.map(source, destination);
         return destination;
     }
+
+    public  static MapSqlParameterSource addOffsetAndLimit(Pageable page) {
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		int offset = (page.getNumber() - 1) * page.getSize();
+    	int limit = page.getSize();
+    	parameterSource.addValue("offset", offset);
+    	parameterSource.addValue("limit", limit);
+    	return parameterSource;
+    }
+
 }
