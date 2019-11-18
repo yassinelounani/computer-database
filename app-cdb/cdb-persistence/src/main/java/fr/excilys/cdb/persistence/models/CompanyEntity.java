@@ -2,11 +2,21 @@ package fr.excilys.cdb.persistence.models;
 
 import java.util.Objects;
 
-public class CompanyEntity {
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "company")
+public class CompanyEntity {
+	@Id
 	private long id;
 	private String name;
 	
+	public CompanyEntity() {
+		super();
+	}
+
 	private CompanyEntity(CompanyBuilder builder) {
 		super();
 		this.id = builder.id;

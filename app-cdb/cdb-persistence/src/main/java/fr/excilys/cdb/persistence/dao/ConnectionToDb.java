@@ -5,8 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.sql.DataSource;
@@ -24,15 +22,6 @@ public class ConnectionToDb {
 	
 	@Autowired
 	private DataSource dataSource;
-	
-
-	public DataSource getDataSource() {
-		return dataSource;
-	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionToDb.class);
 	

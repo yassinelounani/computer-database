@@ -1,5 +1,7 @@
 package fr.excilys.cdb.api.dto;
 
+import java.util.List;
+
 public class Pagination {
 
 	private int numbersOfPages;
@@ -7,6 +9,7 @@ public class Pagination {
 	private int endPage;
 	private int currentPage;
 	private int size;
+	private List<Computer> computers;
 
 	public Pagination(Builder builder) {
 		this.numbersOfPages = builder.numbersOfPages;
@@ -14,6 +17,7 @@ public class Pagination {
 		this.endPage = builder.endPage;
 		this.currentPage = builder.currentPage;
 		this.size = builder.size;
+		this.computers = builder.computers;
 	}
 
 	public int getNumbersOfPages() {
@@ -32,12 +36,17 @@ public class Pagination {
 		return size;
 	}
 
+	public List<Computer> getComputers() {
+		return computers;
+	}
+	
 	public static class Builder {
 		private int numbersOfPages;
 		private int startPage;
 		private int endPage;
 		private int currentPage;
 		private int size;
+		private List<Computer> computers;
 
 		public static Builder newInstance() {
 			return new Builder();
@@ -68,8 +77,20 @@ public class Pagination {
 			return this;
 		}
 
+		public Builder setComputers(List<Computer> computers) {
+			this.computers = computers;
+			return this;
+		}
+
 		public Pagination build() {
 			return new Pagination(this);
 		}
+		
+	}
+
+	@Override
+	public String toString() {
+		return "Pagination [numbersOfPages=" + numbersOfPages + ", startPage=" + startPage + ", endPage=" + endPage
+				+ ", currentPage=" + currentPage + ", size=" + size + ", computers=" + computers + "]";
 	}
 }

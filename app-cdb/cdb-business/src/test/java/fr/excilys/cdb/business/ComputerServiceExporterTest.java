@@ -113,8 +113,8 @@ public class ComputerServiceExporterTest {
 		doReturn(UPDATE_OK).when(mockComputer).addComputer(COMPUTER_MAC);
 		//execute && verify 
 		assertThatCode(() -> { 
-			int addValue = computerService.addComputer(computer);
-			assertThat(addValue).isEqualTo(UPDATE_OK);
+			Optional<Computer> addComputer = computerService.addComputer(computer);
+			assertThat(addComputer.get().getId()).isEqualTo(ID_1);
 		}).doesNotThrowAnyException();
 	}
 }

@@ -13,7 +13,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-public class WebAppInitializer implements WebMvcConfigurer {
+public class SpringWebMvcconfig implements WebMvcConfigurer {
 
 	@Bean
 	public ViewResolver internalResourceViewResolver() {
@@ -32,7 +32,7 @@ public class WebAppInitializer implements WebMvcConfigurer {
 	@Bean
 	public ReloadableResourceBundleMessageSource messageSource() {
 		ReloadableResourceBundleMessageSource ret = new ReloadableResourceBundleMessageSource();
-		ret.setBasename("resources/messages/messages");
+		ret.setBasename("classpath:messages/messages");
 		ret.setDefaultEncoding("utf-8");
 		return ret;
 	}

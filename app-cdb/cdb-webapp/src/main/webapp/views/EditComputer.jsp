@@ -2,6 +2,7 @@
 <%@page import="fr.excilys.cdb.api.dto.Computer"%>
 <%@ page isELIgnored ="false" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,32 +32,32 @@
                     <div class="label label-default pull-right">
                         id: <c:out value="${computer.id}">${computer.id}</c:out>
                     </div>
-                    <h1>Edit Computer</h1>
+                    <h1><spring:message code="editComputer.title"/></h1>
 					<c:if test="${messages.success != null}">
 	                  <div class="alert alert-success">
-	                	<span id="success"><strong>Success!</strong> ${messages.success}</span>
+	                	<span id="success"><strong>Success!</strong> <spring:message code="editComputer.messageSuccess"/></span>
 	               	 </div>
 	            	</c:if>
                     <form action="editComputer" method="POST">
                         <input type="hidden" value="${computer.id}" name="id" id="id"/> 
                         <fieldset>
                             <div class="form-group">
-                                <label for="computerName">Computer name</label>
+                                <label for="computerName"><spring:message code="editComputer.name"/></label>
                                 <input type="text" class="form-control" id="computerName" name="name" value="${computer.name}" required>
                                 <c:if test="${messages.name != null}">
-                					<span id="errorName" style="color: red;">${messages.name}</span>
+                					<span id="errorName" style="color: red;"><spring:message code="editComputer.messageName"/></span>
            						</c:if>
            						<span style="color: blue;" id="spanName"></span>
                             </div>
                             <div class="form-group">
-                                <label for="introduced">Introduced date</label>
+                                <label for="introduced"><spring:message code="editComputer.introducedDate"/></label>
                                 <input type="date" class="form-control" id="introduced" name="introduced" value="${computer.introduced}">
                             </div>
                             <div class="form-group">
-                                <label for="discontinued">Discontinued date</label>
+                                <label for="discontinued"><spring:message code="editComputer.discontinuedDate"/></label>
                                 <input type="date" class="form-control" id="discontinued" name="discontinued" value="${computer.discontinued}">
                                 <c:if test="${messages.introduced != null}">
-                					<span style="color: red;" id="errorIntroduced">${messages.introduced}</span>
+                					<span style="color: red;" id="errorIntroduced"><spring:message code="editComputer.messageIntroduced"/></span>
            						</c:if>
            						<span style="color: blue;" id="spanIntro"></span>
                             </div>
@@ -71,9 +72,9 @@
                             </div>            
                         </fieldset>
                         <div class="actions pull-right">
-                            <input type="submit" value="Edit" class="btn btn-primary">
-                            or
-                            <a href="dashboard" class="btn btn-default">Cancel</a>
+                            <input type="submit" value="<spring:message code="editComputer.btnEdit"/>" class="btn btn-primary">
+                            <spring:message code="editComputer.or"/>
+                            <a href="dashboard" class="btn btn-default"><spring:message code="editComputer.btnCancel"/></a>
                         </div>
                     </form>
                 </div>

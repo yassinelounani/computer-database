@@ -11,9 +11,13 @@ import javax.validation.ValidatorFactory;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.springframework.data.domain.Page;
 
+import fr.excilys.cdb.api.dto.Company;
 import fr.excilys.cdb.api.dto.Computer;
-import fr.excilys.cdb.api.dto.Sort;
+import fr.excilys.cdb.api.dto.PageDto;
+import fr.excilys.cdb.api.dto.PageDto.Builder;
+import fr.excilys.cdb.api.dto.SortDto;
 import fr.excilys.cdb.persistence.mappers.HelperDate;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.CompanyEntity.CompanyBuilder;
@@ -49,11 +53,46 @@ public class Helper {
 		return modelMapper.map(computerEntity, Computer.class);
 	}
 
+	public static Company mapToCompany(CompanyEntity companyEntity) {
+		ModelMapper modelMapper = new ModelMapper();
+		return modelMapper.map(companyEntity, Company.class);
+	}
+
+	public static PageDto<Computer> mapAllComputersWithPage(Page<ComputerEntity> entry) {
+		PageDto.Builder<Computer> builder = new Builder<>();
+		return	builder.setNumber(entry.getNumber())
+        			   .setSize(entry.getSize())
+        			   .setTotalElement(entry.getTotalElements())
+        			   .setContent(mapContent(entry.getContent()))
+        			   .build();
+    }
+
+	public static PageDto<Company> mapAllCompaniesWithPage(Page<CompanyEntity> entry) {
+		PageDto.Builder<Company> builder = new Builder<>();
+		return	builder.setNumber(entry.getNumber())
+        			   .setSize(entry.getSize())
+        			   .setTotalElement(entry.getTotalElements())
+        			   .setContent(mapContentCompanies(entry.getContent()))
+        			   .build();
+    }
+
 	public static List<Computer> mapAll(List<ComputerEntity> entityList) {
         return entityList.stream()
                 .map(entity -> mapToComputer(entity))
                 .collect(Collectors.toList());
-    }
+	}
+
+	private static List<Computer> mapContent(List<ComputerEntity> list) {
+		return list.stream()
+                .map(entity -> mapToComputer(entity))
+                .collect(Collectors.toList());
+	}
+
+	private static List<Company> mapContentCompanies(List<CompanyEntity> list) {
+		return list.stream()
+                .map(entity -> mapToCompany(entity))
+                .collect(Collectors.toList());
+	}
 
 	public static <E> boolean  isValidBean(E bean) {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -62,7 +101,7 @@ public class Helper {
         return violations.isEmpty();
 	}
 
-	public static SortDao mapToSortDao(Sort sort) {
+	public static SortDao mapToSortDao(SortDto sort) {
 		ModelMapper modelMapper = new ModelMapper();
 		return modelMapper.map(sort, SortDao.class);
 	}

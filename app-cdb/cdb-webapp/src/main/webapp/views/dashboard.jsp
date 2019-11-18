@@ -32,7 +32,7 @@
 	<section id="main">
 		<div class="container">
 			<h1 id="homeTitle">
-				<c:out value="${fn:length(computers)}"></c:out>
+				<c:out value="${fn:length(pagination.computers)}"></c:out>
 				<spring:message code="dashboard.numberOfComputers"/>
 			</h1>
 			<div id="actions" class="form-horizontal">
@@ -47,16 +47,16 @@
 					</form>
 				</div>
 
-			</div>
+			</div> 
 			<div class="col-md-6 select-outline">
 				<form id="sortForm" action="dashboard" method="GET">
 					<div class="col-md-4">
 						<select class="form-control" name="property">
 							<option value="" selected><spring:message code="dashboard.orderBy"/></option>
-							<option value='computer'
-								<c:if test="${sort.property == 'computer'}">selected="selected"</c:if>><spring:message code="dashboard.computerName"/></option>
-							<option value='company'
-								<c:if test="${sort.property == 'company'}">selected="selected"</c:if>><spring:message code="dashboard.companyName"/></option>
+							<option value='name'
+								<c:if test="${sort.property == 'name'}">selected="selected"</c:if>><spring:message code="dashboard.computerName"/></option>
+							<option value='company.name'
+								<c:if test="${sort.property == 'company.name'}">selected="selected"</c:if>><spring:message code="dashboard.companyName"/></option>
 						</select>
 					</div>
 					<div class="col-md-4">
@@ -78,7 +78,7 @@
 			</div>
 
 		</div>
-		<form id="deleteForm" action="dashboard/delete" method="POST">
+		<form id="deleteForm" action="deleteComputers" method="POST">
 			<input type="hidden" name="selection" value="${computer.id}">
 		</form>
 		<div class="container" style="margin-top: 10px;">
@@ -103,7 +103,7 @@
 					</tr>
 				</thead>
 				<tbody id="results">
-					<c:forEach var="item" items="${computers}">
+					<c:forEach var="item" items="${pagination.computers}">
 						<tr>
 							<td class="editMode"><input type="checkbox" name="cb"
 								class="cb" value="${item.id}"></td>
@@ -137,7 +137,7 @@
 						</c:when>
 						<c:otherwise>
 							<li class="page-item"><a class="page-link"
-								href="<c:url value="dashboard?number=${i}&size=${pagination.size}&name=${name}&property=${sort.property}&order=${sort.order}"/>">${i}</a>
+								href="<c:url value="dashboard?number=${i - 1}&size=${pagination.size}&name=${name}&property=${sort.property}&order=${sort.order}"/>">${i}</a>
 							</li>
 						</c:otherwise>
 					</c:choose>
@@ -164,9 +164,9 @@
 			</div>
 		</div>
 	</footer>
-	<script src="<c:url value="resources/js/jquery.min.js"/>"></script>
-	<script src="<c:url value="resources/js/bootstrap.min.js"/>"></script>
-	<script src="<c:url value="resources/js/dashboard.js"/>"></script>
+	<script src="<c:url value="/resources/js/jquery.min.js"/>"></script>
+	<script src="<c:url value="/resources/js/bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/resources/js/dashboard.js"/>"></script>
 </body>
 </body>
 </html>

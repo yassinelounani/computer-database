@@ -12,6 +12,7 @@ import javax.validation.ValidatorFactory;
 
 import fr.excilys.cdb.api.dto.Computer;
 import fr.excilys.cdb.api.dto.Computer.Builder;
+import fr.excilys.cdb.api.dto.PageDto;
 
 public class HelperFront {
 
@@ -43,6 +44,13 @@ public class HelperFront {
 		      }
 		}
 		return messages;
+	}
+	
+	public static PageDto<Computer> getPageDto(int number, int size) {
+		PageDto.Builder<Computer> builder = new PageDto.Builder<>();
+		return builder.setNumber(number)
+						.setSize(size)
+						.build();
 	}
 
 	

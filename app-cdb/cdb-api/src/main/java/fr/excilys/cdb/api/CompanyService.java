@@ -3,7 +3,8 @@ package fr.excilys.cdb.api;
 import java.util.List;
 
 import fr.excilys.cdb.api.dto.Company;
-import fr.excilys.cdb.api.dto.Page;
+import fr.excilys.cdb.api.dto.PageDto;
+import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 
 public interface CompanyService {
 	/**
@@ -17,5 +18,5 @@ public interface CompanyService {
 	 * @return company list of computers, null if null
 	 * @throws NotFoundCompanyException throw exception if any computer founded
 	 */
-	List<Company> getCompaniesWithPage(Page page);
+	PageDto<Company> getCompaniesWithPage(PageDto<Company> page);
 }

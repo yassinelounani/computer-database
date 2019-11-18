@@ -3,13 +3,27 @@ package fr.excilys.cdb.persistence.models;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+@Entity
+@Table(name = "Computer")
 public class ComputerEntity {
-
+	@Id
 	private long id;
 	private String name;
 	private LocalDate introduced;
 	private LocalDate discontinued;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "company_id")
 	private CompanyEntity company;
+	
+	public ComputerEntity() {
+		super();
+	}
 
 	private ComputerEntity(ComputerBuilder builder){
 		super();
@@ -65,7 +79,6 @@ public class ComputerEntity {
 	}
 
 	public static class ComputerBuilder {
-
 		private long id;
 		private String name;
 		private LocalDate introduced;

@@ -15,7 +15,7 @@ import fr.excilys.cdb.persistence.mappers.CompanyRowMapper;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.Pageable;
 
-@Component
+
 public class CompanyDao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDao.class);

@@ -15,25 +15,26 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import fr.excilys.cdb.api.CompanyService;
 import fr.excilys.cdb.api.ComputerService;
 import fr.excilys.cdb.api.dto.Company;
 import fr.excilys.cdb.api.dto.Computer;
 import fr.excilys.cdb.api.dto.Identifier;
-import fr.excilys.cdb.api.dto.NameAndPage;
 import fr.excilys.cdb.api.dto.Navigation;
-import fr.excilys.cdb.api.dto.Page;
-import fr.excilys.cdb.api.dto.PageAndSort;
+import fr.excilys.cdb.api.dto.PageDto;
 import fr.excilys.cdb.api.dto.Pagination;
 import fr.excilys.cdb.api.dto.Pagination.Builder;
-import fr.excilys.cdb.api.dto.Sort;
+import fr.excilys.cdb.api.dto.SortDto;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 import fr.excilys.cdb.api.exception.NotFoundComputerException;
 
+
 @Controller
+@RequestMapping("/computers")
 public class Dashboard {
-	private static final String REDIRECT_DASHBOARD = "redirect:/dashboard";
+	private static final String REDIRECT_DASHBOARD = "redirect:/computers/dashboard";
 	private static final String EDIT_COMPUTER = "EditComputer";
 	private static final String ADD_COMPUTER = "AddComputer";
 	private static final String DASHBOARD = "dashboard";
@@ -54,31 +55,23 @@ public class Dashboard {
 
 	@GetMapping("/dashboard")
 	public String dashboard(@ModelAttribute("navigation") Navigation navigation, Model model) {
-		List<Computer> computers = null;
-		int numberOfPages = 0;
-		Page page = getPage(navigation.getNumber(), navigation.getSize());
-		Sort sort = new Sort(navigation.getProperty(), navigation.getOrder());
+		Pagination pagination = null;
+		PageDto<Computer> page = getPage(navigation);
+		SortDto sort = new SortDto(navigation.getProperty(), navigation.getOrder());
 		if(!isBlank(navigation.getName())) {
-			NameAndPage nameAndPage = getNameAndPage(navigation.getName(), page);
-			computers = computerService.getSerchComputersWithPage(nameAndPage);
-			numberOfPages = computerService.getTotalPagesOfSerchedComputers(nameAndPage);
+			pagination = findComputers(page, navigation.getName());
 			model.addAttribute("name", navigation.getName());
-		} else if (!isBlank(navigation.getProperty()) && !isBlank(navigation.getOrder())) {
-			PageAndSort pageAndSort = new PageAndSort(page, sort);
-			computers = computerService.getComputersWithPageAndSort(pageAndSort);
-			numberOfPages = computerService.getTotalPagesOfComputers(page);
+		} else if (!isBalnkSort(navigation)) {
+			pagination = sortComputers(page, sort);
 			model.addAttribute("sort", sort);
 		} else {
-			computers = computerService.getComputersWithPage(page);
-			numberOfPages = computerService.getTotalPagesOfComputers(page);
+			pagination = listComputers(page);
 		}
-		Pagination navPagination = getPagination(page, numberOfPages);
-		model.addAttribute("computers", computers);
-		model.addAttribute("pagination", navPagination);
+		model.addAttribute("pagination", pagination);
 		return DASHBOARD;
 	}
 
-	@PostMapping("dashboard/delete")
+	@PostMapping("/deleteComputers")
 	public String deleteComputers(@RequestParam(value="selection") List<String> ids) {
 		List<Identifier> computerIds = getSelectedIds(ids);
 		for(Identifier computerid : computerIds) {
@@ -98,16 +91,22 @@ public class Dashboard {
 		return ADD_COMPUTER;
 	}
 
+	@GetMapping("/login")
+	public String login(Model model) {
+		
+		return "login";
+	}
+
 	@PostMapping("/addComputer")
 	public String addComputer(@ModelAttribute("computer") Computer computer, Model model) {
 		Map<String, String> messages = 	checkError(computer);
 		addComputer(model, computer, messages);
-		SendComputer(model, messages);
+		SendMessages(model, messages);
 		return ADD_COMPUTER;
 	}
 
 	@GetMapping("/editComputer")
-	public String updateComputer(@RequestParam("id") int idComputer, Model model) {
+	public String updateComputer(@RequestParam("id") long idComputer, Model model) {
 		Identifier computerId = new Identifier(idComputer);
 		Computer computer = computerService.getComputerById(computerId).get();
 		List<Company> companies = companyService.getCompanies();
@@ -119,28 +118,35 @@ public class Dashboard {
 	@PostMapping("/editComputer")
 	public String updateComputer(@ModelAttribute("computer") Computer computer, Model model) {
 		Map<String, String> messages = checkError(computer);
-		updateComputer(model, computer, messages);
-		return EDIT_COMPUTER;
+		updateAndSaveMessages(model, computer, messages);
+		return updateComputer(computer.getId(), model);
 		
 	}
 	private List<Identifier> getSelectedIds(List<String> ids) {
 		return ids.stream().map(id -> new Identifier(Long.parseLong(id))).collect(Collectors.toList());
 	}
 
-	private Page getPage( int number, int size) {
-		return number == 0 ? new Page(FIRST_PAGINATE, SIZE_PAGE) : new Page(number, size);
+	private PageDto<Computer> getPage(Navigation navigation) {
+		return navigation.getNumber() == 0 ? getFirstPage() : getRequestPage(navigation);
 	}
 
+	private PageDto<Computer> getFirstPage() {
+		PageDto.Builder<Computer> builder = new PageDto.Builder<>();
+		return builder.setNumber(FIRST_PAGINATE)
+			.setSize(SIZE_PAGE)
+			.build();
+	}
+
+	private PageDto<Computer> getRequestPage(Navigation navigation) {
+		PageDto.Builder<Computer> builder = new PageDto.Builder<>();
+		return builder.setNumber(navigation.getNumber())
+			.setSize(navigation.getSize())
+			.build();
+		
+	}
+	
 	private boolean isBlank(String request) {
 		return request == null || request.isEmpty();
-	}
-
-	private NameAndPage getNameAndPage(String name, Page page) {
-		NameAndPage nameAndPage = NameAndPage.Builder.newInstance()
-				.setName(name)
-				.setPage(page)
-				.build();
-		return nameAndPage;
 	}
 
 	private int getBeginPage(int currentPage) {
@@ -162,8 +168,8 @@ public class Dashboard {
 	private void addComputer(Model model, Computer computer, Map<String, String> messages) {
 		if (messages.size() == 0) {
 			try {
-				int addValue = computerService.addComputer(computer);
-				if ( addValue == 0) {
+				int addComputer = computerService.addComputer(computer);
+				if (addComputer == 0) {
 					messages.put("fail", "some thing rong");
 				} else {
 					messages.put("success", "Computer added with success");
@@ -176,7 +182,7 @@ public class Dashboard {
 		model.addAttribute("computer", computer);
 	}
 
-	private void SendComputer(Model model, Map<String, String> messages) {
+	private void SendMessages(Model model, Map<String, String> messages) {
 		List<Company> companies = companyService.getCompanies();
 		model.addAttribute("companies", companies);
 		model.addAttribute("messages", messages);
@@ -196,7 +202,7 @@ public class Dashboard {
 		return messages;
 	}
 
-	private void updateComputer(Model model, Computer computer, Map<String, String> messages) {
+	private void updateAndSaveMessages(Model model, Computer computer, Map<String, String> messages) {
 		if (messages.size() == 0) {
 			try {
 				int updateValue = computerService.updateComputer(computer);
@@ -209,14 +215,14 @@ public class Dashboard {
 				messages.put("company", e.getMessage());
 			}
 		}
-		model.addAttribute("computer", computer);
 		model.addAttribute("messages", messages);
 	}
 
-	private Pagination getPagination(Page page, int numberOfPages) {
+	private Pagination getPagination(PageDto<Computer> page) {
 		int currentPage = page.getNumber();
 		int currentSize = page.getSize();
 		int startPage = getBeginPage(page.getNumber());
+		int numberOfPages = getTotalPages(page);
 		int endPage = getEndPage(numberOfPages, currentPage);
 		return Builder.newInstance()
 					.setNumbersOfPages(numberOfPages)
@@ -224,8 +230,35 @@ public class Dashboard {
 					.setEndPage(endPage)
 					.setCurrentPage(currentPage)
 					.setSize(currentSize)
+					.setComputers(page.getContent())
 					.build();
 	}
 
+	private Pagination findComputers(PageDto<Computer> page, String name) {
+		PageDto<Computer> computers = computerService.getSerchComputersWithPage(page, name);
+		return getPagination(computers);
+	}
 
-}
+	private Pagination sortComputers(PageDto<Computer> page, SortDto sort) {
+		PageDto<Computer> computers = computerService.getComputersWithPageAndSort(page, sort);
+		return getPagination(computers);
+	}
+
+	private Pagination listComputers(PageDto<Computer> page) {
+		PageDto<Computer> computers = computerService.getComputersWithPage(page);
+		return getPagination(computers);
+	}
+
+	private int getTotalPages(PageDto<Computer> page) {
+		if(page.getTotalElement() <9) {
+			return FIRST_PAGINATE;
+		}
+		int totalPages = (int) (page.getTotalElement() / page.getSize());
+		totalPages = totalPages % page.getSize() == 0 ? totalPages : totalPages + 1;
+		return totalPages;
+	}
+
+	private boolean isBalnkSort(Navigation navigation) {
+		return isBlank(navigation.getProperty())  || isBlank(navigation.getOrder());
+	}
+} 

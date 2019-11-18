@@ -2,8 +2,6 @@ package fr.excilys.cdb.persistence.dao;
 
 import java.util.List;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -17,10 +15,8 @@ import fr.excilys.cdb.persistence.models.ComputerEntity;
 import fr.excilys.cdb.persistence.models.Pageable;
 import fr.excilys.cdb.persistence.models.SortDao;
 import static fr.excilys.cdb.persistence.mappers.Mapper.addOffsetAndLimit;
-@Component
-public class ComputerDao {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ComputerDao.class);
+public class ComputerDao {
 
 	private static final String GET_ALL_COMPUTERS = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id ORDER BY computer.name, company.name";
@@ -74,7 +70,7 @@ public class ComputerDao {
         List<ComputerEntity> computers = jdbcTemplate.query(GET_ALL_COMPUTERS, computerRowMapper);
         return computers;
 	}
-	
+
 	public List<ComputerEntity> getComputersWithPage(Pageable page) {
 		StringBuilder query = new StringBuilder();
 		query.append(GET_ALL_COMPUTERS_WITH_PAGE)
