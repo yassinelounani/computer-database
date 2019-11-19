@@ -1,17 +1,20 @@
 package fr.excilys.cdb.business;
 
+import static fr.excilys.cdb.persistence.mappers.Mapper.mapAll;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+
 import java.util.Arrays;
 import java.util.List;
+
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import fr.excilys.cdb.api.CompanyService;
 import fr.excilys.cdb.api.dto.Company;
-import fr.excilys.cdb.persistence.dao.CompanyDao;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
-import static fr.excilys.cdb.persistence.mappers.Mapper.mapAll;
 import fr.excilys.cdb.persistence.models.CompanyEntity.CompanyBuilder;
+import fr.excilys.cdb.persistence.repositories.CompanyRepository;
 
 public class CompanyServiceExporterTest {
 	
@@ -27,16 +30,14 @@ public class CompanyServiceExporterTest {
 			 .setName(APPLE)
 			 .build();
 
-	@Autowired
-	private CompanyServiceExporter companyService;
-
 	@Test
-	public void test_getComputers_expect_success() {
+	public void test_getCompanies_expect_success() {
 		//prepare
-		CompanyDao mock = mock(CompanyDao.class);
+		CompanyRepository mock = mock(CompanyRepository.class);
+		CompanyService companyService = new CompanyServiceExporter(mock);
 		List<CompanyEntity> companyEntities = Arrays.asList(COMPANY_APPLE, COMPANY_HP);
 		List<Company> companies = mapAll(companyEntities, Company.class);
-		doReturn(companyEntities).when(mock).getCompanies();
+		doReturn(companyEntities).when(mock).selectCompanies();
 		//execute
 		List<Company> getComputers = companyService.getCompanies();
 		//verify

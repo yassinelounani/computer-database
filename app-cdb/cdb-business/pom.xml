@@ -32,8 +32,7 @@
 			<groupId>fr.excilys.cdb</groupId>
 			<artifactId>cdb-persistence</artifactId>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.modelmapper/modelmapper -->
+		<!-- ===== Third-party libraries ===== -->
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
@@ -48,40 +47,20 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-api-mockito2</artifactId>
-			<version>1.7.0</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-module-junit4</artifactId>
-			<version>${powermock-version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-api-mockito</artifactId>
-			<version>${powermock-version}</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- ===== Third-party libraries ===== -->
-		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>${spring-version}</version>
 		</dependency>
+
 		<dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring-version}</version>
-            <scope>test</scope>
-        </dependency>
-        
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring-version}</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
-	
-	
+
+
 
 </project>

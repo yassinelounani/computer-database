@@ -8,12 +8,10 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import fr.excilys.cdb.persistence.mappers.ComputerRowMapper;
 import fr.excilys.cdb.persistence.models.ComputerEntity;
-import fr.excilys.cdb.persistence.models.Pageable;
-import fr.excilys.cdb.persistence.models.SortDao;
+
 import static fr.excilys.cdb.persistence.mappers.Mapper.addOffsetAndLimit;
 
 public class ComputerDao {

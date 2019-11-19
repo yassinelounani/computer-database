@@ -36,6 +36,8 @@
 		<maven-surefire-version>2.22.1</maven-surefire-version>
 		<maven.test.skip>true</maven.test.skip>
 		<spring-version>5.2.0.RELEASE</spring-version>
+		<javax-validation-version>2.0.1.Final</javax-validation-version>
+		<javax-xml-bind-version>2.3.1</javax-xml-bind-version>
 	</properties>
 
 	<!-- =============================================================== -->
@@ -44,7 +46,6 @@
 	<dependencies>
 		<!-- ===== Modules ===== -->
 		<!-- ===== Spring Framework ===== -->
-
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-framework-bom</artifactId>
@@ -58,12 +59,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${self4j-api-version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql-connector-mysql-version}</version>
 		</dependency>
 
 		<dependency>
@@ -96,12 +91,12 @@
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
-			<version>2.0.1.Final</version>
+			<version>${javax-validation-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
-			<version>2.3.1</version>
+			<version>${javax-xml-bind-version}</version>
 		</dependency>
 
 	</dependencies>

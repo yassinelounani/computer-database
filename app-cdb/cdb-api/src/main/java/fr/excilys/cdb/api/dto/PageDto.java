@@ -6,7 +6,7 @@ import java.util.List;
 import javax.validation.constraints.Min;
 
 public class PageDto<T> {
-	@Min(1)
+	@Min(0)
 	private int number;
 	@Min(1)
 	private int size;
@@ -77,5 +77,4 @@ public class PageDto<T> {
 		return "PageDto [number=" + number + ", size=" + size + ", totalElement=" + totalElement + ", content="
 				+ content + "]";
 	}
-
 }

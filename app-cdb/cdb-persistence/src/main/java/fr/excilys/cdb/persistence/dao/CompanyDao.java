@@ -3,22 +3,16 @@ package fr.excilys.cdb.persistence.dao;
 import static fr.excilys.cdb.persistence.mappers.Mapper.addOffsetAndLimit;
 import java.util.List;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.stereotype.Component;
 import fr.excilys.cdb.persistence.mappers.CompanyRowMapper;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
-import fr.excilys.cdb.persistence.models.Pageable;
-
 
 public class CompanyDao {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDao.class);
 
 	private static final String GET_ALL_COMPANIES = "SELECT company.id, company.name "
 												  + "FROM company";

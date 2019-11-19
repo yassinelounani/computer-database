@@ -17,9 +17,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "fr.excilys.cdb.persistence")
+@EnableJpaRepositories(basePackages = "fr.excilys.cdb.persistence.repositories")
 @EnableTransactionManagement
-public class ConfigSpringDataJpa {
+public class SpringDataJpaConfig {
 
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {

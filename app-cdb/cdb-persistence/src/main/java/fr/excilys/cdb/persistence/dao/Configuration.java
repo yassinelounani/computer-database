@@ -1,11 +1,6 @@
 package fr.excilys.cdb.persistence.dao;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class Configuration {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(ComputerDao.class);
 
     public static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     public static final String PORT = "3306";

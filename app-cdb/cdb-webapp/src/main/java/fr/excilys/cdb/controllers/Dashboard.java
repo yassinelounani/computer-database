@@ -30,7 +30,6 @@ import fr.excilys.cdb.api.dto.SortDto;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 import fr.excilys.cdb.api.exception.NotFoundComputerException;
 
-
 @Controller
 @RequestMapping("/computers")
 public class Dashboard {
@@ -39,7 +38,7 @@ public class Dashboard {
 	private static final String ADD_COMPUTER = "AddComputer";
 	private static final String DASHBOARD = "dashboard";
 	private static final int MARGIN_PAGINATE = 4;
-	private static final int FIRST_PAGINATE = 1;
+	private static final int FIRST_PAGINATE = 0;
 	private static final int END_PAGINATE = 8;
 	private static final int SIZE_PAGE = 10;
 
@@ -150,7 +149,7 @@ public class Dashboard {
 	}
 
 	private int getBeginPage(int currentPage) {
-		return currentPage <= MARGIN_PAGINATE ? FIRST_PAGINATE : currentPage - MARGIN_PAGINATE;
+		return currentPage <= MARGIN_PAGINATE ? FIRST_PAGINATE + 1 : currentPage - MARGIN_PAGINATE;
 	}
 
 	private int getEndPage(int numberOfPages, int currentPage) {
@@ -219,7 +218,7 @@ public class Dashboard {
 	}
 
 	private Pagination getPagination(PageDto<Computer> page) {
-		int currentPage = page.getNumber();
+		int currentPage = page.getNumber() + 1;
 		int currentSize = page.getSize();
 		int startPage = getBeginPage(page.getNumber());
 		int numberOfPages = getTotalPages(page);

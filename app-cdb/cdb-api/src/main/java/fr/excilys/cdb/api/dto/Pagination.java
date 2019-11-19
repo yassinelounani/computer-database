@@ -85,7 +85,6 @@ public class Pagination {
 		public Pagination build() {
 			return new Pagination(this);
 		}
-		
 	}
 
 	@Override

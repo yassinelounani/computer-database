@@ -18,22 +18,22 @@ import fr.excilys.cdb.api.dto.Computer;
 import fr.excilys.cdb.api.dto.PageDto;
 import fr.excilys.cdb.api.dto.PageDto.Builder;
 import fr.excilys.cdb.api.dto.SortDto;
+import fr.excilys.cdb.persistence.dao.SortDao;
 import fr.excilys.cdb.persistence.mappers.HelperDate;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.CompanyEntity.CompanyBuilder;
 import fr.excilys.cdb.persistence.models.ComputerEntity;
 import fr.excilys.cdb.persistence.models.ComputerEntity.ComputerBuilder;
-import fr.excilys.cdb.persistence.models.SortDao;
 
 public class Helper {
 	public static ComputerEntity mapToComputerEntity(Computer computer) {
 		return ComputerBuilder.newInstance()
-					.setId(computer.getId())
-					.setName(computer.getName())
-					.setCompany(mapToCompanyEntity(computer))
-					.setIntroduced(HelperDate.stringDateToLocalDate(computer.getIntroduced()))
-					.setDicontinued( HelperDate.stringDateToLocalDate(computer.getDiscontinued()))
-					.build();
+				.setId(computer.getId())
+				.setName(computer.getName())
+				.setCompany(mapToCompanyEntity(computer))
+				.setIntroduced(HelperDate.stringDateToLocalDate(computer.getIntroduced()))
+				.setDicontinued( HelperDate.stringDateToLocalDate(computer.getDiscontinued()))
+				.build();
 					
 	}
 
@@ -61,19 +61,19 @@ public class Helper {
 	public static PageDto<Computer> mapAllComputersWithPage(Page<ComputerEntity> entry) {
 		PageDto.Builder<Computer> builder = new Builder<>();
 		return	builder.setNumber(entry.getNumber())
-        			   .setSize(entry.getSize())
-        			   .setTotalElement(entry.getTotalElements())
-        			   .setContent(mapContent(entry.getContent()))
-        			   .build();
+        		.setSize(entry.getSize())
+        		.setTotalElement(entry.getTotalElements())
+        		.setContent(mapContent(entry.getContent()))
+        		.build();
     }
 
 	public static PageDto<Company> mapAllCompaniesWithPage(Page<CompanyEntity> entry) {
 		PageDto.Builder<Company> builder = new Builder<>();
 		return	builder.setNumber(entry.getNumber())
-        			   .setSize(entry.getSize())
-        			   .setTotalElement(entry.getTotalElements())
-        			   .setContent(mapContentCompanies(entry.getContent()))
-        			   .build();
+        		.setSize(entry.getSize())
+        		.setTotalElement(entry.getTotalElements())
+        		.setContent(mapContentCompanies(entry.getContent()))
+        		.build();
     }
 
 	public static List<Computer> mapAll(List<ComputerEntity> entityList) {
@@ -84,14 +84,14 @@ public class Helper {
 
 	private static List<Computer> mapContent(List<ComputerEntity> list) {
 		return list.stream()
-                .map(entity -> mapToComputer(entity))
-                .collect(Collectors.toList());
+               .map(entity -> mapToComputer(entity))
+               .collect(Collectors.toList());
 	}
 
 	private static List<Company> mapContentCompanies(List<CompanyEntity> list) {
 		return list.stream()
-                .map(entity -> mapToCompany(entity))
-                .collect(Collectors.toList());
+               .map(entity -> mapToCompany(entity))
+               .collect(Collectors.toList());
 	}
 
 	public static <E> boolean  isValidBean(E bean) {

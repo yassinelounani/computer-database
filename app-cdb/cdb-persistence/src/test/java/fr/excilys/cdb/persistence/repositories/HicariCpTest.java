@@ -1,4 +1,4 @@
-package fr.excilys.cdb.persistence.dao;
+package fr.excilys.cdb.persistence.repositories;
 
 import static fr.excilys.cdb.persistence.dao.ConnectionToDb.closeConnectionAndStetement;
 import static fr.excilys.cdb.persistence.mappers.Mapper.mapResultSetToComputer;

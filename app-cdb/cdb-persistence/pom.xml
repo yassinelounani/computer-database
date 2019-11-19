@@ -19,6 +19,8 @@
 		<hicariCp-version>3.4.1</hicariCp-version>
 		<spring-data-jpa-version>2.2.1.RELEASE</spring-data-jpa-version>
 		<persistance-api-version>1.0.2</persistance-api-version>
+		<hibernate-javax-persistance-version>1.0.0.Final</hibernate-javax-persistance-version>
+		<hibernate-entitymanager-version>5.4.2.Final</hibernate-entitymanager-version>
 	</properties>
 
 	<!-- =============================================================== -->
@@ -28,13 +30,17 @@
 		<!-- ===== Modules ===== -->
 
 		<!-- ===== Third-party libraries ===== -->
-
-		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<version>${h2-database-version}</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql-connector-mysql-version}</version>
 		</dependency>
 
 		<dependency>
@@ -48,32 +54,32 @@
 			<artifactId>logback-classic</artifactId>
 			<version>${logback-version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>${spring-version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
 			<version>${spring-version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring-version}</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${spring-version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${spring-version}</version>
-		</dependency>
+
 		<dependency>
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
@@ -85,17 +91,17 @@
 			<artifactId>spring-data-jpa</artifactId>
 			<version>${spring-data-jpa-version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId>
 			<artifactId>hibernate-jpa-2.1-api</artifactId>
-			<version>1.0.0.Final</version>
+			<version>${hibernate-javax-persistance-version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>5.4.2.Final</version>
+			<version>${hibernate-entitymanager-version}</version>
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>

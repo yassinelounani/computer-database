@@ -1,4 +1,4 @@
-package fr.excilys.cdb.persistence.models;
+package fr.excilys.cdb.persistence.dao;
 
 public class Pageable {
 
