@@ -32,35 +32,35 @@ public interface ComputerRepository extends JpaRepository<ComputerEntity, Long> 
 		 + "FROM ComputerEntity computer LEFT JOIN FETCH computer.company comp "
 		 + "Where computer.name LIKE :name OR comp.name LIKE :name",
 		 	countQuery = "SELECT COUNT(computer.id) FROM ComputerEntity computer LEFT JOIN computer.company comp "
-		 				+ "Where computer.name LIKE :name OR comp.name LIKE :name" )
+		 	+ "Where computer.name LIKE :name OR comp.name LIKE :name" )
 	Page<ComputerEntity> selectSearchComputersWithPage(@Param("name") String name, Pageable pageable);
 
 	@Query(value = "SELECT computer, comp "
-			 + "FROM ComputerEntity computer LEFT JOIN FETCH computer.company comp "
-			 + "Where computer.id = :id",
+		+ "FROM ComputerEntity computer LEFT JOIN FETCH computer.company comp "
+		+ "Where computer.id = :id",
 			 countQuery = "SELECT COUNT(computer.id) FROM ComputerEntity computer")
 	Optional<ComputerEntity> selectComputerById(@Param("id") long id);
 
 	@Query("SELECT MAX(computer.id) "
-			 + "FROM ComputerEntity computer")
+			+ "FROM ComputerEntity computer")
 	long getMaxIdComputer();
 
 	@Query("DELETE "
-			 + "FROM ComputerEntity computer "
-			 + "Where computer.company.id = :id")
+			+ "FROM ComputerEntity computer "
+			+ "Where computer.company.id = :id")
 	int deleteComputerByCompanyId(@Param("id") long id);	
 
 	@Transactional
 	@Modifying
 	@Query("UPDATE ComputerEntity computer "
-		 + "SET computer.name = :#{#computer.name}, computer.introduced = :#{#computer.introduced}, computer.discontinued = :#{#computer.discontinued}, computer.company = :#{#computer.company} "
-		 + "where computer.id = :#{#computer.id}")
+		+ "SET computer.name = :#{#computer.name}, computer.introduced = :#{#computer.introduced}, computer.discontinued = :#{#computer.discontinued}, computer.company = :#{#computer.company} "
+		+ "where computer.id = :#{#computer.id}")
 	int updateComputer(@Param("computer") ComputerEntity computer);
 
 	@Transactional
 	@Modifying
 	@Query(value = "INSERT INTO computer(id, name, introduced, discontinued, company_id) " 
-				 + "VALUES(:#{#computer.id}, :#{#computer.name}, :#{#computer.introduced}, :#{#computer.discontinued}, :#{#computer.company.id})",
+			+ "VALUES(:#{#computer.id}, :#{#computer.name}, :#{#computer.introduced}, :#{#computer.discontinued}, :#{#computer.company.id})",
 				 nativeQuery = true)
 	int saveComputer(@Param("computer") ComputerEntity computer);
 	
