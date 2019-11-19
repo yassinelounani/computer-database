@@ -46,8 +46,8 @@ public interface ComputerRepository extends JpaRepository<ComputerEntity, Long> 
 	long getMaxIdComputer();
 
 	@Query("DELETE "
-			+ "FROM ComputerEntity computer "
-			+ "Where computer.company.id = :id")
+		+ "FROM ComputerEntity computer "
+		+ "Where computer.company.id = :id")
 	int deleteComputerByCompanyId(@Param("id") long id);	
 
 	@Transactional
