@@ -1,5 +1,10 @@
 package fr.excilys.cdb.persistence.repositories;
 
-public interface UserRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
 
+import fr.excilys.cdb.persistence.models.UserEntity;
+
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
+
+	UserEntity findByUsername(String username);
 }

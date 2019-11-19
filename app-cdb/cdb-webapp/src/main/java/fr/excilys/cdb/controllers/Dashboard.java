@@ -89,13 +89,7 @@ public class Dashboard {
 		model.addAttribute("companies", companies);
 		return ADD_COMPUTER;
 	}
-
-	@GetMapping("/login")
-	public String login(Model model) {
-		
-		return "login";
-	}
-
+ 
 	@PostMapping("/addComputer")
 	public String addComputer(@ModelAttribute("computer") Computer computer, Model model) {
 		Map<String, String> messages = 	checkError(computer);

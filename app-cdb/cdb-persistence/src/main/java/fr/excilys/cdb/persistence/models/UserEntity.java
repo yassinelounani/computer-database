@@ -18,9 +18,10 @@ public class UserEntity {
 	@Id
 	private long id;
 	private String username;
+	
 	private String password;
 	private boolean enabled;
-	@Column(name="id")
+	@Column(name="role", table = "role")
 	private String role;
 
 	public UserEntity() {
