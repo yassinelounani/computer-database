@@ -1,17 +1,23 @@
 package fr.excilys.cdb.api.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.Min;
 
-public class PageDto<T> {
+public class PageDto<T> implements  Serializable{
+	private static final long serialVersionUID = -4101066142655945396L;
 	@Min(0)
 	private int number;
 	@Min(1)
 	private int size;
 	private long totalElement;
 	private List<T> content;
+
+	public PageDto() {
+		super();
+	}
 
 	public PageDto(Builder<T> builder) {
 		this.number = builder.number;
@@ -34,6 +40,22 @@ public class PageDto<T> {
 
 	public List<T> getContent() {
 		return content;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	public void setTotalElement(long totalElement) {
+		this.totalElement = totalElement;
+	}
+
+	public void setContent(List<T> content) {
+		this.content = content;
 	}
 
 	public static class Builder<T> {

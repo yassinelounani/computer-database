@@ -49,6 +49,7 @@ public class Helper {
 		TypeMap<ComputerEntity, Computer> typeMap = modelMapper.createTypeMap(ComputerEntity.class, Computer.class);
 		typeMap.addMappings(mapper -> {
 			    mapper.map(src -> src.getCompany().getId(), Computer::setIdCompany);
+			    mapper.map(src -> src.getCompany().getName(), Computer::setNameCompany);
 		});
 		return modelMapper.map(computerEntity, Computer.class);
 	}

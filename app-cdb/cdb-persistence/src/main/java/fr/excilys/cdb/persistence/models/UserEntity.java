@@ -1,38 +1,36 @@
 package fr.excilys.cdb.persistence.models;
 
-import javax.persistence.Column;
+import java.util.Set;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
-import javax.persistence.SecondaryTables;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="user")
-@SecondaryTables({
-    @SecondaryTable(name="role", pkJoinColumns={
-        @PrimaryKeyJoinColumn(name="user_id", referencedColumnName="id") })
-})
+@Table(name = "user")
 public class UserEntity {
-	@Id
-	private long id;
-	private String username;
-	
+  
+    @Id
+    private Long id;
+    private String username;
 	private String password;
 	private boolean enabled;
-	@Column(name="role", table = "role")
-	private String role;
+ 
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private Set<RoleEntity> roles;
 
 	public UserEntity() {
 		super();
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	
-	public void setId(long id) {
+
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -60,17 +58,18 @@ public class UserEntity {
 		this.enabled = enabled;
 	}
 
-	public String getRole() {
-		return role;
+	public Set<RoleEntity> getRoles() {
+		return roles;
 	}
 
-	public void setRole(String role) {
-		this.role = role;
+	public void setRoles(Set<RoleEntity> roles) {
+		this.roles = roles;
 	}
 
 	@Override
 	public String toString() {
-		return "UserEntity [id=" + id + ", username=" + username + ", password=" + password + ", enabled=" + enabled
-				+ ", role=" + role + "]";
+		return "User [id=" + id + ", username=" + username + ", password=" + password + ", enabled=" + enabled
+				+ ", roles=" + roles + "]";
 	}
+
 }

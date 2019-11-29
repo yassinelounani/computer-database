@@ -88,13 +88,15 @@ public class ComputerServiceExporter implements ComputerService {
 	}
 
 	public Optional<Computer> getComputerById(Identifier computerId) {
+		Computer computer = null;
 		if (isValidBean(computerId)) {
 			Optional<ComputerEntity> computerEntity = computerRepository.selectComputerById(computerId.getId());
 			LOGGER.info("get Computer with id : {} from Dao Computer", computerId.getId());
-			Computer computer = mapToComputer(computerEntity.get());
-			return Optional.of(computer);
+			if (computerEntity.isPresent()) {
+				computer = mapToComputer(computerEntity.get());
+			}
 		}
-		return Optional.empty();
+		return Optional.ofNullable(computer);
 	}
 
 	public int addComputer(Computer computer) throws NotFoundCompanyException {
@@ -130,6 +132,7 @@ public class ComputerServiceExporter implements ComputerService {
 			computerRepository.deleteById(computerId.getId());
 		}
 	}
+
 	@Transactional
 	public void deleteCompany(Identifier idcompany) throws NotFoundCompanyException {
 		if (isValidBean(idcompany)) {

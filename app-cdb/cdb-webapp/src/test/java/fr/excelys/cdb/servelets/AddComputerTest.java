@@ -1,6 +1,5 @@
 package fr.excelys.cdb.servelets;
 
-import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterEach;
@@ -10,6 +9,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AddComputerTest {
 	  private static final String DISCONTINUED_MUST_BE_BEFORE_THE_INTRODUCED = "The discontinued date must be before the introduced date";

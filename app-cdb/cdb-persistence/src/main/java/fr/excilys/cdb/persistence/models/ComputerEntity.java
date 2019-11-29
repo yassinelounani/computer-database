@@ -61,7 +61,7 @@ public class ComputerEntity {
 
 	@Override
 	public String toString() {
-		return "Computer [id=" + id + ", name=" + name + ", introduce=" + introduced + ", discontinued="
+		return "Computer [id=" + id + ", name=" + name + ", introduced=" + introduced + ", discontinued="
 				+ discontinued + ", company=" + company + "]";
 	}
 

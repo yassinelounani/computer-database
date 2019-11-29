@@ -2,13 +2,12 @@ package fr.excilys.cdb.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint;
@@ -16,8 +15,7 @@ import org.springframework.security.web.authentication.www.DigestAuthenticationF
 
 import fr.excilys.cdb.business.UserService;;
 
-@Configuration
-@EnableWebSecurity
+
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
@@ -48,7 +46,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .and()
         .authorizeRequests()
         .anyRequest()
-        .authenticated();
+        .authenticated().and().csrf().disable();
 
     }
 
@@ -65,23 +63,28 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         DigestAuthenticationFilter digestAuthenticationFilter = new DigestAuthenticationFilter();
         digestAuthenticationFilter.setAuthenticationEntryPoint(digestEntryPoint());
         digestAuthenticationFilter.setUserDetailsService(userDetailsServiceBean());
+        digestAuthenticationFilter.setPasswordAlreadyEncoded(false);
         return digestAuthenticationFilter;
     }
+    
 
     @Bean
 	public PasswordEncoder passwordEncoder() {
 		return new PasswordEncoder() {
 			@Override
 			public String encode(CharSequence rawPassword) {
-				return rawPassword.toString();
+				//return rawPassword.toString();
+				return BCrypt.hashpw(rawPassword.toString(), BCrypt.gensalt(4));
 			}
 
 			@Override
 			public boolean matches(CharSequence rawPassword, String encodedPassword) {
-				return rawPassword.toString().equals(encodedPassword);
+				//return rawPassword.toString().equals(encodedPassword);
+				 return BCrypt.checkpw(rawPassword.toString(), encodedPassword);
 			}
 		};
 	}
+
 
 
 }
