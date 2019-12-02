@@ -19,7 +19,7 @@ public class HelperDate {
 			return null;
 		}
 		if (date.matches("^([0-2][0-9]|(3)[0-1])(\\/)(((0)[0-9])|((1)[0-2]))(\\/)\\d{4}$")) {
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 			return LocalDate.parse(date, formatter);
 		}
 		return LocalDate.parse(date);

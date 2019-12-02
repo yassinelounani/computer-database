@@ -71,12 +71,14 @@ public final class Company {
 
 		private Builder() {}
 
-		public void setId(long id) {
+		public Builder setId(long id) {
 			this.id = id;
+			return this;
 		}
 
-		public void setName(String name) {
+		public Builder setName(String name) {
 			this.name = name;
+			return this;
 		}
 		
 		public Company build() {

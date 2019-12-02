@@ -4,7 +4,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.security.RolesAllowed;
+
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,7 +43,7 @@ public class ComputerController {
 	@GetMapping
 	@ApiOperation(value = "${swagger.computers}", notes = "${swagger.computers.desc}")
 	public ResponseEntity<List<Computer>> getAll() {
-		List<Computer> computers = listComputers();
+		List<Computer> computers = computerService.getComputers();
 		return ok().body(computers);
 	}
 
@@ -58,7 +58,8 @@ public class ComputerController {
 	@ApiOperation(value = "${swagger.page}", notes = "${swagger.page.desc}")
 	@GetMapping("/page")
 	public ResponseEntity<PageDto<Computer>> getAllWithPage(@Valid Navigation navigation) {
-		PageDto<Computer> pageDto = listComputers(navigation);
+		PageDto<Computer> page = getPage(navigation);
+		PageDto<Computer> pageDto = computerService.getComputersWithPage(page);
 		return ok().body(pageDto);
 	}
 
@@ -66,7 +67,7 @@ public class ComputerController {
 	@ApiOperation(value = "${swagger.find}", notes = "${swagger.find.desc}")
 	public ResponseEntity<PageDto<Computer>> find(@PathVariable("name") final String name, @Valid Navigation navigation) {
 		PageDto<Computer> page = getPage(navigation);
-		PageDto<Computer> pageDto = findComputers(page,name);
+		PageDto<Computer> pageDto = computerService.getSerchComputersWithPage(page, name);
 		return ok().body(pageDto);
 	}
 
@@ -76,11 +77,10 @@ public class ComputerController {
 		System.err.println(navigation);
 		PageDto<Computer> page = getPage(navigation);
 		SortDto sort = new SortDto(navigation.getProperty(), navigation.getOrder());
-		PageDto<Computer> pageDto = sortComputers(page,sort);
+		PageDto<Computer> pageDto = computerService.getComputersWithPageAndSort(page, sort);
 		return ok().body(pageDto);
 	}
 
-	@RolesAllowed("ADMIN")
 	@DeleteMapping("/delete/{id}")
 	@ApiOperation(value = "${swagger.delete}", notes = "${swagger.delete.desc}")
 	public ResponseEntity<HttpStatus> delete(@PathVariable(value="id") Long id) {
@@ -93,7 +93,6 @@ public class ComputerController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@RolesAllowed("ADMIN")
 	@DeleteMapping("/delete/company/{id}")
 	@ApiOperation(value = "${swagger.delete.comp}", notes = "${swagger.delete.comp.desc}")
 	public ResponseEntity<HttpStatus> deleteCompanies(@PathVariable(value="id") Long id) {
@@ -106,18 +105,34 @@ public class ComputerController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@RolesAllowed("ADMIN")
 	@PostMapping("/add")
 	@ApiOperation(value = "${swagger.add}", notes = "${swagger.add.desc}")
 	public ResponseEntity<HttpStatus> add(@RequestBody @Valid Computer computer) {
-		return addComputer(computer);
+		try {
+			int addComputer = computerService.addComputer(computer);
+			if (addComputer == 0) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			} else {
+				return ResponseEntity.status(HttpStatus.CREATED).build();
+			}
+		} catch (NotFoundCompanyException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
 	}
 
-	@RolesAllowed("ADMIN")
 	@PutMapping("/update")
 	@ApiOperation(value = "${swagger.update}", notes = "${swagger.update.desc}")
 	public ResponseEntity<HttpStatus> update(@RequestBody @Valid Computer computer) {
-		return updateAndSave(computer);
+		try {
+			int updateValue = computerService.updateComputer(computer);
+			if ( updateValue == 0) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			} else {
+				return ResponseEntity.status(HttpStatus.OK).build();
+			}
+		} catch (NotFoundComputerException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
 	}
 
 	private PageDto<Computer> getPage(@Valid Navigation navigation) {
@@ -126,48 +141,4 @@ public class ComputerController {
 			.setSize(navigation.getSize())
 			.build();
 	}
-	
-	private ResponseEntity<HttpStatus> addComputer(Computer computer) {
-			try {
-				int addComputer = computerService.addComputer(computer);
-				if (addComputer == 0) {
-					return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-				} else {
-					return ResponseEntity.status(HttpStatus.CREATED).build();
-				}
-			} catch (NotFoundCompanyException e) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-			}
-	}
-
-	private ResponseEntity<HttpStatus> updateAndSave(Computer computer) {
-			try {
-				int updateValue = computerService.updateComputer(computer);
-				if ( updateValue == 0) {
-					return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-				} else {
-					return ResponseEntity.status(HttpStatus.OK).build();
-				}
-			} catch (NotFoundComputerException e) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-			}
-	}
-
-	private PageDto<Computer> findComputers(PageDto<Computer> page, String name) {
-		return computerService.getSerchComputersWithPage(page, name);
-	}
-
-	private PageDto<Computer> sortComputers(PageDto<Computer> page, SortDto sort) {
-		return computerService.getComputersWithPageAndSort(page, sort);
-	}
-
-	private PageDto<Computer> listComputers(Navigation navigation) {
-		PageDto<Computer> page = getPage(navigation);
-		return computerService.getComputersWithPage(page);
-	}
-
-	private List<Computer> listComputers() {
-		return computerService.getComputers();
-	}
-
 } 

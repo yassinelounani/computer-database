@@ -1,5 +1,6 @@
 package fr.excilys.cdb.business;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -8,9 +9,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.springframework.data.domain.Page;
 
 import fr.excilys.cdb.api.dto.Company;
@@ -45,18 +43,24 @@ public class Helper {
 	}
 
 	public static Computer mapToComputer(ComputerEntity computerEntity) {
-		ModelMapper modelMapper = new ModelMapper();
-		TypeMap<ComputerEntity, Computer> typeMap = modelMapper.createTypeMap(ComputerEntity.class, Computer.class);
-		typeMap.addMappings(mapper -> {
-			    mapper.map(src -> src.getCompany().getId(), Computer::setIdCompany);
-			    mapper.map(src -> src.getCompany().getName(), Computer::setNameCompany);
-		});
-		return modelMapper.map(computerEntity, Computer.class);
+		return Computer.Builder.newInstance()
+				.setId(computerEntity.getId())
+				.setName(computerEntity.getName())
+				.setIntroduced(mapToDateDto(computerEntity.getIntroduced()))
+				.setDicontinued(mapToDateDto(computerEntity.getDiscontinued()))
+				.setIdCompany(mapIdCompany(computerEntity.getCompany()))
+				.setNameComapny(mapNameCompany(computerEntity.getCompany()))
+				.build();
 	}
 
 	public static Company mapToCompany(CompanyEntity companyEntity) {
-		ModelMapper modelMapper = new ModelMapper();
-		return modelMapper.map(companyEntity, Company.class);
+		if (companyEntity != null) {
+			return Company.Builder.newInstance()
+					 .setId(companyEntity.getId())
+					 .setName(companyEntity.getName())
+					 .build();
+		}
+		return null;
 	}
 
 	public static PageDto<Computer> mapAllComputersWithPage(Page<ComputerEntity> entry) {
@@ -103,7 +107,21 @@ public class Helper {
 	}
 
 	public static SortDao mapToSortDao(SortDto sort) {
-		ModelMapper modelMapper = new ModelMapper();
-		return modelMapper.map(sort, SortDao.class);
+		SortDao sortDao = new SortDao();
+		sortDao.setOrder(sort.getOrder());
+		sortDao.setProperty(sort.getProperty());
+		return sortDao;
+	}
+
+	private static String mapToDateDto(LocalDate date) {
+		return date != null ? date.toString() : null;
+	}
+
+	private static long mapIdCompany(CompanyEntity company) {
+		return company != null ? company.getId() : 0;
+	}
+
+	private static String mapNameCompany(CompanyEntity company) {
+		return company != null ? company.getName() : null;
 	}
 }
