@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +40,8 @@ public class ComputerController {
 		super();
 		this.computerService = computerService;
 	}
-	
+
+	@CrossOrigin
 	@GetMapping
 	@ApiOperation(value = "${swagger.computers}", notes = "${swagger.computers.desc}")
 	public ResponseEntity<List<Computer>> getAll() {
@@ -47,6 +49,7 @@ public class ComputerController {
 		return ok().body(computers);
 	}
 
+	@CrossOrigin
 	@ApiOperation(value = "${swagger.id}", notes = "${swagger.id.desc}")
 	@GetMapping("/{id}")
 	public ResponseEntity<Computer> getById(@PathVariable("id") final Long id) {
@@ -55,6 +58,7 @@ public class ComputerController {
 		return ResponseEntity.of(computer);
 	}
 
+	@CrossOrigin
 	@ApiOperation(value = "${swagger.page}", notes = "${swagger.page.desc}")
 	@GetMapping("/page")
 	public ResponseEntity<PageDto<Computer>> getAllWithPage(@Valid Navigation navigation) {
@@ -63,6 +67,7 @@ public class ComputerController {
 		return ok().body(pageDto);
 	}
 
+	@CrossOrigin
 	@GetMapping("/find/{name}")
 	@ApiOperation(value = "${swagger.find}", notes = "${swagger.find.desc}")
 	public ResponseEntity<PageDto<Computer>> find(@PathVariable("name") final String name, @Valid Navigation navigation) {
@@ -71,6 +76,7 @@ public class ComputerController {
 		return ok().body(pageDto);
 	}
 
+	@CrossOrigin
 	@GetMapping(value = "/sort")
 	@ApiOperation(value = "${swagger.sort}", notes = "${swagger.sort.desc}")
 	public ResponseEntity<PageDto<Computer>> sort(@Valid Navigation navigation) {
@@ -81,6 +87,7 @@ public class ComputerController {
 		return ok().body(pageDto);
 	}
 
+	@CrossOrigin
 	@DeleteMapping("/delete/{id}")
 	@ApiOperation(value = "${swagger.delete}", notes = "${swagger.delete.desc}")
 	public ResponseEntity<HttpStatus> delete(@PathVariable(value="id") Long id) {
@@ -93,6 +100,7 @@ public class ComputerController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
+	@CrossOrigin
 	@DeleteMapping("/delete/company/{id}")
 	@ApiOperation(value = "${swagger.delete.comp}", notes = "${swagger.delete.comp.desc}")
 	public ResponseEntity<HttpStatus> deleteCompanies(@PathVariable(value="id") Long id) {
@@ -105,6 +113,7 @@ public class ComputerController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
+	@CrossOrigin
 	@PostMapping("/add")
 	@ApiOperation(value = "${swagger.add}", notes = "${swagger.add.desc}")
 	public ResponseEntity<HttpStatus> add(@RequestBody @Valid Computer computer) {
@@ -120,6 +129,7 @@ public class ComputerController {
 		}
 	}
 
+	@CrossOrigin
 	@PutMapping("/update")
 	@ApiOperation(value = "${swagger.update}", notes = "${swagger.update.desc}")
 	public ResponseEntity<HttpStatus> update(@RequestBody @Valid Computer computer) {
