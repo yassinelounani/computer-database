@@ -31,6 +31,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/computers")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ComputerController {
 
 	private final ComputerService computerService;

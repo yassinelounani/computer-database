@@ -9,6 +9,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import org.springframework.data.domain.Page;
 
 import fr.excilys.cdb.api.dto.Company;
@@ -16,12 +17,15 @@ import fr.excilys.cdb.api.dto.Computer;
 import fr.excilys.cdb.api.dto.PageDto;
 import fr.excilys.cdb.api.dto.PageDto.Builder;
 import fr.excilys.cdb.api.dto.SortDto;
+import fr.excilys.cdb.api.dto.UserDto;
 import fr.excilys.cdb.persistence.dao.SortDao;
 import fr.excilys.cdb.persistence.mappers.HelperDate;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.CompanyEntity.CompanyBuilder;
 import fr.excilys.cdb.persistence.models.ComputerEntity;
 import fr.excilys.cdb.persistence.models.ComputerEntity.ComputerBuilder;
+import fr.excilys.cdb.persistence.models.RoleEntity;
+import fr.excilys.cdb.persistence.models.UserEntity;
 
 public class Helper {
 	public static ComputerEntity mapToComputerEntity(Computer computer) {
@@ -123,5 +127,18 @@ public class Helper {
 
 	private static String mapNameCompany(CompanyEntity company) {
 		return company != null ? company.getName() : null;
+	}
+
+	public static UserDto mapToUser(UserEntity user) {
+		return UserDto.Builder.newInstance()
+				.setUsername(user.getUsername())
+				.setPassword(user.getPassword())
+				.setRoles(maptoRoles(user.getRoles()))
+				.build();					
+	}
+
+	public static Set<String> maptoRoles(Set<RoleEntity> roles) {
+		return roles.stream().map(mapper -> mapper.getRole().toString())
+					.collect(Collectors.toSet());
 	}
 }

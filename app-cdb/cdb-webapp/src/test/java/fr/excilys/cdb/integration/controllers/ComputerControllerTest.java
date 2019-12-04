@@ -28,12 +28,12 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.excilys.cdb.api.dto.Computer;
-import fr.excilys.cdb.configuration.SecurityConfig;
 import fr.excilys.cdb.configuration.SpringConfig;
+import fr.excilys.cdb.configuration.WebSecurityConfig;
 
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {SpringConfig.class, SecurityConfig.class})
+@ContextConfiguration(classes = {SpringConfig.class, WebSecurityConfig.class})
 public class ComputerControllerTest {
 	
 	private final static Computer COMPUTER = Computer.Builder.newInstance()
