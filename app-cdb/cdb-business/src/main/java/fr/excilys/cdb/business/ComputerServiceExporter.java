@@ -100,6 +100,7 @@ public class ComputerServiceExporter implements ComputerService {
 	}
 
 	public int addComputer(Computer computer) throws NotFoundCompanyException {
+		System.err.println(computer);
 		int addvalue = 0;
 		if (isValidBean(computer)) {
 			LOGGER.info("Valid bean Computer .................................................");
@@ -112,8 +113,8 @@ public class ComputerServiceExporter implements ComputerService {
 		return addvalue;
 	}
 
-	private void checkCompany(long id) throws NotFoundCompanyException {
-		if(id != 0) {
+	private void checkCompany(Long id) throws NotFoundCompanyException {
+		if(id != null) {
 			Optional<CompanyEntity> company = companyRepository.selectCompanyById(id);
 			if (!company.isPresent()) {
 					throw new NotFoundCompanyException(

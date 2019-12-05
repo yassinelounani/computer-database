@@ -117,7 +117,8 @@ public class ComputerController {
 	@CrossOrigin
 	@PostMapping("/add")
 	@ApiOperation(value = "${swagger.add}", notes = "${swagger.add.desc}")
-	public ResponseEntity<HttpStatus> add(@RequestBody @Valid Computer computer) {
+	public ResponseEntity<HttpStatus> add(@Valid @RequestBody Computer computer) {
+		System.err.println(computer);
 		try {
 			int addComputer = computerService.addComputer(computer);
 			if (addComputer == 0) {

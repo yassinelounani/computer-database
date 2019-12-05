@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Table(name = "computer")
 public class ComputerEntity {
 	@Id
-	private long id;
+	private Long id;
 	private String name;
 	private LocalDate introduced;
 	private LocalDate discontinued;
@@ -34,7 +34,7 @@ public class ComputerEntity {
 		this.company = builder.company;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -55,7 +55,7 @@ public class ComputerEntity {
 		return company;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -79,7 +79,7 @@ public class ComputerEntity {
 	}
 
 	public static class ComputerBuilder {
-		private long id;
+		private Long id;
 		private String name;
 		private LocalDate introduced;
 		private LocalDate discontinued;
@@ -91,7 +91,7 @@ public class ComputerEntity {
 		
 		private ComputerBuilder() {}
 		
-		public ComputerBuilder setId(long id) {
+		public ComputerBuilder setId(Long id) {
 			this.id = id;
 			return this;
 		}

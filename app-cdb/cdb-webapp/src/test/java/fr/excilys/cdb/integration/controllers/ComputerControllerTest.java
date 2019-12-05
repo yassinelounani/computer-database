@@ -41,7 +41,7 @@ public class ComputerControllerTest {
 			.setName("MAC_EXILYS")
 			.setIntroduced("2019-01-10")
 			.setDicontinued("2019-10-10")
-			.setIdCompany(5)
+			.setIdCompany(5l)
 			.build();
 	
 	@Autowired

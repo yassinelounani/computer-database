@@ -10,7 +10,7 @@ import fr.excilys.cdb.api.validation.ValidDateFormat;
 @IntroducedBeforeDiscontinued
 public class Computer {
 
-	private long id;
+	private Long id;
 	@NotBlank
 	private String name;
 	
@@ -18,7 +18,7 @@ public class Computer {
 	private String introduced;
 	@ValidDateFormat(date = "discontibued")
 	private String discontinued;
-	private long idCompany;
+	private Long idCompany;
 	private String nameCompany;
 	
 	public Computer() {
@@ -35,7 +35,7 @@ public class Computer {
 		this.nameCompany = builder.nameCompany;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -51,11 +51,11 @@ public class Computer {
 		return discontinued;
 	}
 
-	public long getIdCompany() {
+	public Long getIdCompany() {
 		return idCompany;
 	}	
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -71,7 +71,7 @@ public class Computer {
 		this.discontinued = discontinued;
 	}
 
-	public void setIdCompany(long idCompany) {
+	public void setIdCompany(Long idCompany) {
 		this.idCompany = idCompany;
 	}
 
@@ -115,11 +115,11 @@ public class Computer {
 
 	public static class Builder {
 
-		private long id;
+		private Long id;
 		private String name;
 		private String introduced;
 		private String discontinued;
-		private long idCompany;
+		private Long idCompany;
 		private String nameCompany;
 
 		public static Builder newInstance() {
@@ -148,7 +148,7 @@ public class Computer {
 			return this;
 		}
 
-		public Builder setIdCompany(long idCompany) {
+		public Builder setIdCompany(Long idCompany) {
 			this.idCompany = idCompany;
 			return this;
 		}

@@ -65,11 +65,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/**/configuration/ui").permitAll()
 				.antMatchers("/**/configuration/security").permitAll()
 				.antMatchers("/csrf").permitAll()
-				.antMatchers("/computers").permitAll()
+				.antMatchers("/computers/**").permitAll()
 				.antMatchers("/companies/**").permitAll()
-				.antMatchers("/computers/delete/**").hasRole("ADMIN")
-				.antMatchers("/computers/add", "/computers/update").hasRole("ADMIN")
-				.antMatchers("/computers/**").hasRole("USER")
+//				.antMatchers("/computers/delete/**").hasRole("ADMIN")
+//				.antMatchers("/computers/add", "/computers/update").hasRole("ADMIN")
+//				.antMatchers("/computers/**").hasRole("USER")
 				.anyRequest().authenticated();
 
 	}

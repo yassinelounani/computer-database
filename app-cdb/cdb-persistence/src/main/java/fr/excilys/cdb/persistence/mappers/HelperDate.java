@@ -15,7 +15,7 @@ public class HelperDate {
 	}
 
 	public static LocalDate stringDateToLocalDate(String date) {
-		if (date.isEmpty()) {
+		if (date == null || date.isEmpty()) {
 			return null;
 		}
 		if (date.matches("^([0-2][0-9]|(3)[0-1])(\\/)(((0)[0-9])|((1)[0-2]))(\\/)\\d{4}$")) {

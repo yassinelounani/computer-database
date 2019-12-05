@@ -13,7 +13,7 @@ public class ValidDateFormatValidator implements ConstraintValidator<ValidDateFo
 
     @Override
     public boolean isValid(String request, ConstraintValidatorContext constraintValidatorContext) {
-    	if (request.trim().isEmpty() || request == null) {
+    	if (isBlank(request)) {
             return true;
         }
     	boolean isValid = false;
@@ -28,5 +28,9 @@ public class ValidDateFormatValidator implements ConstraintValidator<ValidDateFo
             isValid = false;
         }
     	return isValid; 
+    }
+    
+    private boolean isBlank(String date) {
+    	return date == null || date.trim().isEmpty() ? true : false;
     }
 }

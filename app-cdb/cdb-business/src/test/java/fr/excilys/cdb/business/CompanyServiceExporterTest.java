@@ -19,7 +19,7 @@ import fr.excilys.cdb.persistence.repositories.CompanyRepository;
 public class CompanyServiceExporterTest {
 	
 	private static final String APPLE = "Apple";
-	private static final int ID_1 = 1;
+	private static final long ID_1 = 1;
 
 	private static CompanyEntity COMPANY_APPLE = CompanyBuilder.newInstance()
 			 .setId(ID_1)

@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 
 public final class Company {
 	
-	private long id;
+	private Long id;
 	@NotBlank
 	private String name;
 
@@ -24,11 +24,11 @@ public final class Company {
 		return name;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -63,7 +63,7 @@ public final class Company {
 	}
 	
 	public static class Builder {
-		private long id;
+		private Long id;
 		private String name;
 		
 		public static Builder newInstance() {
@@ -72,7 +72,7 @@ public final class Company {
 
 		private Builder() {}
 
-		public Builder setId(long id) {
+		public Builder setId(Long id) {
 			this.id = id;
 			return this;
 		}

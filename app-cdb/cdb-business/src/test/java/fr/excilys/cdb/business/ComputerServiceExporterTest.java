@@ -34,9 +34,9 @@ public class ComputerServiceExporterTest {
 	private static final LocalDate INTRODUCED_MAC = LocalDate.of(2020, 1, 10);
 	private static final String MAC_BOOK_PRO = "MacBook Pro 2020";
 	private static final String APPLE = "Apple";
-	private static final int ID_2 = 2;
-	private static final int ID_1 = 1;
-	private static final int UPDATE_OK = 1;
+	private static final long ID_2 = 2;
+	private static final long ID_1 = 1;
+	private static final long UPDATE_OK = 1;
 
 	private static CompanyEntity COMPANY = CompanyBuilder.newInstance()
 			.setId(ID_1)

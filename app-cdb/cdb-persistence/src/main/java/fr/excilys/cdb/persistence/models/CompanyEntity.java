@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @Table(name = "company")
 public class CompanyEntity {
 	@Id
-	private long id;
+	private Long id;
 	private String name;
 	
 	public CompanyEntity() {
@@ -27,11 +27,11 @@ public class CompanyEntity {
 		return name;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 	
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -52,7 +52,7 @@ public class CompanyEntity {
 
 	public static class CompanyBuilder {
 
-		private long id;
+		private Long id;
 		private String name;
 
 		private CompanyBuilder() {}
@@ -61,7 +61,7 @@ public class CompanyEntity {
 			return new CompanyBuilder();
 		}
 
-		public CompanyBuilder setId(long id) {
+		public CompanyBuilder setId(Long id) {
 			this.id = id;
 			return this;
 		}

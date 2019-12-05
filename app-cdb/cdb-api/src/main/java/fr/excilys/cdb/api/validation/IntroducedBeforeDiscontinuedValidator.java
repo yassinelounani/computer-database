@@ -16,7 +16,7 @@ public class IntroducedBeforeDiscontinuedValidator implements ConstraintValidato
     @Override
     public boolean isValid(Computer request, ConstraintValidatorContext constraintValidatorContext) {
     	boolean isValid = false;  
-    	if (request.getIntroduced().trim().isEmpty() || request.getDiscontinued().trim().isEmpty()) {
+    	if (isBlank(request.getIntroduced()) || isBlank(request.getDiscontinued())) {
             return true;
         }
     	if ((request.getIntroduced().matches("^\\d{4}-\\d{2}-\\d{2}$")
@@ -35,5 +35,9 @@ public class IntroducedBeforeDiscontinuedValidator implements ConstraintValidato
             }
     	}
     	return isValid;        
+    }
+    
+    private boolean isBlank(String date) {
+    	return date == null || date.trim().isEmpty() ? true : false;
     }
 }

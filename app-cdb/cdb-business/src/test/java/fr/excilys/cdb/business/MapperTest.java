@@ -20,7 +20,7 @@ public class MapperTest {
 	private static final LocalDate INTRODUCED = LocalDate.of(2019,  4,  12);
 	private static final String COMPUTER = "computer";
 	private static final String COMPANY = "company";
-	private static final int ID_1 = 1;
+	private static final long ID_1 = 1;
 
 	@Test
 	public void test_maptoComputer_expect_succes() {
@@ -31,7 +31,7 @@ public class MapperTest {
 				.build();
 		
 		ComputerEntity computerEntity = ComputerBuilder.newInstance()
-				.setId(1)
+				.setId(ID_1)
 				.setName(COMPUTER)
 				.setIntroduced(INTRODUCED)
 				.setDicontinued(DISCONTINUED)
