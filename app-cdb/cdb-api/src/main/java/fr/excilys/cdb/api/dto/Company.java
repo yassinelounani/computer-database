@@ -2,11 +2,12 @@ package fr.excilys.cdb.api.dto;
 
 import java.util.Objects;
 
-import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 
 public final class Company {
-	@Min(1)
+	
 	private long id;
+	@NotBlank
 	private String name;
 
 	public Company() {

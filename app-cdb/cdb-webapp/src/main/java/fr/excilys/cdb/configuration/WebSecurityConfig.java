@@ -3,11 +3,11 @@ package fr.excilys.cdb.configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,9 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-	
+
 	@Autowired
 	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
@@ -49,26 +49,35 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf().disable();
-		
+
 		httpSecurity
 			.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
 			.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
 			.and()
 			.sessionManagement()
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		
+
 		httpSecurity
 				.authorizeRequests()
 				.antMatchers("/login").permitAll()
-				.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-				.antMatchers("/login").permitAll()
+				.antMatchers("/cdb-webapp/swagger-ui.html").permitAll()
+				.antMatchers("/**/webjars/**").permitAll()
+				.antMatchers("/**/configuration/ui").permitAll()
+				.antMatchers("/**/configuration/security").permitAll()
+				.antMatchers("/csrf").permitAll()
 				.antMatchers("/computers").permitAll()
+				.antMatchers("/companies/**").permitAll()
 				.antMatchers("/computers/delete/**").hasRole("ADMIN")
 				.antMatchers("/computers/add", "/computers/update").hasRole("ADMIN")
 				.antMatchers("/computers/**").hasRole("USER")
 				.anyRequest().authenticated();
-		
-		
+
 	}
-	
+
+	@Override
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/**/swagger-resources/configuration/ui","/**/configuration/ui", "/**/swagger-resources",
+                 "/**/swagger-ui.html", "/**/webjars/**", "/**/configuration/security", "/csrf","/index.jsp", "/v2/api-docs");
+    }
+
 }

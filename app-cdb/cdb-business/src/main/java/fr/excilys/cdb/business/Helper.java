@@ -32,15 +32,22 @@ public class Helper {
 		return ComputerBuilder.newInstance()
 				.setId(computer.getId())
 				.setName(computer.getName())
-				.setCompany(mapToCompanyEntity(computer))
+				.setCompany(mapToCompanyEntity(mapToCompanyFromComputer(computer)))
 				.setIntroduced(HelperDate.stringDateToLocalDate(computer.getIntroduced()))
 				.setDicontinued( HelperDate.stringDateToLocalDate(computer.getDiscontinued()))
 				.build();
 					
 	}
 
-	public static CompanyEntity mapToCompanyEntity(Computer computer) {
+	public static CompanyEntity mapToCompanyEntity(Company company) {
 		return CompanyBuilder.newInstance()
+				.setId(company.getId())
+				.setName(company.getName())
+				.build();
+	}
+	
+	public static Company mapToCompanyFromComputer(Computer computer) {
+		return Company.Builder.newInstance()
 				.setId(computer.getIdCompany())
 				.setName(computer.getNameCompany())
 				.build();

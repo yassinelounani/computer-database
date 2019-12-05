@@ -13,7 +13,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-public class SpringWebMvcconfig implements WebMvcConfigurer {
+public class SpringWebMvcConfig implements WebMvcConfigurer {
 
 	@Bean
 	public ViewResolver internalResourceViewResolver() {

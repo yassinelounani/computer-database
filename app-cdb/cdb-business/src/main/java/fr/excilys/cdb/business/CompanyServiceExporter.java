@@ -2,9 +2,12 @@ package fr.excilys.cdb.business;
 
 import static fr.excilys.cdb.business.Helper.isValidBean;
 import static fr.excilys.cdb.business.Helper.mapAllCompaniesWithPage;
+import static fr.excilys.cdb.business.Helper.mapToCompany;
+import static fr.excilys.cdb.business.Helper.mapToCompanyEntity;
 import static fr.excilys.cdb.persistence.mappers.Mapper.mapAll;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,11 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import fr.excilys.cdb.api.CompanyService;
 import fr.excilys.cdb.api.dto.Company;
+import fr.excilys.cdb.api.dto.Identifier;
 import fr.excilys.cdb.api.dto.PageDto;
+import fr.excilys.cdb.api.dto.SortDto;
+import fr.excilys.cdb.api.exception.NotFoundCompanyException;
+import fr.excilys.cdb.api.exception.NotFoundComputerException;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.repositories.CompanyRepository;
 
@@ -48,5 +57,90 @@ public class CompanyServiceExporter implements CompanyService{
 			return mapAllCompaniesWithPage(companies);
 		}
 		return page;
+	}
+
+	public PageDto<Company> getCompaniesWithPageAndSort(PageDto<Company> page, SortDto sort) {
+		if (isValidBean(page)) {
+			Pageable pageable = PageRequest.of(
+					page.getNumber(),
+					page.getSize(),
+					Sort.by(getDirection(sort), sort.getProperty()));
+			Page<CompanyEntity> companies = companyRepository.selectCompaniesWithPage(pageable);
+			LOGGER.info("get all companies with page {} from Dao Computer", page.getNumber());
+			return mapAllCompaniesWithPage(companies);
+		}
+		return page;
+	}
+
+	public PageDto<Company> getSerchCompaniesWithPage(PageDto<Company> page, String name) {
+		if (isValidBean(page) && !isBlank(name)) {
+			Pageable pageable = PageRequest.of(page.getNumber(), page.getSize(), Sort.by("name"));
+			Page<CompanyEntity> companies = companyRepository.selectSearchCompaniesByPage(nameForLikeSql(name), pageable);
+			LOGGER.info("get all companies Serched with page {} from Dao Computer", page.getNumber());
+			return mapAllCompaniesWithPage(companies);
+		}
+		return page;
+	}
+
+	public Optional<Company> getCompanyById(Identifier companyId) {
+		Company company = null;
+		if (isValidBean(companyId)) {
+			Optional<CompanyEntity> companyEntity = companyRepository.selectCompanyById(companyId.getId());
+			LOGGER.info("get company with id : {} from Dao Computer", companyId.getId());
+			if (companyEntity.isPresent()) {
+				company = mapToCompany(companyEntity.get());
+			}
+		}
+		return Optional.ofNullable(company);
+	}
+
+	public int addCompany(Company company) {
+		int addvalue = 0;
+		if (isValidBean(company)) {
+			LOGGER.info("Valid bean Computer .................................................");
+			CompanyEntity companyEntity = mapToCompanyEntity(company);
+			long idcompany = companyRepository.getMaxIdCompanies() + 1;
+			companyEntity.setId(idcompany);
+			addvalue = companyRepository.saveCompany(companyEntity);
+		}
+		return addvalue;
+	}
+
+
+	public void deleteCompanyById(Identifier companyId) throws NotFoundComputerException {
+		if (isValidBean(companyId)) {
+			Optional<Company> getComputer = getCompanyById(companyId);
+			if (!getComputer.isPresent()) {
+				throw new NotFoundComputerException("Company with id :"+ companyId.getId() +" not Exist");
+			}
+			companyRepository.deleteById(companyId.getId());
+		}
+	}
+
+	public int updateCompany(Company company) throws NotFoundCompanyException {
+		int updateValue = 0;
+		if ( isValidBean(company)) {
+			Identifier companyId = new Identifier(company.getId());
+			Optional<Company> getCompany = getCompanyById(companyId);
+			if (!getCompany.isPresent()) {
+				throw new NotFoundCompanyException("Company with id :"+ company.getId() +" not Exist");
+			}
+			
+			CompanyEntity entity = mapToCompanyEntity(company);
+			updateValue = companyRepository.updateCompany(entity);
+		}
+		return updateValue;
+	}
+
+	private Direction getDirection(SortDto sort) {
+		return sort.getOrder().equals("ASC") ? Direction.ASC : Direction.DESC;
+	}
+
+	private boolean isBlank(String name) {
+		return name == null || name.isEmpty();
+	}
+
+	private String nameForLikeSql(String name) {
+		return "%" + name.trim() + "%";
 	}
 }

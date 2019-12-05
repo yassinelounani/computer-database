@@ -1,6 +1,5 @@
 package fr.excilys.cdb.configuration;
 
-import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
@@ -16,9 +15,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -61,25 +57,14 @@ public class SpringConfig implements WebApplicationInitializer {
 	@Override
 	public void onStartup(ServletContext ctx) throws ServletException {
         AnnotationConfigWebApplicationContext webCtx = new AnnotationConfigWebApplicationContext();
-        webCtx.register(SpringConfig.class, SpringWebMvcconfig.class);
+        webCtx.register(SpringConfig.class, SpringWebMvcConfig.class);
         webCtx.setServletContext(ctx);
         ServletRegistration.Dynamic servlet = ctx.addServlet("dispatcher", new DispatcherServlet(webCtx));
         servlet.setLoadOnStartup(1);
         servlet.addMapping("/");
     }
 
-	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-	      LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-	      em.setDataSource(dataSource());
-	      em.setPackagesToScan(new String[] { "fr.excilys.cdb.persistence" });
-	 
-	      JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-	      em.setJpaVendorAdapter(vendorAdapter);
-	      em.setJpaProperties(additionalProperties());
-	 
-	      return em;
-	}
+	
 
 	@Bean
 	public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
@@ -89,9 +74,4 @@ public class SpringConfig implements WebApplicationInitializer {
 	    return transactionManager;
 	}
 
-	Properties additionalProperties() {
-	    Properties properties = new Properties();
-	    properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");    
-	    return properties;
-	}
 }
