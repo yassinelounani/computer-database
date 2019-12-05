@@ -128,8 +128,8 @@ public class Helper {
 		return date != null ? date.toString() : null;
 	}
 
-	private static long mapIdCompany(CompanyEntity company) {
-		return company != null ? company.getId() : 0;
+	private static Long mapIdCompany(CompanyEntity company) {
+		return company != null ? company.getId() : null;
 	}
 
 	private static String mapNameCompany(CompanyEntity company) {

@@ -37,7 +37,7 @@ import fr.excilys.cdb.configuration.WebSecurityConfig;
 public class ComputerControllerTest {
 	
 	private final static Computer COMPUTER = Computer.Builder.newInstance()
-			.setId(55)
+			.setId(55l)
 			.setName("MAC_EXILYS")
 			.setIntroduced("2019-01-10")
 			.setDicontinued("2019-10-10")

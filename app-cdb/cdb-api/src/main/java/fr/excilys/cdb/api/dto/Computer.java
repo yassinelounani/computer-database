@@ -128,7 +128,7 @@ public class Computer {
 
 		private Builder() {}
 		
-		public Builder setId(long id) {
+		public Builder setId(Long id) {
 			this.id = id;
 			return this;
 		}

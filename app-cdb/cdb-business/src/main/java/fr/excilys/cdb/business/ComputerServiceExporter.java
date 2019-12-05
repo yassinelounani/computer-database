@@ -100,13 +100,12 @@ public class ComputerServiceExporter implements ComputerService {
 	}
 
 	public int addComputer(Computer computer) throws NotFoundCompanyException {
-		System.err.println(computer);
 		int addvalue = 0;
 		if (isValidBean(computer)) {
 			LOGGER.info("Valid bean Computer .................................................");
 			ComputerEntity computerEntity = mapToComputerEntity(computer);
 			checkCompany(computer.getIdCompany());
-			long idcomputer = computerRepository.getMaxIdComputer() + 1;
+			Long idcomputer = computerRepository.getMaxIdComputer() + 1;
 			computerEntity.setId(idcomputer);
 			addvalue = computerRepository.saveComputer(computerEntity);
 		}

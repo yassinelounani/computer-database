@@ -20,7 +20,7 @@ public class ComputerValidationTest {
 	private static final String DATE_2018_04_12 = "2018-04-12";
 	private static final String DATE_2017_04_12 = "2017-04-12";
 	private static final String TEST = "Test";
-	private static final int ID_1 = 1;
+	private static final long ID_1 = 1;
 	private Validator validator;
 
     @BeforeEach

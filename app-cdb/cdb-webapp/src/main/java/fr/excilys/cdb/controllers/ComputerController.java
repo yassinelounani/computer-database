@@ -78,7 +78,7 @@ public class ComputerController {
 	}
 
 	@CrossOrigin
-	@GetMapping(value = "/sort")
+	@GetMapping(value = "/sort/{property}")
 	@ApiOperation(value = "${swagger.sort}", notes = "${swagger.sort.desc}")
 	public ResponseEntity<PageDto<Computer>> sort(@Valid Navigation navigation) {
 		System.err.println(navigation);
@@ -118,6 +118,7 @@ public class ComputerController {
 	@PostMapping("/add")
 	@ApiOperation(value = "${swagger.add}", notes = "${swagger.add.desc}")
 	public ResponseEntity<HttpStatus> add(@Valid @RequestBody Computer computer) {
+		System.err.println(computer);
 		System.err.println(computer);
 		try {
 			int addComputer = computerService.addComputer(computer);

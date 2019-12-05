@@ -27,14 +27,14 @@ import fr.excilys.cdb.controllers.ComputerController;
 public class ComputerControllerTest {
 	
 	private Computer MAC = Computer.Builder.newInstance()
-			.setId(55)
+			.setId(55l)
 			.setName("MAC_EX")
 			.setIntroduced("2019-01-10")
 			.setDicontinued("2019-10-10")
 			.setIdCompany(5l)
 			.build();
 	private Computer TOSH = Computer.Builder.newInstance()
-			.setId(55)
+			.setId(55l)
 			.setName("TOSH_EX")
 			.setIntroduced("2019-01-10")
 			.setDicontinued("2019-10-10")
