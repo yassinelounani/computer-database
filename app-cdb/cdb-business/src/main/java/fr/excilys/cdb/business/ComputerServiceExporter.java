@@ -164,16 +164,16 @@ public class ComputerServiceExporter implements ComputerService {
 	}
 
 	private Computer prepareComputerToUpdate(Computer computer, Computer getComputer) {
-		if (computer.getName().isEmpty()) {
+		if (isBlank(computer.getName())) {
 			computer.setName(getComputer.getName());
 		}
-		if (computer.getIntroduced() == null) {
+		if (isBlank(computer.getIntroduced())) {
 			computer.setIntroduced(getComputer.getIntroduced());
 		}
-		if (computer.getDiscontinued() == null) {
+		if (isBlank(computer.getDiscontinued())) {
 			computer.setDiscontinued(getComputer.getDiscontinued());	
 		}
-		if (computer.getIdCompany() <= 0) {
+		if (computer.getIdCompany() == null) {
 			computer.setIdCompany(computer.getIdCompany());
 		}
 		return computer;
@@ -183,10 +183,10 @@ public class ComputerServiceExporter implements ComputerService {
 		return sort.getOrder().equals("ASC") ? Direction.ASC : Direction.DESC;
 	}
 
-	private boolean isBlank(String name) {
-		return name == null || name.isEmpty();
+	private boolean isBlank(String element) {
+		return element == null || element.isEmpty();
 	}
-
+	
 	private String nameForLikeSql(String name) {
 		return "%" + name.trim() + "%";
 	}
