@@ -60,17 +60,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		httpSecurity
 				.authorizeRequests()
 				.antMatchers("/login").permitAll()
+				.antMatchers("/computers/**").permitAll()
+				.antMatchers("/companies/**").permitAll()
 				.antMatchers("/cdb-webapp/swagger-ui.html").permitAll()
 				.antMatchers("/**/webjars/**").permitAll()
 				.antMatchers("/**/configuration/ui").permitAll()
 				.antMatchers("/**/configuration/security").permitAll()
-				.antMatchers("/csrf").permitAll()
-				.antMatchers("/computers/**").permitAll()
-				.antMatchers("/companies/**").permitAll()
+				.antMatchers("/csrf").permitAll();
 //				.antMatchers("/computers/delete/**").hasRole("ADMIN")
 //				.antMatchers("/computers/add", "/computers/update").hasRole("ADMIN")
 //				.antMatchers("/computers/**").hasRole("USER")
-				.anyRequest().authenticated();
+				//.anyRequest().authenticated();
 
 	}
 

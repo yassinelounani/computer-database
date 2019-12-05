@@ -27,6 +27,7 @@ import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/companies")
+@CrossOrigin(origins = "http://localhost:4200")
 public class CompanyController {
 
 	private final CompanyService companyService;
