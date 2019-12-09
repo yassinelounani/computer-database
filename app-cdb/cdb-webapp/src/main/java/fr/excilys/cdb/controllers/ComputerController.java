@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +19,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import fr.excilys.cdb.api.ComputerService;
 import fr.excilys.cdb.api.dto.Computer;
+import fr.excilys.cdb.api.dto.FilterByProperty;
 import fr.excilys.cdb.api.dto.Identifier;
 import fr.excilys.cdb.api.dto.Navigation;
 import fr.excilys.cdb.api.dto.PageDto;
@@ -78,10 +79,18 @@ public class ComputerController {
 	}
 
 	@CrossOrigin
-	@GetMapping(value = "/sort/{property}")
+	@GetMapping("/find")
+	@ApiOperation(value = "${swagger.find}", notes = "${swagger.find.desc}")
+	public ResponseEntity<PageDto<Computer>> findByDate(FilterByProperty filter, @Valid Navigation navigation) {
+		PageDto<Computer> page = getPage(navigation);
+		PageDto<Computer> pageDto = computerService.getcomputerByDate(page, filter);
+		return ok().body(pageDto);
+	}
+
+	@CrossOrigin
+	@GetMapping(value = "/sort")
 	@ApiOperation(value = "${swagger.sort}", notes = "${swagger.sort.desc}")
 	public ResponseEntity<PageDto<Computer>> sort(@Valid Navigation navigation) {
-		System.err.println(navigation);
 		PageDto<Computer> page = getPage(navigation);
 		SortDto sort = new SortDto(navigation.getProperty(), navigation.getOrder());
 		PageDto<Computer> pageDto = computerService.getComputersWithPageAndSort(page, sort);
@@ -148,7 +157,7 @@ public class ComputerController {
 		}
 	}
 
-	private PageDto<Computer> getPage(@Valid Navigation navigation) {
+	private PageDto<Computer> getPage(Navigation navigation) {
 		PageDto.Builder<Computer> builder = new PageDto.Builder<>();
 		return builder.setNumber(navigation.getNumber())
 			.setSize(navigation.getSize())

@@ -1,13 +1,16 @@
 package fr.excilys.cdb.api;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import fr.excilys.cdb.api.dto.Computer;
+import fr.excilys.cdb.api.dto.FilterByProperty;
+import fr.excilys.cdb.api.dto.Identifier;
 import fr.excilys.cdb.api.dto.PageDto;
 import fr.excilys.cdb.api.dto.SortDto;
-import fr.excilys.cdb.api.dto.Identifier;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 import fr.excilys.cdb.api.exception.NotFoundComputerException;
-import java.util.List;
-import java.util.Optional;
 public interface ComputerService {
 	/**
 	 * get all computers
@@ -66,4 +69,7 @@ public interface ComputerService {
 	  *  @return computers list of name computer (may be empty)
 	  */
 	 PageDto<Computer> getSerchComputersWithPage(PageDto<Computer> page, String name);
+	 
+	 
+	 PageDto<Computer> getcomputerByDate(PageDto<Computer> page, FilterByProperty filter);
 }

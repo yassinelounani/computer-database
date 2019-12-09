@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import fr.excilys.cdb.persistence.mappers.FilterDate;
 import fr.excilys.cdb.persistence.models.ComputerEntity;
 
 @Repository
@@ -34,7 +35,21 @@ public interface ComputerRepository extends JpaRepository<ComputerEntity, Long> 
 		 	countQuery = "SELECT COUNT(computer.id) FROM ComputerEntity computer LEFT JOIN computer.company comp "
 		 	+ "Where computer.name LIKE :name OR comp.name LIKE :name" )
 	Page<ComputerEntity> selectSearchComputersWithPage(@Param("name") String name, Pageable pageable);
-
+	
+	@Query(value = "SELECT computer, comp "
+			 + "FROM ComputerEntity computer LEFT JOIN FETCH computer.company comp "
+			 + "Where introduced BETWEEN :#{#filter.begin} AND :#{#filter.end}",
+			 	countQuery = "SELECT COUNT(computer.id) FROM ComputerEntity computer LEFT JOIN computer.company comp "
+			 	+ "Where introduced BETWEEN :#{#filter.begin} AND :#{#filter.end}" )
+	Page<ComputerEntity> selectByIntroducedDate(@Param("filter") FilterDate filter, Pageable pageable);
+	
+	@Query(value = "SELECT computer, comp "
+			 + "FROM ComputerEntity computer LEFT JOIN FETCH computer.company comp "
+			 + "Where discontinued BETWEEN :#{#filter.begin} AND :#{#filter.end}",
+			 	countQuery = "SELECT COUNT(computer.id) FROM ComputerEntity computer LEFT JOIN computer.company comp "
+			 	+ "Where discontinued BETWEEN :#{#filter.begin} AND :#{#filter.end}" )
+	Page<ComputerEntity> selectByDiscontinuedDate(@Param("filter") FilterDate filter, Pageable pageable);
+	
 	@Query(value = "SELECT computer, comp "
 		+ "FROM ComputerEntity computer LEFT JOIN FETCH computer.company comp "
 		+ "Where computer.id = :id",

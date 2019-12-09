@@ -6,6 +6,7 @@ import static fr.excilys.cdb.business.Helper.mapAllComputersWithPage;
 import static fr.excilys.cdb.business.Helper.mapToComputer;
 import static fr.excilys.cdb.business.Helper.mapToComputerEntity;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,11 +23,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.excilys.cdb.api.ComputerService;
 import fr.excilys.cdb.api.dto.Computer;
+import fr.excilys.cdb.api.dto.FilterByProperty;
 import fr.excilys.cdb.api.dto.Identifier;
 import fr.excilys.cdb.api.dto.PageDto;
 import fr.excilys.cdb.api.dto.SortDto;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 import fr.excilys.cdb.api.exception.NotFoundComputerException;
+import fr.excilys.cdb.persistence.mappers.FilterDate;
+import fr.excilys.cdb.persistence.mappers.HelperDate;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.ComputerEntity;
 import fr.excilys.cdb.persistence.repositories.CompanyRepository;
@@ -85,6 +89,31 @@ public class ComputerServiceExporter implements ComputerService {
 			return mapAllComputersWithPage(computers);
 		}
 		return page;
+	}
+	
+	public PageDto<Computer> getcomputerByDate(PageDto<Computer> page, FilterByProperty filterByProperty) {
+		if (isValidBean(page) && filterByProperty != null) {
+			Page<ComputerEntity> computers = null;
+			Pageable pageable = PageRequest.of(page.getNumber(), page.getSize(), Sort.by("name"));
+			FilterDate filter = getFilterByDate(filterByProperty);
+			if(filterByProperty.getFilter().equals("introduced")) {
+				computers = computerRepository.selectByIntroducedDate(filter,  pageable);
+			} else if (filterByProperty.getFilter().equals("discontinued")){
+				computers = computerRepository.selectByDiscontinuedDate(filter,  pageable);
+			}
+			LOGGER.info("get all Computers Serched with page {} from Dao Computer", page.getNumber());
+			return mapAllComputersWithPage(computers);
+		}
+		return page;
+	}
+
+	private FilterDate getFilterByDate(FilterByProperty filter) {
+		LocalDate date = HelperDate.stringDateToLocalDate(filter.getValue());
+		LocalDate endDate = date.plusDays(1);
+		return  FilterDate.Builder.newInstance()
+							.setBegin(date)
+							.setEnd(endDate)
+							.build();
 	}
 
 	public Optional<Computer> getComputerById(Identifier computerId) {
@@ -189,4 +218,5 @@ public class ComputerServiceExporter implements ComputerService {
 	private String nameForLikeSql(String name) {
 		return "%" + name.trim() + "%";
 	}
+	
 }

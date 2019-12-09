@@ -6,8 +6,8 @@ import static fr.excilys.cdb.persistence.repositories.DbInit.COMPANY;
 import static fr.excilys.cdb.persistence.repositories.DbInit.COMPUTER;
 import static fr.excilys.cdb.persistence.repositories.DbInit.DISCONTINUED;
 import static fr.excilys.cdb.persistence.repositories.DbInit.ID_1;
-import static fr.excilys.cdb.persistence.repositories.DbInit.ID_31;
 import static fr.excilys.cdb.persistence.repositories.DbInit.ID_2;
+import static fr.excilys.cdb.persistence.repositories.DbInit.ID_31;
 import static fr.excilys.cdb.persistence.repositories.DbInit.INTRODUCED;
 import static fr.excilys.cdb.persistence.repositories.DbInit.PAGE_1;
 import static fr.excilys.cdb.persistence.repositories.DbInit.QUNTUM_MAC;
@@ -18,7 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +35,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import fr.excilys.cdb.persistence.configuration.LoadApplicationContext;
 import fr.excilys.cdb.persistence.configuration.SpringDataJpaConfig;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
@@ -160,5 +163,4 @@ public class ComputerRepositoryTest {
 		//verify
 		assertThat(maxVlue).isEqualTo(20);
 	}
-	
 }

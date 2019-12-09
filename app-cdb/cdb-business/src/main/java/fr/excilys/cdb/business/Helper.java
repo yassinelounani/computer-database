@@ -75,12 +75,15 @@ public class Helper {
 	}
 
 	public static PageDto<Computer> mapAllComputersWithPage(Page<ComputerEntity> entry) {
-		PageDto.Builder<Computer> builder = new Builder<>();
-		return	builder.setNumber(entry.getNumber())
-        		.setSize(entry.getSize())
-        		.setTotalElement(entry.getTotalElements())
-        		.setContent(mapContent(entry.getContent()))
-        		.build();
+		if(entry !=null) {
+			PageDto.Builder<Computer> builder = new Builder<>();
+			return	builder.setNumber(entry.getNumber())
+	        		.setSize(entry.getSize())
+	        		.setTotalElement(entry.getTotalElements())
+	        		.setContent(mapContent(entry.getContent()))
+	        		.build();
+		}
+		return null;
     }
 
 	public static PageDto<Company> mapAllCompaniesWithPage(Page<CompanyEntity> entry) {
@@ -125,6 +128,7 @@ public class Helper {
 	}
 
 	private static String mapToDateDto(LocalDate date) {
+		
 		return date != null ? date.toString() : null;
 	}
 
@@ -141,7 +145,7 @@ public class Helper {
 				.setUsername(user.getUsername())
 				.setPassword(user.getPassword())
 				.setRoles(maptoRoles(user.getRoles()))
-				.build();					
+				.build();	
 	}
 
 	public static Set<String> maptoRoles(Set<RoleEntity> roles) {
