@@ -31,10 +31,17 @@ public interface ComputerRepository extends JpaRepository<ComputerEntity, Long> 
 	
 	@Query(value = "SELECT computer, comp "
 		 + "FROM ComputerEntity computer LEFT JOIN FETCH computer.company comp "
-		 + "Where computer.name LIKE :name OR comp.name LIKE :name",
+		 + "Where computer.name LIKE :name",
 		 	countQuery = "SELECT COUNT(computer.id) FROM ComputerEntity computer LEFT JOIN computer.company comp "
-		 	+ "Where computer.name LIKE :name OR comp.name LIKE :name" )
+		 	+ "Where computer.name LIKE :name" )
 	Page<ComputerEntity> selectSearchComputersWithPage(@Param("name") String name, Pageable pageable);
+	
+	@Query(value = "SELECT computer, comp "
+			 + "FROM ComputerEntity computer LEFT JOIN FETCH computer.company comp "
+			 + "Where comp.name LIKE :name",
+			 	countQuery = "SELECT COUNT(computer.id) FROM ComputerEntity computer LEFT JOIN computer.company comp "
+			 	+ "Where comp.name LIKE :name" )
+	Page<ComputerEntity> selectSearchComputersByCompanyWithPage(@Param("name") String name, Pageable pageable);
 	
 	@Query(value = "SELECT computer, comp "
 			 + "FROM ComputerEntity computer LEFT JOIN FETCH computer.company comp "

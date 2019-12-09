@@ -68,7 +68,7 @@ public interface ComputerService {
 	  *  @param nameAndPAge contain name of computer to search and page
 	  *  @return computers list of name computer (may be empty)
 	  */
-	 PageDto<Computer> getSerchComputersWithPage(PageDto<Computer> page, String name);
+	 PageDto<Computer> getSerchComputersWithPage(PageDto<Computer> page, String name, String property);
 	 
 	 
 	 PageDto<Computer> getcomputerByDate(PageDto<Computer> page, FilterByProperty filter);

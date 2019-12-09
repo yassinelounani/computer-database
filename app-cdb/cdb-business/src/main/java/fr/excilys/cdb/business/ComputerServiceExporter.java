@@ -80,16 +80,21 @@ public class ComputerServiceExporter implements ComputerService {
 		return page;
 	}
 
-	public PageDto<Computer> getSerchComputersWithPage(PageDto<Computer> page, String name) {
+	public PageDto<Computer> getSerchComputersWithPage(PageDto<Computer> page, String name, String property) {
 		if (isValidBean(page) && !isBlank(name)) {
 			Pageable pageable = PageRequest.of(page.getNumber(), page.getSize(), Sort.by("name"));
-			Page<ComputerEntity> computers = computerRepository
-					.selectSearchComputersWithPage(nameForLikeSql(name), pageable);
+			Page<ComputerEntity> computers = null;
+			if (property.equals("company")) {
+				computers = computerRepository.selectSearchComputersByCompanyWithPage(nameForLikeSql(name), pageable);
+			} else if (property.equals("computer")) {
+				computers = computerRepository.selectSearchComputersWithPage(nameForLikeSql(name), pageable);
+			}	
 			LOGGER.info("get all Computers Serched with page {} from Dao Computer", page.getNumber());
 			return mapAllComputersWithPage(computers);
 		}
 		return page;
 	}
+	
 	
 	public PageDto<Computer> getcomputerByDate(PageDto<Computer> page, FilterByProperty filterByProperty) {
 		if (isValidBean(page) && filterByProperty != null) {

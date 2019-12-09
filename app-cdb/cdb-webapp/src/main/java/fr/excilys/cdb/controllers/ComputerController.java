@@ -74,7 +74,7 @@ public class ComputerController {
 	@ApiOperation(value = "${swagger.find}", notes = "${swagger.find.desc}")
 	public ResponseEntity<PageDto<Computer>> find(@PathVariable("name") final String name, @Valid Navigation navigation) {
 		PageDto<Computer> page = getPage(navigation);
-		PageDto<Computer> pageDto = computerService.getSerchComputersWithPage(page, name);
+		PageDto<Computer> pageDto = computerService.getSerchComputersWithPage(page, name, navigation.getProperty());
 		return ok().body(pageDto);
 	}
 
