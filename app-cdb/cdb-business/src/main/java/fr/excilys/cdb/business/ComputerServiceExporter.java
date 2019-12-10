@@ -73,7 +73,7 @@ public class ComputerServiceExporter implements ComputerService {
 					page.getNumber(),
 					page.getSize(),
 					Sort.by(getDirection(navigation.getOrder()), navigation.getProperty()));
-			if(navigation.getValue() == null) {
+			if(navigation.getValue() == null || navigation.getValue().isEmpty()) {
 				computers = computerRepository.selectComputersWithPage(pageable);
 			} else if (navigation.getFilter().equals("computer")){
 				computers = computerRepository.selectComputersWithPageAndSort(nameForLikeSql(navigation.getValue()), pageable);
