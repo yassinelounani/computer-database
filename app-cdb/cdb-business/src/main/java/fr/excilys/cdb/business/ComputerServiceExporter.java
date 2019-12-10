@@ -23,10 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.excilys.cdb.api.ComputerService;
 import fr.excilys.cdb.api.dto.Computer;
-import fr.excilys.cdb.api.dto.FilterByProperty;
 import fr.excilys.cdb.api.dto.Identifier;
+import fr.excilys.cdb.api.dto.Navigation;
 import fr.excilys.cdb.api.dto.PageDto;
-import fr.excilys.cdb.api.dto.SortDto;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 import fr.excilys.cdb.api.exception.NotFoundComputerException;
 import fr.excilys.cdb.persistence.mappers.FilterDate;
@@ -67,13 +66,22 @@ public class ComputerServiceExporter implements ComputerService {
 		return page;
 	}
 	
-	public PageDto<Computer> getComputersWithPageAndSort(PageDto<Computer> page, SortDto sort) {
+	public PageDto<Computer> getComputersWithPageAndSort(PageDto<Computer> page, Navigation navigation) {
 		if (isValidBean(page)) {
+			Page<ComputerEntity> computers = null;
 			Pageable pageable = PageRequest.of(
 					page.getNumber(),
 					page.getSize(),
-					Sort.by(getDirection(sort), sort.getProperty()));
-			Page<ComputerEntity> computers = computerRepository.selectComputersWithPage(pageable);
+					Sort.by(getDirection(navigation.getOrder()), navigation.getProperty()));
+			if(navigation.getValue() == null) {
+				computers = computerRepository.selectComputersWithPage(pageable);
+			} else if (navigation.getFilter().equals("computer")){
+				computers = computerRepository.selectComputersWithPageAndSort(nameForLikeSql(navigation.getValue()), pageable);
+			} else if (navigation.getFilter().equals("company")) {
+				computers = computerRepository.selectSearchComputersByCompanyWithPage(nameForLikeSql(navigation.getValue()), pageable);
+			} else {
+				return getcomputerByDate(page, navigation);
+			}
 			LOGGER.info("get all Computers with page {} from Dao Computer", page.getNumber());
 			return mapAllComputersWithPage(computers);
 		}
@@ -96,14 +104,15 @@ public class ComputerServiceExporter implements ComputerService {
 	}
 	
 	
-	public PageDto<Computer> getcomputerByDate(PageDto<Computer> page, FilterByProperty filterByProperty) {
-		if (isValidBean(page) && filterByProperty != null) {
+	public PageDto<Computer> getcomputerByDate(PageDto<Computer> page, Navigation navigation) {
+		if (isValidBean(page) && navigation != null) {
 			Page<ComputerEntity> computers = null;
-			Pageable pageable = PageRequest.of(page.getNumber(), page.getSize(), Sort.by("name"));
-			FilterDate filter = getFilterByDate(filterByProperty);
-			if(filterByProperty.getFilter().equals("introduced")) {
+			Sort sort = getSortList(navigation);
+			Pageable pageable = PageRequest.of(page.getNumber(), page.getSize(), sort);
+			FilterDate filter = getFilterByDate(navigation);
+			if(navigation.getFilter().equals("introduced")) {
 				computers = computerRepository.selectByIntroducedDate(filter,  pageable);
-			} else if (filterByProperty.getFilter().equals("discontinued")){
+			} else if (navigation.getFilter().equals("discontinued")){
 				computers = computerRepository.selectByDiscontinuedDate(filter,  pageable);
 			}
 			LOGGER.info("get all Computers Serched with page {} from Dao Computer", page.getNumber());
@@ -111,8 +120,8 @@ public class ComputerServiceExporter implements ComputerService {
 		}
 		return page;
 	}
-
-	private FilterDate getFilterByDate(FilterByProperty filter) {
+	
+	private FilterDate getFilterByDate(Navigation filter) {
 		LocalDate date = HelperDate.stringDateToLocalDate(filter.getValue());
 		LocalDate endDate = date.plusDays(1);
 		return  FilterDate.Builder.newInstance()
@@ -212,8 +221,8 @@ public class ComputerServiceExporter implements ComputerService {
 		return computer;
 	}
 
-	private Direction getDirection(SortDto sort) {
-		return sort.getOrder().equals("ASC") ? Direction.ASC : Direction.DESC;
+	private Direction getDirection(String order) {
+		return order.equals("ASC") ? Direction.ASC : Direction.DESC;
 	}
 
 	private boolean isBlank(String element) {
@@ -222,6 +231,16 @@ public class ComputerServiceExporter implements ComputerService {
 	
 	private String nameForLikeSql(String name) {
 		return "%" + name.trim() + "%";
+	}
+	
+	private Sort getSortList(Navigation navigation) {
+		Sort sort = null;
+		if(navigation.getOrder().equals("ASC")) {
+				sort = Sort.by(navigation.getProperty()).ascending();
+		} else {
+				sort = Sort.by(navigation.getProperty()).descending();
+		}
+		return sort;
 	}
 	
 }

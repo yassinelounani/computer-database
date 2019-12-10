@@ -34,6 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
 	}
+	
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -66,18 +67,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/**/webjars/**").permitAll()
 				.antMatchers("/**/configuration/ui").permitAll()
 				.antMatchers("/**/configuration/security").permitAll()
-				.antMatchers("/csrf").permitAll();
-//				.antMatchers("/computers/delete/**").hasRole("ADMIN")
-//				.antMatchers("/computers/add", "/computers/update").hasRole("ADMIN")
-//				.antMatchers("/computers/**").hasRole("USER")
-				//.anyRequest().authenticated();
+				.antMatchers("/csrf").permitAll()
+			
+				.anyRequest().authenticated();
+				
 
+	
+	    
 	}
 
 	@Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/**/swagger-resources/configuration/ui","/**/configuration/ui", "/**/swagger-resources",
-                 "/**/swagger-ui.html", "/**/webjars/**", "/**/configuration/security", "/csrf","/index.jsp", "/v2/api-docs");
+		web.ignoring().antMatchers(
+				"/**/swagger-resources/configuration/ui",
+				"/**/configuration/ui",
+				"/**/swagger-resources",
+                "/**/swagger-ui.html",
+                "/**/webjars/**",
+                "/**/configuration/security",
+                "/csrf","/index.jsp",
+                "/v2/api-docs",
+                "/login");
     }
 
 }

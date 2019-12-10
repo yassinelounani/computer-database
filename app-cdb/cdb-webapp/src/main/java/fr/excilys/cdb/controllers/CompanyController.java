@@ -9,6 +9,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +40,7 @@ public class CompanyController {
 		this.companyService = companyService;
 	}
 	
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@GetMapping
 	@ApiOperation(value = "${swagger.companies}", notes = "${swagger.companies.desc}")
 	public ResponseEntity<List<Company>> getAll() {
@@ -45,6 +48,7 @@ public class CompanyController {
 		return ok().body(companies); 
 	}
 
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/page")
 	@ApiOperation(value = "${swagger.comp.page}", notes = "${swagger.comp.page.desc}")
 	public ResponseEntity<PageDto<Company>> getAllWithPage(Navigation navigation) {

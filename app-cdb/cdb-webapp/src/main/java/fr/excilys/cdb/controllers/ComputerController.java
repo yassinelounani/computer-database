@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,6 @@ import fr.excilys.cdb.api.dto.FilterByProperty;
 import fr.excilys.cdb.api.dto.Identifier;
 import fr.excilys.cdb.api.dto.Navigation;
 import fr.excilys.cdb.api.dto.PageDto;
-import fr.excilys.cdb.api.dto.SortDto;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 import fr.excilys.cdb.api.exception.NotFoundComputerException;
 import io.swagger.annotations.ApiOperation;
@@ -42,7 +42,8 @@ public class ComputerController {
 		super();
 		this.computerService = computerService;
 	}
-
+	
+	@Secured("ROLE_USER")
 	@CrossOrigin
 	@GetMapping
 	@ApiOperation(value = "${swagger.computers}", notes = "${swagger.computers.desc}")
@@ -50,7 +51,8 @@ public class ComputerController {
 		List<Computer> computers = computerService.getComputers();
 		return ok().body(computers);
 	}
-
+	
+	@Secured("ROLE_USER")
 	@CrossOrigin
 	@ApiOperation(value = "${swagger.id}", notes = "${swagger.id.desc}")
 	@GetMapping("/{id}")
@@ -60,6 +62,7 @@ public class ComputerController {
 		return ResponseEntity.of(computer);
 	}
 
+	@Secured("ROLE_USER")
 	@CrossOrigin
 	@ApiOperation(value = "${swagger.page}", notes = "${swagger.page.desc}")
 	@GetMapping("/page")
@@ -69,34 +72,37 @@ public class ComputerController {
 		return ok().body(pageDto);
 	}
 
-	@CrossOrigin
-	@GetMapping("/find/{name}")
-	@ApiOperation(value = "${swagger.find}", notes = "${swagger.find.desc}")
-	public ResponseEntity<PageDto<Computer>> find(@PathVariable("name") final String name, @Valid Navigation navigation) {
-		PageDto<Computer> page = getPage(navigation);
-		PageDto<Computer> pageDto = computerService.getSerchComputersWithPage(page, name, navigation.getProperty());
-		return ok().body(pageDto);
-	}
-
+	@Secured("ROLE_USER")
 	@CrossOrigin
 	@GetMapping("/find")
 	@ApiOperation(value = "${swagger.find}", notes = "${swagger.find.desc}")
-	public ResponseEntity<PageDto<Computer>> findByDate(FilterByProperty filter, @Valid Navigation navigation) {
+	public ResponseEntity<PageDto<Computer>> find(@Valid Navigation navigation) {
 		PageDto<Computer> page = getPage(navigation);
-		PageDto<Computer> pageDto = computerService.getcomputerByDate(page, filter);
+		PageDto<Computer> pageDto = computerService.getSerchComputersWithPage(page, navigation.getValue(), navigation.getProperty());
 		return ok().body(pageDto);
 	}
 
+	@Secured("ROLE_USER")
+	@CrossOrigin
+	@GetMapping("/find/date")
+	@ApiOperation(value = "${swagger.find}", notes = "${swagger.find.desc}")
+	public ResponseEntity<PageDto<Computer>> findByDate(FilterByProperty filter, @Valid Navigation navigation) {
+		PageDto<Computer> page = getPage(navigation);
+		PageDto<Computer> pageDto = computerService.getcomputerByDate(page, navigation);
+		return ok().body(pageDto);
+	}
+
+	@Secured("ROLE_USER")
 	@CrossOrigin
 	@GetMapping(value = "/sort")
 	@ApiOperation(value = "${swagger.sort}", notes = "${swagger.sort.desc}")
 	public ResponseEntity<PageDto<Computer>> sort(@Valid Navigation navigation) {
 		PageDto<Computer> page = getPage(navigation);
-		SortDto sort = new SortDto(navigation.getProperty(), navigation.getOrder());
-		PageDto<Computer> pageDto = computerService.getComputersWithPageAndSort(page, sort);
+		PageDto<Computer> pageDto = computerService.getComputersWithPageAndSort(page, navigation);
 		return ok().body(pageDto);
 	}
 
+	@Secured("ROLE_USER")
 	@CrossOrigin
 	@DeleteMapping("/delete/{id}")
 	@ApiOperation(value = "${swagger.delete}", notes = "${swagger.delete.desc}")
@@ -110,6 +116,7 @@ public class ComputerController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
+	@Secured("ROLE_USER")
 	@CrossOrigin
 	@DeleteMapping("/delete/company/{id}")
 	@ApiOperation(value = "${swagger.delete.comp}", notes = "${swagger.delete.comp.desc}")
@@ -123,6 +130,7 @@ public class ComputerController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
+	@Secured("ROLE_USER")
 	@CrossOrigin
 	@PostMapping("/add")
 	@ApiOperation(value = "${swagger.add}", notes = "${swagger.add.desc}")
@@ -141,6 +149,7 @@ public class ComputerController {
 		}
 	}
 
+	@Secured("ROLE_USER")
 	@CrossOrigin
 	@PutMapping("/update")
 	@ApiOperation(value = "${swagger.update}", notes = "${swagger.update.desc}")

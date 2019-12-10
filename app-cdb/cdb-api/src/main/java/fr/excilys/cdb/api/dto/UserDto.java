@@ -7,6 +7,7 @@ public class UserDto {
 	private String username;
 	private String password;
 	private Set<String> roles;
+	private String token;
 	
 	
 	public UserDto() {
@@ -18,6 +19,7 @@ public class UserDto {
 		this.username = builder.username;
 		this.password = builder.password;
 		this.roles = builder.roles;
+		this.token = builder.token;
 	}
 
 	public String getUsername() {
@@ -30,6 +32,14 @@ public class UserDto {
 
 	public String getPassword() {
 		return password;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	public void setPassword(String password) {
@@ -53,6 +63,7 @@ public class UserDto {
 		private String username;
 		private String password;
 		private Set<String> roles = new HashSet<String>();
+		private String token;
 		
 		public static Builder newInstance() {
 			return new Builder();
@@ -65,6 +76,11 @@ public class UserDto {
 
 		public Builder setPassword(String password) {
 			this.password = password;
+			return this;
+		}
+
+		public Builder setToken(String token) {
+			this.token = token;
 			return this;
 		}
 

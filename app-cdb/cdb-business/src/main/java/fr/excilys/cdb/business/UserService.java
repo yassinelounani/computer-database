@@ -1,7 +1,7 @@
 package fr.excilys.cdb.business;
 
-import static fr.excilys.cdb.business.Helper.mapToUser;
-
+import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +9,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -50,20 +52,6 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public UserDto findByUsernameAndPassword(UserDto userDto) throws UsernameNotFoundException{
-    	System.err.println(userDto);
-    	UserEntity user = userRepository.findByUsername(userDto.getUsername());
-    	if (user == null) {
-            throw new UsernameNotFoundException("Username " + userDto.getUsername() + " not found");
-        } else {
-        	 if(bCrypt.matches(userDto.getPassword(), user.getPassword())) {
-        		 return mapToUser(user);
-        	 } else {
-        		 throw new UsernameNotFoundException("password " + userDto.getUsername() + " is incorect");
-        	 }
-        }
-    }
-
 	private String[] getRoles(UserEntity user) {
 		return 	user.getRoles().stream()
 					.map(mapper -> mapper.getRole())
@@ -72,22 +60,36 @@ public class UserService implements UserDetailsService {
 	}
 
 	
-	  public Token login(UserDto requestUser) {
-		  String token = null;
-		  	UsernamePasswordAuthenticationToken authenticationTokenRequest = new
-	                UsernamePasswordAuthenticationToken(requestUser.getUsername(), requestUser.getPassword());
-	        System.err.println(authenticationTokenRequest);
-		  	try {
-	            Authentication authentication = this.authenticationManager.authenticate(authenticationTokenRequest);
-	            SecurityContext securityContext = SecurityContextHolder.getContext();
-	            securityContext.setAuthentication(authentication);
-	            System.err.println(authentication);
-	            final UserDetails userDetails = loadUserByUsername(requestUser.getUsername());
-	            System.err.println(userDetails);
-	            token = jwtTokenUtil.generateToken(userDetails);
+	public UserDto login(UserDto requestUser) {
+		UserDto sendUser = null;
+		String token = null;
+		UsernamePasswordAuthenticationToken authenticationTokenRequest = new
+	    UsernamePasswordAuthenticationToken(requestUser.getUsername(), requestUser.getPassword());
+	    System.err.println(authenticationTokenRequest);
+		try {
+	        Authentication authentication = this.authenticationManager.authenticate(authenticationTokenRequest);
+	        SecurityContext securityContext = SecurityContextHolder.getContext();
+	        securityContext.setAuthentication(authentication);
+	        System.err.println(authentication);
+	        final UserDetails userDetails = loadUserByUsername(requestUser.getUsername());
+	        System.err.println(userDetails);
+	        token = jwtTokenUtil.generateToken(userDetails);
+	        Collection<SimpleGrantedAuthority> roles = (Collection<SimpleGrantedAuthority>) securityContext.getAuthentication().getAuthorities();
+	        sendUser = UserDto.Builder.newInstance()
+	            	.setUsername(requestUser.getUsername())
+	            	.setToken(token)
+	            	.setRoles( getRolesFromUserDetails(roles))
+	            	.build();
 	        } catch (BadCredentialsException ex) { 
 	        	System.out.println(ex.getMessage());
 	        }
-	        return new Token(token);
+	        return sendUser;
 	    }
+	  
+	private Set<String> getRolesFromUserDetails(Collection<SimpleGrantedAuthority> collection) {
+			return 	collection.stream()
+						.map(mapper -> mapper.getAuthority())
+						.collect(Collectors.toSet());
+	}
+	  	
 }	

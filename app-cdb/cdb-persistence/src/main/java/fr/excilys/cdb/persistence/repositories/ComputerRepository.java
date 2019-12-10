@@ -27,6 +27,12 @@ public interface ComputerRepository extends JpaRepository<ComputerEntity, Long> 
 		 + "FROM ComputerEntity computer LEFT JOIN FETCH computer.company comp",
 		   countQuery = "SELECT COUNT(computer.id) FROM ComputerEntity computer" )
 	Page<ComputerEntity> selectComputersWithPage(Pageable pageable);
+
+	@Query(value = "SELECT computer, comp "
+			 + "FROM ComputerEntity computer LEFT JOIN FETCH computer.company comp "
+			 + "Where computer.name LIKE :name",
+			   countQuery = "SELECT COUNT(computer.id) FROM ComputerEntity computer WHERE computer.name LIKE :name" )
+	Page<ComputerEntity> selectComputersWithPageAndSort(@Param("name") String name, Pageable pageable);
 	
 	
 	@Query(value = "SELECT computer, comp "

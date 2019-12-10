@@ -1,4 +1,4 @@
-package fr.excilys.cdb.controllers;
+    package fr.excilys.cdb.controllers;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -26,11 +26,11 @@ public class UserController {
 	  AuthenticationManager authenticationManager;
 	
 	@PostMapping("/login")
-    public ResponseEntity<Token> login(@RequestBody UserDto userDto) {
-         Token token = userservice.login(userDto);
-        System.err.println(token);
+    public ResponseEntity<UserDto> login(@RequestBody UserDto userDto) {
+		UserDto user = userservice.login(userDto);
+        System.err.println(user);
         
-        return ok().body(token);
+        return ok().body(user);
     }
 	
 

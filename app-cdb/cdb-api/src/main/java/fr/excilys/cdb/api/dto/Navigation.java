@@ -14,16 +14,23 @@ public final class Navigation implements Serializable {
 	
 	private String property;
 	
+	private String filter;
+	
 	private String order;
+
+	private String value;
 	
 	public Navigation() {
 		super();
 	}
+	
 	public Navigation(Builder builder) {
 		this.number = builder.number;
 		this.size = builder.size;
 		this.property = builder.property;
 		this.order = builder.order;
+		this.value = builder.value;
+		this.filter = builder.filter;
 	}
 
 	public int getNumber() {
@@ -42,12 +49,22 @@ public final class Navigation implements Serializable {
 		return order;
 	}
 
-	
+	public String getFilter() {
+		return filter;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
 
 	@Override
 	public String toString() {
-		return "Navigation [number=" + number + ", size=" + size + ", property=" + property
-				+ ", order=" + order + "]";
+		return "Navigation [number=" + number + ", size=" + size + ", property=" + property + ", order=" + order
+				+ ", value=" + value + "]";
 	}
 
 	public static class Builder {
@@ -55,6 +72,8 @@ public final class Navigation implements Serializable {
 		private int size;
 		private String property;
 		private String order;
+		private String value;
+		private String filter;
 
 		public Builder setNumber(int number) {
 			this.number = number;
@@ -76,6 +95,16 @@ public final class Navigation implements Serializable {
 			return this;
 		}
 
+		public Builder setValue(String value) {
+			this.value = value;
+			return this;
+		}
+
+		public Builder setFilter(String filter) {
+			this.filter = filter;
+			return this;
+		}
+
 		public static Builder newInstance() {
 			return new Builder();
 		}
@@ -88,14 +117,23 @@ public final class Navigation implements Serializable {
 	public void setNumber(int number) {
 		this.number = number;
 	}
+
 	public void setSize(int size) {
 		this.size = size;
 	}
+
 	public void setProperty(String property) {
 		this.property = property;
 	}
+
 	public void setOrder(String order) {
 		this.order = order;
 	}
+	
+	public void setFilter(String filter) {
+		this.filter = filter;
+	}
+
+	
 	
 }
