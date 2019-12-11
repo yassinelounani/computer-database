@@ -118,20 +118,6 @@ public class ComputerController {
 
 	@Secured("ROLE_USER")
 	@CrossOrigin
-	@DeleteMapping("/delete/company/{id}")
-	@ApiOperation(value = "${swagger.delete.comp}", notes = "${swagger.delete.comp.desc}")
-	public ResponseEntity<HttpStatus> deleteCompanies(@PathVariable(value="id") Long id) {
-		Identifier computerId = new Identifier(id);
-		try {
-			computerService.deleteCompany(computerId);
-		} catch (NotFoundCompanyException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
-		return ResponseEntity.status(HttpStatus.OK).build();
-	}
-
-	@Secured("ROLE_USER")
-	@CrossOrigin
 	@PostMapping("/add")
 	@ApiOperation(value = "${swagger.add}", notes = "${swagger.add.desc}")
 	public ResponseEntity<HttpStatus> add(@Valid @RequestBody Computer computer) {

@@ -18,29 +18,35 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.excilys.cdb.api.CompanyService;
 import fr.excilys.cdb.api.dto.Company;
 import fr.excilys.cdb.api.dto.Identifier;
+import fr.excilys.cdb.api.dto.Navigation;
 import fr.excilys.cdb.api.dto.PageDto;
-import fr.excilys.cdb.api.dto.SortDto;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
-import fr.excilys.cdb.api.exception.NotFoundComputerException;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.repositories.CompanyRepository;
+import fr.excilys.cdb.persistence.repositories.ComputerRepository;
 
 @Service
 public class CompanyServiceExporter implements CompanyService{
 	
+	private static final String NAME = "name";
+
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyServiceExporter.class);
 	
     
 	private CompanyRepository companyRepository;
+	private ComputerRepository computerRepository;
 
 	@Autowired
-	public CompanyServiceExporter(CompanyRepository companyRepository) {
+	public CompanyServiceExporter(CompanyRepository companyRepository, ComputerRepository computerRepository) {
 		super();
 		this.companyRepository = companyRepository;
+		this.computerRepository = computerRepository;
 	}
 
 	public List<Company> getCompanies() {
@@ -59,13 +65,18 @@ public class CompanyServiceExporter implements CompanyService{
 		return page;
 	}
 
-	public PageDto<Company> getCompaniesWithPageAndSort(PageDto<Company> page, SortDto sort) {
+	public PageDto<Company> getCompaniesWithPageAndSort(PageDto<Company> page, Navigation navigation) {
 		if (isValidBean(page)) {
+			Page<CompanyEntity> companies = null;
 			Pageable pageable = PageRequest.of(
 					page.getNumber(),
 					page.getSize(),
-					Sort.by(getDirection(sort), sort.getProperty()));
-			Page<CompanyEntity> companies = companyRepository.selectCompaniesWithPage(pageable);
+					Sort.by(getDirection(navigation.getOrder()), NAME));
+			if (navigation.getValue() == null || navigation.getValue().isEmpty()) {
+				companies = companyRepository.selectCompaniesWithPage(pageable);
+			} else {
+				return getSerchCompaniesWithPage(page, navigation.getValue());
+			}
 			LOGGER.info("get all companies with page {} from Dao Computer", page.getNumber());
 			return mapAllCompaniesWithPage(companies);
 		}
@@ -74,7 +85,7 @@ public class CompanyServiceExporter implements CompanyService{
 
 	public PageDto<Company> getSerchCompaniesWithPage(PageDto<Company> page, String name) {
 		if (isValidBean(page) && !isBlank(name)) {
-			Pageable pageable = PageRequest.of(page.getNumber(), page.getSize(), Sort.by("name"));
+			Pageable pageable = PageRequest.of(page.getNumber(), page.getSize(), Sort.by(NAME));
 			Page<CompanyEntity> companies = companyRepository.selectSearchCompaniesByPage(nameForLikeSql(name), pageable);
 			LOGGER.info("get all companies Serched with page {} from Dao Computer", page.getNumber());
 			return mapAllCompaniesWithPage(companies);
@@ -105,18 +116,20 @@ public class CompanyServiceExporter implements CompanyService{
 		}
 		return addvalue;
 	}
-
-
-	public void deleteCompanyById(Identifier companyId) throws NotFoundComputerException {
-		if (isValidBean(companyId)) {
-			Optional<Company> getComputer = getCompanyById(companyId);
-			if (!getComputer.isPresent()) {
-				throw new NotFoundComputerException("Company with id :"+ companyId.getId() +" not Exist");
+	
+	@Transactional
+	public void deleteCompany(Identifier idcompany) throws NotFoundCompanyException {
+		if (isValidBean(idcompany)) {
+			Optional<Company> getCompany = getCompanyById(idcompany);
+			if (!getCompany.isPresent()) {
+				throw new NotFoundCompanyException("Company with id :"+ idcompany.getId() +" not Exist");
+			} else {
+				computerRepository.deleteComputerByCompanyId(idcompany.getId());
+				companyRepository.deleteById(idcompany.getId());
 			}
-			companyRepository.deleteById(companyId.getId());
 		}
 	}
-
+	
 	public int updateCompany(Company company) throws NotFoundCompanyException {
 		int updateValue = 0;
 		if ( isValidBean(company)) {
@@ -132,8 +145,8 @@ public class CompanyServiceExporter implements CompanyService{
 		return updateValue;
 	}
 
-	private Direction getDirection(SortDto sort) {
-		return sort.getOrder().equals("ASC") ? Direction.ASC : Direction.DESC;
+	private Direction getDirection(String proprerty) {
+		return proprerty.equals("ASC") ? Direction.ASC : Direction.DESC;
 	}
 
 	private boolean isBlank(String name) {

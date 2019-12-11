@@ -5,8 +5,8 @@ import java.util.Optional;
 
 import fr.excilys.cdb.api.dto.Company;
 import fr.excilys.cdb.api.dto.Identifier;
+import fr.excilys.cdb.api.dto.Navigation;
 import fr.excilys.cdb.api.dto.PageDto;
-import fr.excilys.cdb.api.dto.SortDto;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 
 public interface CompanyService {
@@ -26,7 +26,7 @@ public interface CompanyService {
 	 * @param pageAndSort represent page requested with sort properties
 	 * @return Companies list of Companies (may be empty)
 	 */
-	PageDto<Company> getCompaniesWithPageAndSort(PageDto<Company> page, SortDto sort);
+	PageDto<Company> getCompaniesWithPageAndSort(PageDto<Company> page, Navigation navigation);
 	/**
 	 * get Company with id
 	 * @param id of Company to find

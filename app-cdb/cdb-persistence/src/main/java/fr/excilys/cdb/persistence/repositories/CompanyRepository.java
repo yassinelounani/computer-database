@@ -31,14 +31,12 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
 	Optional<CompanyEntity> selectCompanyById(@Param("id") long id);
 	
 	@Query(value = "SELECT company "
-			 + "FROM CompanyEntity company  "
+			 + "FROM CompanyEntity company "
 			 + "Where company.name LIKE :name ",
 			 	countQuery = "SELECT COUNT(company.id) FROM CompanyEntity company "
 			 	+ "Where company.name LIKE :name " )
 	Page<CompanyEntity> selectSearchCompaniesByPage(@Param("name") String name, Pageable pageable);
-
-		
-
+			
 	@Query("SELECT MAX(company.id) "
 		 + "FROM CompanyEntity company")
 	long getMaxIdCompanies();

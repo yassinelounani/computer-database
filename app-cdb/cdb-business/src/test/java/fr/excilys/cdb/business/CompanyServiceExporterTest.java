@@ -15,6 +15,7 @@ import fr.excilys.cdb.api.dto.Company;
 import fr.excilys.cdb.persistence.models.CompanyEntity;
 import fr.excilys.cdb.persistence.models.CompanyEntity.CompanyBuilder;
 import fr.excilys.cdb.persistence.repositories.CompanyRepository;
+import fr.excilys.cdb.persistence.repositories.ComputerRepository;
 
 public class CompanyServiceExporterTest {
 	
@@ -34,7 +35,8 @@ public class CompanyServiceExporterTest {
 	public void test_getCompanies_expect_success() {
 		//prepare
 		CompanyRepository mock = mock(CompanyRepository.class);
-		CompanyService companyService = new CompanyServiceExporter(mock);
+		ComputerRepository mockComputer = mock(ComputerRepository.class);
+		CompanyService companyService = new CompanyServiceExporter(mock, mockComputer);
 		List<CompanyEntity> companyEntities = Arrays.asList(COMPANY_APPLE, COMPANY_HP);
 		List<Company> companies = mapAll(companyEntities, Company.class);
 		doReturn(companyEntities).when(mock).selectCompanies();

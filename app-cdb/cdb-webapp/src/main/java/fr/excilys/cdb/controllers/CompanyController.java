@@ -9,24 +9,21 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import fr.excilys.cdb.api.CompanyService;
 import fr.excilys.cdb.api.dto.Company;
 import fr.excilys.cdb.api.dto.Navigation;
 import fr.excilys.cdb.api.dto.PageDto;
-import fr.excilys.cdb.api.dto.SortDto;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
 import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/companies")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -57,26 +54,26 @@ public class CompanyController {
 		return ok().body(pageDto);
 	}
 
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@CrossOrigin
-	@GetMapping("/find/{name}")
+	@GetMapping("/find")
 	@ApiOperation(value = "${swagger.comp.find}", notes = "${swagger.comp.find.desc}")
-	public ResponseEntity<PageDto<Company>> find(@PathVariable("name") final String name, @Valid Navigation navigation) {
+	public ResponseEntity<PageDto<Company>> find(@Valid Navigation navigation) {
 		PageDto<Company> page = getRequestPage(navigation);
-		PageDto<Company> pageDto = companyService.getSerchCompaniesWithPage(page, name);
+		PageDto<Company> pageDto = companyService.getSerchCompaniesWithPage(page, navigation.getValue());
 		return ok().body(pageDto);
 	}
 
-	@CrossOrigin
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping(value = "/sort")
 	@ApiOperation(value = "${swagger.comp.sort}", notes = "${swagger.comp.sort.desc}")
 	public ResponseEntity<PageDto<Company>> sort(@Valid Navigation navigation) {
 		PageDto<Company> page = getRequestPage(navigation);
-		SortDto sort = new SortDto(navigation.getProperty(), navigation.getOrder());
-		PageDto<Company> pageDto = companyService.getCompaniesWithPageAndSort(page, sort);
+		PageDto<Company> pageDto = companyService.getCompaniesWithPageAndSort(page, navigation);
 		return ok().body(pageDto);
 	}
 
-	@CrossOrigin
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PostMapping("/add")
 	@ApiOperation(value = "${swagger.comp.add}", notes = "${swagger.comp.add.desc}")
 	public ResponseEntity<HttpStatus> add(@RequestBody @Valid Company Company) {
@@ -88,7 +85,7 @@ public class CompanyController {
 			}
 	}
 
-	@CrossOrigin
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PutMapping("/update")
 	@ApiOperation(value = "${swagger.comp.update}", notes = "${swagger.comp.update.desc}")
 	public ResponseEntity<HttpStatus> update(@RequestBody @Valid Company Company) {

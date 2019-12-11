@@ -50,13 +50,6 @@ public interface ComputerService {
 	 */
 	void deleteComputerById(Identifier computerId) throws NotFoundComputerException;
 	/**
-	 * delete company and computers associates with id of company
-	 * @param companyId id of company
-	 * @throws NotFoundComputerException if id of computer not exist
-	 * @return 1 if computer deleted else 0
-	 */
-	void deleteCompany(Identifier companyId) throws NotFoundCompanyException;
-	/**
 	 * update computer
 	 * @param computer
 	 * @return 1 if computer added else 0 and -1 if error Date

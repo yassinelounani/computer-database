@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import fr.excilys.cdb.api.ComputerService;
 import fr.excilys.cdb.api.dto.Computer;
@@ -176,14 +175,7 @@ public class ComputerServiceExporter implements ComputerService {
 		}
 	}
 
-	@Transactional
-	public void deleteCompany(Identifier idcompany) throws NotFoundCompanyException {
-		if (isValidBean(idcompany)) {
-			checkCompany(idcompany.getId());
-			computerRepository.deleteComputerByCompanyId(idcompany.getId());
-			companyRepository.deleteById(idcompany.getId());
-		}
-	}
+
 
 	public int updateComputer(Computer computer) throws NotFoundComputerException {
 		int updateValue = 0;
