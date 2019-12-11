@@ -9,9 +9,12 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import fr.excilys.cdb.api.CompanyService;
 import fr.excilys.cdb.api.dto.Company;
+import fr.excilys.cdb.api.dto.Identifier;
 import fr.excilys.cdb.api.dto.Navigation;
 import fr.excilys.cdb.api.dto.PageDto;
 import fr.excilys.cdb.api.exception.NotFoundCompanyException;
@@ -45,7 +49,7 @@ public class CompanyController {
 		return ok().body(companies); 
 	}
 
-	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@GetMapping("/page")
 	@ApiOperation(value = "${swagger.comp.page}", notes = "${swagger.comp.page.desc}")
 	public ResponseEntity<PageDto<Company>> getAllWithPage(Navigation navigation) {
@@ -54,17 +58,7 @@ public class CompanyController {
 		return ok().body(pageDto);
 	}
 
-	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	@CrossOrigin
-	@GetMapping("/find")
-	@ApiOperation(value = "${swagger.comp.find}", notes = "${swagger.comp.find.desc}")
-	public ResponseEntity<PageDto<Company>> find(@Valid Navigation navigation) {
-		PageDto<Company> page = getRequestPage(navigation);
-		PageDto<Company> pageDto = companyService.getSerchCompaniesWithPage(page, navigation.getValue());
-		return ok().body(pageDto);
-	}
-
-	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@GetMapping(value = "/sort")
 	@ApiOperation(value = "${swagger.comp.sort}", notes = "${swagger.comp.sort.desc}")
 	public ResponseEntity<PageDto<Company>> sort(@Valid Navigation navigation) {
@@ -99,6 +93,19 @@ public class CompanyController {
 		} catch (NotFoundCompanyException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
+	}
+
+	@Secured("ROLE_ADMIN")
+	@DeleteMapping("/delete/{id}")
+	@ApiOperation(value = "${swagger.delete}", notes = "${swagger.delete.desc}")
+	public ResponseEntity<HttpStatus> delete(@PathVariable(value="id") Long id) {
+		Identifier computerId = new Identifier(id);
+		try {
+			companyService.deleteCompany(computerId);
+		} catch (NotFoundCompanyException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
 	private PageDto<Company> getRequestPage(Navigation navigation) {

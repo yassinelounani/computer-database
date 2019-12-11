@@ -47,4 +47,10 @@ public interface CompanyService {
 	 * @throws NotFoundCompanyException if id of Company not exist
 	 */
 	 int updateCompany(Company Company) throws NotFoundCompanyException;
+	 /**
+		 * delete Company in cascade
+		 * @param companyId id of company
+		 * @throws NotFoundCompanyException if id of Company not exist
+		 */
+	 void deleteCompany(Identifier companyId) throws NotFoundCompanyException;
 }
