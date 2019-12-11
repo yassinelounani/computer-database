@@ -1,6 +1,7 @@
 package fr.excilys.cdb.api.validation;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -24,8 +25,8 @@ public class IntroducedBeforeDiscontinuedValidator implements ConstraintValidato
     			&& (request.getDiscontinued().matches("^\\d{4}-\\d{2}-\\d{2}$")
     			|| request.getDiscontinued().matches("^([0-2][0-9]|(3)[0-1])(\\/)(((0)[0-9])|((1)[0-2]))(\\/)\\d{4}$"))) {
     		
-    		LocalDate introducedDate = LocalDate.parse(request.getIntroduced());
-            LocalDate discontinuedDate = LocalDate.parse(request.getDiscontinued());
+    		LocalDate introducedDate = stringDateToLocalDate(request.getIntroduced());
+            LocalDate discontinuedDate = stringDateToLocalDate(request.getDiscontinued());
             isValid = introducedDate.isBefore(discontinuedDate);
             if ( !isValid ) {
                 constraintValidatorContext.disableDefaultConstraintViolation();
@@ -40,4 +41,15 @@ public class IntroducedBeforeDiscontinuedValidator implements ConstraintValidato
     private boolean isBlank(String date) {
     	return date == null || date.trim().isEmpty() ? true : false;
     }
+    
+    private LocalDate stringDateToLocalDate(String date) {
+		if (date == null || date.isEmpty()) {
+			return null;
+		}
+		if (date.matches("^([0-2][0-9]|(3)[0-1])(\\/)(((0)[0-9])|((1)[0-2]))(\\/)\\d{4}$")) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			return LocalDate.parse(date, formatter);
+		}
+		return LocalDate.parse(date);
+	}
 }
