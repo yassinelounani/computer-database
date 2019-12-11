@@ -47,12 +47,4 @@ public interface CompanyService {
 	 * @throws NotFoundCompanyException if id of Company not exist
 	 */
 	 int updateCompany(Company Company) throws NotFoundCompanyException;
-	 
-	 /**
-	  *  get all Companies Searched with the name of Company or company and page
-	  *  @param PageDto contain parameters of pagination of searched page
-	  *  @param name name of company to find
-	  *  @return Companies list of name Company (may be empty)
-	  */
-	 PageDto<Company> getSerchCompaniesWithPage(PageDto<Company> page, String name);
 }

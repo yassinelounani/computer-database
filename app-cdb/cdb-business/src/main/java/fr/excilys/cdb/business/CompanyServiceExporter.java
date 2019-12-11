@@ -68,14 +68,15 @@ public class CompanyServiceExporter implements CompanyService{
 	public PageDto<Company> getCompaniesWithPageAndSort(PageDto<Company> page, Navigation navigation) {
 		if (isValidBean(page)) {
 			Page<CompanyEntity> companies = null;
+			Sort sort = Sort.by(getDirection(navigation.getOrder()), NAME);
 			Pageable pageable = PageRequest.of(
 					page.getNumber(),
 					page.getSize(),
-					Sort.by(getDirection(navigation.getOrder()), NAME));
+					sort);
 			if (navigation.getValue() == null || navigation.getValue().isEmpty()) {
 				companies = companyRepository.selectCompaniesWithPage(pageable);
 			} else {
-				return getSerchCompaniesWithPage(page, navigation.getValue());
+				return getSerchCompaniesWithPage(page, navigation.getValue(), sort);
 			}
 			LOGGER.info("get all companies with page {} from Dao Computer", page.getNumber());
 			return mapAllCompaniesWithPage(companies);
@@ -83,9 +84,9 @@ public class CompanyServiceExporter implements CompanyService{
 		return page;
 	}
 
-	public PageDto<Company> getSerchCompaniesWithPage(PageDto<Company> page, String name) {
+	private PageDto<Company> getSerchCompaniesWithPage(PageDto<Company> page, String name, Sort sort) {
 		if (isValidBean(page) && !isBlank(name)) {
-			Pageable pageable = PageRequest.of(page.getNumber(), page.getSize(), Sort.by(NAME));
+			Pageable pageable = PageRequest.of(page.getNumber(), page.getSize(), sort);
 			Page<CompanyEntity> companies = companyRepository.selectSearchCompaniesByPage(nameForLikeSql(name), pageable);
 			LOGGER.info("get all companies Serched with page {} from Dao Computer", page.getNumber());
 			return mapAllCompaniesWithPage(companies);
